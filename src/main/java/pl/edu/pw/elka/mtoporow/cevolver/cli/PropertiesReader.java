@@ -37,13 +37,15 @@ public class PropertiesReader {
         parameters.fitnessEvaluator_$eq(readOne(FEType.class, "fe"));
         parameters.selectionStrategy_$eq(readOne(SSType.class, "ss"));
         parameters.terminationCondition_$eq(readOne(TCType.class, "tc"));
+        parameters.populationSize_$eq(readInt("populationSize"));
+        parameters.eliteCount_$eq(readInt("eliteCount"));
     }
 
     private <T extends Enum<T> & AlgorithmPartType> AlgorithmPartParams<T> readOne(final Class<T> partTypeClass, final String propName) throws IOException {
         String propVal = getRequiredProperty(propName);
-        AlgorithmPartParams<T> partParams = new AlgorithmPartParams<>();
         // Odczytujemy typ części algorytmu
-        partParams.partType_$eq(Enum.valueOf(partTypeClass, propVal.toUpperCase()));
+        T partType = Enum.valueOf(partTypeClass, propVal.toUpperCase());
+        AlgorithmPartParams<T> partParams = new AlgorithmPartParams<>(partType);
         // Odczytujemy informację nt. wszystkich parametrów danej części
         RegisteredParams.ParamDef[] partParamDefs = RegisteredParams.partsParamDefs().get(partParams.partType());
         if (partParamDefs != null) {
@@ -61,6 +63,11 @@ public class PropertiesReader {
             throw new IOException("Missing property: " + propName);
         }
         return propVal;
+    }
+
+    private int readInt(String propName) throws IOException, NumberFormatException {
+        String propVal = getRequiredProperty(propName);
+        return Integer.parseInt(propVal);
     }
 
     public AlgorithmParameters getParameters() {
