@@ -1,0 +1,22 @@
+package pl.edu.pw.elka.mtoporow.cevolver.algorithm.data
+
+import java.net.URL
+
+import org.apache.commons.math3.linear.Array2DRowRealMatrix
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
+
+import scala.io.Source
+
+/**
+ * Klasa dostarczająca dane z pliku CSV (format: częstotliwość, Re Gamma, Im Gamma)
+ * Data utworzenia: 05.06.15, 13:33
+ * @author Michał Toporowski
+ */
+class CsvDataProvider(val fileUrl: URL) extends DataProvider {
+  private val SEPARATOR = ","
+  override def provide: CanalResponse = {
+    val source = Source.fromURL(fileUrl)
+    val matrix = source.getLines().map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray
+    new CanalResponse(new Array2DRowRealMatrix(matrix))
+  }
+}
