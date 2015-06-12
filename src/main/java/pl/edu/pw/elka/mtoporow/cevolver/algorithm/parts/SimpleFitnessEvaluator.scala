@@ -11,7 +11,10 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
  * @author Michał Toporowski
  */
 class SimpleFitnessEvaluator extends FitnessEvaluator[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
-  override def getFitness(candidate: EvolutionaryAlgorithm.C, population: util.List[_ <: EvolutionaryAlgorithm.C]): Double = ???
+  override def getFitness(candidate: EvolutionaryAlgorithm.C, population: util.List[_ <: EvolutionaryAlgorithm.C]): Double = {
+    // TODO:: zaimplementować
+    0.0
+  }
 
   override def isNatural: Boolean = false
 }
