@@ -51,7 +51,7 @@ public class PropertiesReader {
         if (partParamDefs != null) {
             for (RegisteredParams.ParamDef partParamDef : partParamDefs) {
                 String parVal = getRequiredProperty(propName + "." + partParamDef.name());
-                partParams.setParamValAsString(partParamDef, parVal);
+                partParams.setStringAsParamVal(partParamDef, parVal);
             }
         }
         return partParams;

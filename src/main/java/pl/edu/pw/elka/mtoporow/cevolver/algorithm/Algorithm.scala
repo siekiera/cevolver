@@ -7,6 +7,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm
  */
 @Deprecated
 trait Algorithm[D, R] {
+  // FIXME:: do zastanowienia, chyba niepotrzebne
   /**
    * Rozwiązuje problem
    * @param data dane wejściowe

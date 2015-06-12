@@ -1,10 +1,10 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.data.CsvDataProvider
+import pl.edu.pw.elka.mtoporow.cevolver.data.CsvDataProvider
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 
 /**
- * Klasa X
+ * Główna klasa aplikacji
  * Data utworzenia: 15.05.15, 13:55
  * @author Michał Toporowski
  */

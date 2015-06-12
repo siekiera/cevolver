@@ -5,24 +5,37 @@ import java.util
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.RankSelection
 import org.uncommons.watchmaker.framework.termination.GenerationCount
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{RegisteredParams, CFType, EOType}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{CFType, EOType, RegisteredParams}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.{SimpleCandidateFactory, SimpleFitnessEvaluator, SimpleMutation}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, EvolutionaryAlgorithm, InternalAlgorithmParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 
 /**
- * Klasa X
+ * Silnik rozwiązujący problem
  * Data utworzenia: 15.04.15
  * @author Michał Toporowski
  */
 class Solver {
 
+  /**
+   * Rozwiązuje problem
+   *
+   * @param parameters
+   * @param data
+   * @return
+   */
   def solve(parameters: AlgorithmParameters, data: CanalResponse): EvolutionaryAlgorithm.C = {
     val algorithm = new EvolutionaryAlgorithm
     algorithm.parameters = convertParams(parameters)
     algorithm.solve(data)
   }
 
+  /**
+   * Konwertuje parametry zewnętrzne (deklaratywne) na wewnętrzne (programowe)
+   *
+   * @param parameters
+   * @return
+   */
   private def convertParams(parameters: AlgorithmParameters): InternalAlgorithmParams = {
     val result = new InternalAlgorithmParams
     result.populationSize = parameters.populationSize

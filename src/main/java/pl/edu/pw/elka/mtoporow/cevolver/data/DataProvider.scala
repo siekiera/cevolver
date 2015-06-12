@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.mtoporow.cevolver.algorithm.data
+package pl.edu.pw.elka.mtoporow.cevolver.data
 
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 
@@ -8,5 +8,10 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
  * @author Michał Toporowski
  */
 trait DataProvider {
+  /**
+   * Dostarcza dane
+   *
+   * @return
+   */
   def provide: CanalResponse
 }

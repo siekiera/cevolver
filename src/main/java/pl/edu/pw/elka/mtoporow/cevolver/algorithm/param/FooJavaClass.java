@@ -10,12 +10,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
 @Deprecated
 public class FooJavaClass {
     public void ae(EOType w) {
-//        switch (w) {
-//            case EOType.DEFAULT():
-//                break;
-//        }]
-
-
 
     }
 }

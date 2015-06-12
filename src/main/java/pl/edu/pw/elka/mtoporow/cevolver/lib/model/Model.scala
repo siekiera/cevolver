@@ -9,6 +9,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model
  */
 @Deprecated
 trait Model[R] {
+  // FIXME:: do zastanowienia, chyba niepotrzebne
 
   /**
    * Zwraca odpowiedź modelu

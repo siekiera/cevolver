@@ -2,9 +2,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm
 
 import org.uncommons.maths.random.JavaRNG
 import org.uncommons.watchmaker.framework._
-import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
-import org.uncommons.watchmaker.framework.selection.RankSelection
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse}
 
 /**

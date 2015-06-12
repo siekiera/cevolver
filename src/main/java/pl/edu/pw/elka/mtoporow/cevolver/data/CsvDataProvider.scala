@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.mtoporow.cevolver.algorithm.data
+package pl.edu.pw.elka.mtoporow.cevolver.data
 
 import java.net.URL
 
@@ -14,6 +14,7 @@ import scala.io.Source
  */
 class CsvDataProvider(val fileUrl: URL) extends DataProvider {
   private val SEPARATOR = ","
+
   override def provide: CanalResponse = {
     val source = Source.fromURL(fileUrl)
     val matrix = source.getLines().map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray
