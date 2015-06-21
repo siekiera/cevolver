@@ -2,11 +2,12 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts
 
 import java.util.Random
 
-import org.apache.commons.math3.linear.ArrayRealVector
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripParams, MicrostripLineModel}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Prosta fabryka osobników
@@ -15,7 +16,9 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripParams, 
  */
 class SimpleCandidateFactory extends AbstractCandidateFactory[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
   override def generateRandomCandidate(rng: Random): EvolutionaryAlgorithm.C = {
-    // TODO:: zaimplementować
-    new MicrostripLineModel(new Distances(new ArrayRealVector(2)), new MicrostripParams)
+    // Tworzymy N+1 liczb losowych i skalujemy je tak, żeby ich suma wynosiła długość kabla
+    val randomCoeffs = MatrixOps.asSums(MatrixOps.randomRealVector(rng, MeasurementParams.getDiscontinuitiesCount + 1))
+    val distances = randomCoeffs.mapMultiply(MeasurementParams.getTotalLength / randomCoeffs.getEntry(randomCoeffs.getDimension - 1))
+    new MicrostripLineModel(new Distances(distances), MeasurementParams.getMicrostripParams)
   }
 }

@@ -4,6 +4,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmParameters;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmPartParams;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.*;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,14 @@ public class PropertiesReader {
         parameters.terminationCondition_$eq(readOne(TCType.class, "tc"));
         parameters.populationSize_$eq(readInt("populationSize"));
         parameters.eliteCount_$eq(readInt("eliteCount"));
+        MeasurementParams.setMicrostripParams(new MicrostripParams(
+                readDouble("microstrip.w"),
+                readDouble("microstrip.t"),
+                readDouble("microstrip.h"),
+                readDouble("microstrip.epsr")
+        ));
+        MeasurementParams.setTotalLength(readDouble("totalLength"));
+        MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
     }
 
     private <T extends Enum<T> & AlgorithmPartType> AlgorithmPartParams<T> readOne(final Class<T> partTypeClass, final String propName) throws IOException {
@@ -68,6 +77,11 @@ public class PropertiesReader {
     private int readInt(String propName) throws IOException, NumberFormatException {
         String propVal = getRequiredProperty(propName);
         return Integer.parseInt(propVal);
+    }
+
+    private double readDouble(String propName) throws IOException, NumberFormatException {
+        String propVal = getRequiredProperty(propName);
+        return Double.parseDouble(propVal);
     }
 
     public AlgorithmParameters getParameters() {

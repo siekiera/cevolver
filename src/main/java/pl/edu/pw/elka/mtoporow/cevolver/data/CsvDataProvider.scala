@@ -3,7 +3,9 @@ package pl.edu.pw.elka.mtoporow.cevolver.data
 import java.net.URL
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 import scala.io.Source
 
@@ -17,7 +19,10 @@ class CsvDataProvider(val fileUrl: URL) extends DataProvider {
 
   override def provide: CanalResponse = {
     val source = Source.fromURL(fileUrl)
-    val matrix = source.getLines().map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray
-    new CanalResponse(new Array2DRowRealMatrix(matrix))
+    val dataArray = source.getLines().map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray
+    val matrix = new Array2DRowRealMatrix(dataArray)
+    // Pierwsza kolumna: częstotliwości - ustawienia globalne
+    MeasurementParams.setFrequencies(matrix.getColumnVector(0))
+    new CanalResponse(MatrixOps.createComplexVector(matrix.getColumnVector(1), matrix.getColumnVector(2)))
   }
 }
