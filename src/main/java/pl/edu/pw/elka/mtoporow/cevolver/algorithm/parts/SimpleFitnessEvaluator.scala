@@ -16,6 +16,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 class SimpleFitnessEvaluator extends FitnessEvaluator[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
   override def getFitness(candidate: EvolutionaryAlgorithm.C, population: util.List[_ <: EvolutionaryAlgorithm.C]): Double = {
     // TODO:: zaimplementować
+    // TODO:: czy to na pewno jest dobrze?
     val candResponse = candidate.response()
     val diff = candResponse.value.subtract(data.value)
     MatrixOps.reduceComplexVector(diff, (a: Complex, b: Complex) => sqrAbs(a) + sqrAbs(b))
