@@ -12,8 +12,11 @@ object CevolverApp {
 
 
   def main(args: Array[String]) {
-    val inputStream = getClass.getClassLoader.getResourceAsStream("algorithm.properties")
-    val parameters = new PropertiesReader(inputStream).getParameters
+    val algInputStream = getClass.getClassLoader.getResourceAsStream("algorithm.properties")
+    val envInputStream = getClass.getClassLoader.getResourceAsStream("micro.properties")
+    val parameters = new AlgorithmPropertiesReader(algInputStream).getParameters
+    // TODO:: docelowo może dobrze byłoby powiązać EnvProperties z .s2p
+    new EnvPropertiesReader(envInputStream)
     //    val data = new CsvDataProvider(getClass.getClassLoader.getResource("sampledata.csv")).provide
     val data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro.s2p")).provide
     val result = new Solver().solve(parameters, data)

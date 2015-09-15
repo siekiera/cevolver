@@ -1,56 +1,43 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli;
 
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmParameters;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmPartParams;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.*;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.AlgorithmPartType;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.RegisteredParams;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Klasa odczytująca plik konfiguracji parametrów algorytmu
+ * Klasa odczytująca plik properties
  * Data utworzenia: 12.06.15, 11:10
  *
  * @author Michał Toporowski
  */
-public class PropertiesReader {
+public abstract class PropertiesReader {
 
     private final Properties properties = new Properties();
-    private final AlgorithmParameters parameters = new AlgorithmParameters();
-    private final InputStream is;
 
     public PropertiesReader(final InputStream is) throws IOException {
-        this.is = is;
+        properties.load(is);
+        init();
         read();
     }
 
     /**
      * Wczytuje plik
      */
-    private void read() throws IOException {
-        properties.load(is);
-        parameters.candidateFactory_$eq(readOne(CFType.class, "cf"));
-        AlgorithmPartParams<EOType> operator = readOne(EOType.class, "eo");
-        parameters.operators_$eq(Conversions.objectToScalaList(operator)); //FIXME:: chcemy obsługiwać > 1
-        parameters.fitnessEvaluator_$eq(readOne(FEType.class, "fe"));
-        parameters.selectionStrategy_$eq(readOne(SSType.class, "ss"));
-        parameters.terminationCondition_$eq(readOne(TCType.class, "tc"));
-        parameters.populationSize_$eq(readInt("populationSize"));
-        parameters.eliteCount_$eq(readInt("eliteCount"));
-        MeasurementParams.setMicrostripParams(new MicrostripParams(
-                readDouble("microstrip.w"),
-                readDouble("microstrip.t"),
-                readDouble("microstrip.h"),
-                readDouble("microstrip.epsr")
-        ));
-        MeasurementParams.setTotalLength(readDouble("totalLength"));
-        MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
+    protected abstract void read() throws IOException;
+
+    /**
+     * Czynności inicjalne do wykonania przed read()
+     */
+    protected void init() {
+
     }
 
-    private <T extends Enum<T> & AlgorithmPartType> AlgorithmPartParams<T> readOne(final Class<T> partTypeClass, final String propName) throws IOException {
+
+    protected <T extends Enum<T> & AlgorithmPartType> AlgorithmPartParams<T> readOne(final Class<T> partTypeClass, final String propName) throws IOException {
         String propVal = getRequiredProperty(propName);
         // Odczytujemy typ części algorytmu
         T partType = Enum.valueOf(partTypeClass, propVal.toUpperCase());
@@ -66,7 +53,7 @@ public class PropertiesReader {
         return partParams;
     }
 
-    private String getRequiredProperty(String propName) throws IOException {
+    protected String getRequiredProperty(String propName) throws IOException {
         String propVal = properties.getProperty(propName);
         if (propVal == null) {
             throw new IOException("Missing property: " + propName);
@@ -74,17 +61,14 @@ public class PropertiesReader {
         return propVal;
     }
 
-    private int readInt(String propName) throws IOException, NumberFormatException {
+    protected int readInt(String propName) throws IOException, NumberFormatException {
         String propVal = getRequiredProperty(propName);
         return Integer.parseInt(propVal);
     }
 
-    private double readDouble(String propName) throws IOException, NumberFormatException {
+    protected double readDouble(String propName) throws IOException, NumberFormatException {
         String propVal = getRequiredProperty(propName);
         return Double.parseDouble(propVal);
     }
 
-    public AlgorithmParameters getParameters() {
-        return parameters;
-    }
 }

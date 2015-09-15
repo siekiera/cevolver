@@ -24,6 +24,7 @@ class TouchstoneDataProvider(val fileUrl: URL) extends DataProvider {
     val matrix = new Array2DRowRealMatrix(dataArray)
     // Pierwsza kolumna: częstotliwości - ustawienia globalne
     MeasurementParams.setFrequencies(matrix.getColumnVector(0))
+    // TODO:: można stąd odczytać więcej rzeczy, np. Z - poza tym co, z parametrami paska?
     new CanalResponse(MatrixOps.createComplexVector(matrix.getColumnVector(1), matrix.getColumnVector(2)))
   }
 

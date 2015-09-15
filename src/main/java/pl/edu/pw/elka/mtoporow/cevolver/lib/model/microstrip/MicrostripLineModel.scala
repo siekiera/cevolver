@@ -40,8 +40,10 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     for (dist <- distances.distances.toArray) {
       val length = dist - prev // długość paska
       prev = dist //poprzednia odległość
+      // FIXME:: należy to przerobić - każda nieciągłość to grubszy mikropasek
       // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?
       val microstrip = new Microstrip(params.w, length, params.t, params.h, params.epsr)
+      // TODO :: Z pewnie z pliku można wczytywać
       val tmatrix = microstrip.tMatrix(frequency, new Complex(0, 0)) //FIXME - skąd Z01
       resultTMatrix *= tmatrix
     }
