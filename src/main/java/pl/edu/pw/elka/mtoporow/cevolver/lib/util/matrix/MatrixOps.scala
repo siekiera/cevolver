@@ -60,6 +60,18 @@ object MatrixOps {
   }
 
   /**
+   * Dzieli wektor na dwie części - wektor długości n-1 oraz ostatni element
+   *
+   * @param realVector wektor
+   * @return para (wektor, ostatni element)
+   */
+  def extractLast(realVector: RealVector) = {
+    val subvector = realVector.getSubVector(0, realVector.getDimension - 1)
+    val last = realVector.getEntry(realVector.getDimension - 1)
+    (subvector, last)
+  }
+
+  /**
    * Skaluje wektor
    * @param realVector wektor
    * @param newSum liczba, która ma być nową sumą wartości wektora
@@ -92,4 +104,12 @@ object MatrixOps {
       }
     })
   }
+
+  /**
+   * Konwertuje wektor liczb zespolonych do Stringa
+   *
+   * @param v
+   */
+  def complexVecToString(v: FieldVector[Complex]) = "[" + v.toArray.map(_.toString).mkString(", ") + "]"
+
 }

@@ -19,7 +19,9 @@ object CevolverApp {
     new EnvPropertiesReader(envInputStream)
     //    val data = new CsvDataProvider(getClass.getClassLoader.getResource("sampledata.csv")).provide
     val data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro20.s2p")).provide
+    println("Rozpoczynam obliczenia")
     val result = new Solver().solve(parameters, data)
+    println("Zakończono obliczenia")
     println("result: " + result)
   }
 }

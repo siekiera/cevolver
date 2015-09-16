@@ -5,6 +5,7 @@ import org.apache.commons.math3.linear.MatrixUtils
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Model kanału w postaci linii mikropaskowej
@@ -37,18 +38,44 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   private def response(frequency: Double): Complex = {
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
     var prev = 0.0
-    for (dist <- distances.distances.toArray) {
+    val (dists, last) = MatrixOps.extractLast(distances.distances)
+    for (dist <- dists.toArray) {
       val length = dist - prev // długość paska
       prev = dist //poprzednia odległość
-      // FIXME:: należy to przerobić - każda nieciągłość to grubszy mikropasek
       // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?
-      val microstrip = new Microstrip(params.w, length, params.t, params.h, params.epsr)
-      // TODO :: Z pewnie z pliku można wczytywać
-      val tmatrix = microstrip.tMatrix(frequency, new Complex(0, 0)) //FIXME - skąd Z01
-      resultTMatrix *= tmatrix
+      // TODO:: Z01 Z pewnie z pliku można wczytywać
+      // TODO:: Do zastanowienia czy na pewno jako length - params.discL to modelować
+      // Właściwy mikropasek
+      resultTMatrix *= calculateTMatrix(params.w, length - params.discL, frequency, new Complex(0, 0))
+      // Przerwanie - modelujemy jako mikropasek o większym W
+      resultTMatrix *= calculateTMatrix(params.discW, params.discL, frequency, new Complex(0, 0))
     }
+    // Ostatni element mikropaska
+    resultTMatrix *= calculateTMatrix(params.w, last - prev, frequency, new Complex(0, 0))
+    // Obliczenie odpowiedzi całego kanału
     val s11 = resultTMatrix.toSMatrix.s11
     s11
   }
 
+  /**
+   * Oblicza macierz T zadanego mikropaska
+   *
+   * @param w
+   * @param l
+   * @param frequency
+   * @param z01
+   */
+  private def calculateTMatrix(w: Double, l: Double, frequency: Double, z01: Complex): TMatrix = {
+    val microstrip = new Microstrip(w, l, params.t, params.h, params.epsr)
+    microstrip.tMatrix(frequency, z01)
+  }
+
+  override def toString: String = {
+    val sb = StringBuilder.newBuilder
+    sb ++= "Microstrip Line Model: "
+    sb ++= "distances: ["
+    sb ++= distances.distances.toArray.map(_.toString).mkString(", ")
+    sb ++= "]; response: " + response()
+    sb.toString()
+  }
 }
