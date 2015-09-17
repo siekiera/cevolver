@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
 
+import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
  */
 public class MeasurementParams {
     // TODO:: może przenieść do Scali
+    // TODO:: może połączyć to jakoś z Distances w jedną klasę
 
     /**
      * Częstotliwości, z jakimi wykonywany był pomiar
@@ -29,6 +31,10 @@ public class MeasurementParams {
      */
     private static double totalLength;
 
+    /**
+     * Impedancja na wejściu
+     */
+    private static Complex impedance;
     /**
      * Liczba nieciągłości
      */
@@ -66,5 +72,13 @@ public class MeasurementParams {
 
     public static void setDiscontinuitiesCount(int discontinuitiesCount) {
         MeasurementParams.discontinuitiesCount = discontinuitiesCount;
+    }
+
+    public static Complex getImpedance() {
+        return impedance;
+    }
+
+    public static void setImpedance(Complex impedance) {
+        MeasurementParams.impedance = impedance;
     }
 }

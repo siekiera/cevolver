@@ -39,19 +39,20 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
     var prev = 0.0
     val (dists, last) = MatrixOps.extractLast(distances.distances)
+    val z01 = MeasurementParams.getImpedance
     for (dist <- dists.toArray) {
       val length = dist - prev // długość paska
       prev = dist //poprzednia odległość
       // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?
-      // TODO:: Z01 Z pewnie z pliku można wczytywać
+      // TODO:: Z01 wszędzie to samo - upewnić się, czy na pewno
       // TODO:: Do zastanowienia czy na pewno jako length - params.discL to modelować
       // Właściwy mikropasek
-      resultTMatrix *= calculateTMatrix(params.w, length - params.discL, frequency, new Complex(0, 0))
+      resultTMatrix *= calculateTMatrix(params.w, length - params.discL, frequency, z01)
       // Przerwanie - modelujemy jako mikropasek o większym W
-      resultTMatrix *= calculateTMatrix(params.discW, params.discL, frequency, new Complex(0, 0))
+      resultTMatrix *= calculateTMatrix(params.discW, params.discL, frequency, z01)
     }
     // Ostatni element mikropaska
-    resultTMatrix *= calculateTMatrix(params.w, last - prev, frequency, new Complex(0, 0))
+    resultTMatrix *= calculateTMatrix(params.w, last - prev, frequency, z01)
     // Obliczenie odpowiedzi całego kanału
     val s11 = resultTMatrix.toSMatrix.s11
     s11

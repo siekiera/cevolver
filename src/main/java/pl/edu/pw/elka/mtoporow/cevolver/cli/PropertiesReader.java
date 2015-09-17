@@ -1,11 +1,14 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmPartParams;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.AlgorithmPartType;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.RegisteredParams;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -69,6 +72,16 @@ public abstract class PropertiesReader {
     protected double readDouble(String propName) throws IOException, NumberFormatException {
         String propVal = getRequiredProperty(propName);
         return Double.parseDouble(propVal);
+    }
+
+    protected RealVector readOptionalDoubles(String propName) {
+        String propVal = properties.getProperty(propName);
+        if (propVal != null) {
+            String[] values = propVal.split(",");
+            double[] doubleVals = Arrays.stream(values).mapToDouble(Double::valueOf).toArray();
+            return new ArrayRealVector(doubleVals);
+        }
+        return null;
     }
 
 }
