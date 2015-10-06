@@ -19,6 +19,8 @@ class SimpleCandidateFactory extends AbstractCandidateFactory[EvolutionaryAlgori
     // Tworzymy N+1 liczb losowych i skalujemy je tak, żeby ich suma wynosiła długość kabla
     val randomCoeffs = MatrixOps.asSums(MatrixOps.randomRealVector(rng, MeasurementParams.getDiscontinuitiesCount + 1))
     val distances = randomCoeffs.mapMultiply(MeasurementParams.getTotalLength / randomCoeffs.getEntry(randomCoeffs.getDimension - 1))
-    new MicrostripLineModel(new Distances(distances), MeasurementParams.getMicrostripParams)
+    // do modelu wrzucamy wektor N-elementowy
+    val modelDistances = new Distances(MatrixOps.dropLast(distances))
+    new MicrostripLineModel(modelDistances, MeasurementParams.getMicrostripParams)
   }
 }

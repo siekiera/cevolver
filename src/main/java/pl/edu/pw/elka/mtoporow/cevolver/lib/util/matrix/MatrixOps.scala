@@ -72,6 +72,14 @@ object MatrixOps {
   }
 
   /**
+   * Odcina z wektora ostatni element
+   *
+   * @param realVector wektor
+   * @return para (wektor, ostatni element)
+   */
+  def dropLast(realVector: RealVector) = realVector.getSubVector(0, realVector.getDimension - 1)
+
+  /**
    * Skaluje wektor
    * @param realVector wektor
    * @param newSum liczba, która ma być nową sumą wartości wektora

@@ -26,7 +26,7 @@ object CevolverApp {
     val result = new Solver().solve(parameters, data)
     println("Zakończono obliczenia")
     println("wynik: " + result)
-    println("oczekiwany wynik" + getExpectedResult(expectedDists))
+    println("oczekiwany wynik: " + getExpectedResult(expectedDists))
   }
 
   private def getExpectedResult(expectedDists: Distances) = {

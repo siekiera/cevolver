@@ -40,6 +40,7 @@ public class EnvPropertiesReader extends PropertiesReader {
         MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
         RealVector expectedDistances = readOptionalDoubles("discontinuities");
         if (expectedDistances != null) {
+//            expectedDistances = expectedDistances.append(MeasurementParams.getTotalLength());
             this.expectedDistances = new Distances(expectedDistances);
         }
     }
