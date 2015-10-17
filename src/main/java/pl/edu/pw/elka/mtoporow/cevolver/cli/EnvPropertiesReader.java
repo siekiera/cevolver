@@ -4,6 +4,7 @@ import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.UnitConversions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,8 @@ import java.io.InputStream;
  * Klasa odczytująca plik konfiguracji parametrów środowiska (np. mikropaska)
  * <p>
  * Data utworzenia: 15.09.15 11:27
+ *
+ * Założenie: odległości w MILach (1/1000 cala) TODO:: może warto zmienić na MM
  *
  * @author Michał Toporowski
  */
@@ -29,20 +32,25 @@ public class EnvPropertiesReader extends PropertiesReader {
     @Override
     protected void read() throws IOException {
         MeasurementParams.setMicrostripParams(new MicrostripParams(
-                readDouble("microstrip.w"),
-                readDouble("microstrip.t"),
-                readDouble("microstrip.h"),
+                readMilDouble("microstrip.w"),
+                readMilDouble("microstrip.t"),
+                readMilDouble("microstrip.h"),
                 readDouble("microstrip.epsr"),
-                readDouble("microstrip.discW"),
-                readDouble("microstrip.discL")
+                readMilDouble("microstrip.discW"),
+                readMilDouble("microstrip.discL")
         ));
-        MeasurementParams.setTotalLength(readDouble("totalLength"));
+        MeasurementParams.setTotalLength(readMilDouble("totalLength"));
         MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
         RealVector expectedDistances = readOptionalDoubles("discontinuities");
         if (expectedDistances != null) {
 //            expectedDistances = expectedDistances.append(MeasurementParams.getTotalLength());
+            expectedDistances.mapMultiplyToSelf(UnitConversions.milToM(1));
             this.expectedDistances = new Distances(expectedDistances);
         }
+    }
+
+    private double readMilDouble(final String name) throws IOException {
+        return UnitConversions.milToM(readDouble(name));
     }
 
     public Distances getExpectedDistances() {

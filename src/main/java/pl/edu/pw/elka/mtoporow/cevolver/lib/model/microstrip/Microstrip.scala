@@ -8,10 +8,10 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.PhysicalConstants
  * Mikropasek
  * Data utworzenia: 14.06.15, 18:53
  *
- * @param w wysokość paska
- * @param l długość paska
- * @param t wysokość paska
- * @param h wysokość dielektrycznego podłoża
+ * @param w wysokość paska (m)
+ * @param l długość paska (m)
+ * @param t wysokość paska (m)
+ * @param h wysokość dielektrycznego podłoża (m)
  * @param epsr względna przenikalność elektryczna podłoża
  *
  * @author Michał Toporowski
@@ -38,7 +38,7 @@ class Microstrip(
   }
 
   /**
-   * Oblicza impedancję charakterystyczną (Z0)
+   * Oblicza impedancję charakterystyczną (Z0) - [Om]
    */
   def charImpedance(): Double = {
     // obliczenie (Korszeń s. 18) - różne wzory dla w / h < 1 i w / h >= 1
@@ -52,10 +52,10 @@ class Microstrip(
 
   /**
    * Oblicza długość elektryczną (theta)
-   * @param f częstotliwość fali
-   * @return
+   * @param f częstotliwość fali (Hz)
+   * @return theta (rad)
    */
-  private def electricalLength(f: Double): Double = {
+  def electricalLength(f: Double): Double = {
     // prędkość fazowa fali - Korszeń, s. 19
     def vphi = PhysicalConstants.LIGHT_SPEED_MPS / math.sqrt(epsef)
     // długość elektryczna
@@ -66,7 +66,7 @@ class Microstrip(
    * Oblicza macierz S mikropaska
    *
    * @param f częstotliwość fali
-   * @param z01 impedancja charakterystyczna prowadnic mikrofalowych podłączonych do wrót linii Z01
+   * @param z01 impedancja charakterystyczna prowadnic mikrofalowych podłączonych do wrót linii Z01 (Om)
    * @return
    */
   def sMatrix(f: Double, z01: Complex): SMatrix = {
@@ -89,8 +89,8 @@ class Microstrip(
   /**
    * Oblicza macierz T mikropaska
    *
-   * @param f częstotliwość fali
-   * @param z01 impedancja charakterystyczna prowadnic mikrofalowych podłączonych do wrót linii Z01
+   * @param f częstotliwość fali (Hz)
+   * @param z01 impedancja charakterystyczna prowadnic mikrofalowych podłączonych do wrót linii Z01 (Om)
    * @return
    */
   def tMatrix(f: Double, z01: Complex): TMatrix = {

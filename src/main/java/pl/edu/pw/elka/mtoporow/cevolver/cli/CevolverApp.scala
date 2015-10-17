@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
+import org.apache.commons.math3.linear.ArrayRealVector
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
@@ -27,6 +28,10 @@ object CevolverApp {
     println("Zakończono obliczenia")
     println("wynik: " + result)
     println("oczekiwany wynik: " + getExpectedResult(expectedDists))
+//    println(getExpectedResult(new Distances(new ArrayRealVector(Array(50.0, 110.0)))))
+//    println(getExpectedResult(new Distances(new ArrayRealVector(Array(20.0, 30.0)))))
+//    println(getExpectedResult(new Distances(new ArrayRealVector(Array(20.0, 130.0)))))
+//    println(getExpectedResult(new Distances(new ArrayRealVector(Array(90.0, 140.0)))))
   }
 
   private def getExpectedResult(expectedDists: Distances) = {

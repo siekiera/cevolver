@@ -6,6 +6,7 @@ import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.UnitConversions
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 import scala.io.Source
@@ -28,8 +29,8 @@ class TouchstoneDataProvider(val fileUrl: URL) extends DataProvider {
     // Z komentarzy !<P1 odczytujemy Z0, jeśli jest
     val p1Row = comments.filter(_.startsWith("!< P1")).toArray.head
     MeasurementParams.setImpedance(readZ0(p1Row))
-    // Pierwsza kolumna: częstotliwości - ustawienia globalne
-    MeasurementParams.setFrequencies(matrix.getColumnVector(0))
+    // Pierwsza kolumna: częstotliwości - ustawienia globalne + konwersja do Hz
+    MeasurementParams.setFrequencies(matrix.getColumnVector(0).mapMultiply(UnitConversions.GIGA))
     // Odczytujemy dwie pierwsze wartości - S11
     new CanalResponse(MatrixOps.createComplexVector(matrix.getColumnVector(1), matrix.getColumnVector(2)))
   }

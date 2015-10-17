@@ -19,6 +19,8 @@ class SimpleMutation extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with 
 
   private def mutate(candidate: EvolutionaryAlgorithm.C, rng: Random): EvolutionaryAlgorithm.C = {
     // Na razie mutujemy Gaussianem każdy współczynnik
+    // FIXME:: do poprawy - wartości są bardzo małe i czasem wchodzi w liczby ujemne
+    // rozważyć zmianę reprezentacji lub uzależnienie współcz. mutacji od wartości liczb
     candidate.distances.distances.mapAddToSelf(rng.nextGaussian())
     candidate
   }
