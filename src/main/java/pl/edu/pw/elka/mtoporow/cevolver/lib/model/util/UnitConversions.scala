@@ -5,7 +5,9 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.util
  *
  * Data utworzenia: 17.10.15 13:44
  * @author Michał Toporowski
+ * @deprecated zamienić na Units
  */
+@Deprecated
 object UnitConversions {
 
   val MILLI = 0.001
