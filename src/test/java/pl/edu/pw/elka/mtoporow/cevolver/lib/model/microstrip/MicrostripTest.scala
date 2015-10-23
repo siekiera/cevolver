@@ -1,6 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.UnitConversions
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
 
 /**
  * Test algorytmu obliczającego parametry mikropaska
@@ -42,12 +42,12 @@ class MicrostripTest extends org.scalatest.FunSuite {
    * @return
    */
   private def performTest(epsr: Double, wmm: Double, hmm: Double, lmm: Double, fGhz: Double, expectedZ0: Double, expectedELDeg: Double) = {
-    val microstrip = new Microstrip(wmm * UnitConversions.MILLI, lmm * UnitConversions.MILLI, 0, hmm * UnitConversions.MILLI, epsr)
+    val microstrip = new Microstrip(Units.MILLI.toSI(wmm), Units.MILLI.toSI(lmm), 0, Units.MILLI.toSI(hmm), epsr)
     val z0 = microstrip.charImpedance()
-    val el = microstrip.electricalLength(fGhz * UnitConversions.GIGA)
+    val el = microstrip.electricalLength(Units.GIGA.toSI(fGhz))
     println("Obliczone Z0: " + z0 + "; oczekiwane: " + expectedZ0)
     (100 * z0).round == (100 * expectedZ0).round
-    val expectedEL = UnitConversions.degToRad(expectedELDeg)
+    val expectedEL = Units.DEG.toSI(expectedELDeg)
     println("Obliczona dł. elektr.: " + el + "; oczekiwana: " + expectedEL)
     (10 * el).round == (10 * expectedEL).round
   }
