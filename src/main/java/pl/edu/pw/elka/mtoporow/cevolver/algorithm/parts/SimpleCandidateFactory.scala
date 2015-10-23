@@ -17,8 +17,9 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 class SimpleCandidateFactory extends AbstractCandidateFactory[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
   override def generateRandomCandidate(rng: Random): EvolutionaryAlgorithm.C = {
     // Tworzymy N+1 liczb losowych i skalujemy je tak, żeby ich suma wynosiła długość kabla
-    val randomCoeffs = MatrixOps.asSums(MatrixOps.randomRealVector(rng, MeasurementParams.getDiscontinuitiesCount + 1))
-    val distances = randomCoeffs.mapMultiply(MeasurementParams.getTotalLength / randomCoeffs.getEntry(randomCoeffs.getDimension - 1))
+    val randomCoeffs = MatrixOps.randomRealVector(rng, MeasurementParams.getDiscontinuitiesCount + 1)
+    val sum = MatrixOps.sum(randomCoeffs)
+    val distances = randomCoeffs.mapMultiply(MeasurementParams.getTotalLength / sum)
     // do modelu wrzucamy wektor N-elementowy
     val modelDistances = new Distances(MatrixOps.dropLast(distances))
     new MicrostripLineModel(modelDistances, MeasurementParams.getMicrostripParams)

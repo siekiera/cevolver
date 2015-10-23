@@ -4,8 +4,8 @@ import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.MatrixUtils
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Model kanału w postaci linii mikropaskowej
@@ -37,21 +37,18 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
    */
   private def response(frequency: Double): Complex = {
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
-    var prev = 0.0
     val z01 = MeasurementParams.getImpedance
     for (dist <- distances.distances.toArray) {
-      val length = dist - prev // długość paska
-      prev = dist //poprzednia odległość
       // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?
       // TODO:: Z01 wszędzie to samo - upewnić się, czy na pewno
       // TODO:: Do zastanowienia czy na pewno jako length - params.discL to modelować
       // Właściwy mikropasek
-      resultTMatrix *= calculateTMatrix(params.w, length - params.discL, frequency, z01)
+      resultTMatrix *= calculateTMatrix(params.w, dist - params.discL, frequency, z01)
       // Przerwanie - modelujemy jako mikropasek o większym W
       resultTMatrix *= calculateTMatrix(params.discW, params.discL, frequency, z01)
     }
     // Ostatni element mikropaska
-    resultTMatrix *= calculateTMatrix(params.w, MeasurementParams.getTotalLength - prev, frequency, z01)
+    resultTMatrix *= calculateTMatrix(params.w, MeasurementParams.getTotalLength - distances.last, frequency, z01)
     // Obliczenie odpowiedzi całego kanału
     val s11 = resultTMatrix.toSMatrix.s11
     s11
@@ -73,8 +70,10 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   override def toString: String = {
     val sb = StringBuilder.newBuilder
     sb ++= "Microstrip Line Model: "
-    sb ++= "distances: ["
+    sb ++= "distances (m): ["
     sb ++= distances.distances.toArray.map(_.toString).mkString(", ")
+    sb ++= "]; distances (mils): ["
+    sb ++= distances.distances.toArray.map(Units.MIL.fromSI(_).toString).mkString(", ")
     sb ++= "]; response: " + response()
     sb.toString()
   }

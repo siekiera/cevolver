@@ -43,14 +43,12 @@ public class EnvPropertiesReader extends PropertiesReader {
         MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
         RealVector expectedDistances = readOptionalDoubles("discontinuities");
         if (expectedDistances != null) {
-//            expectedDistances = expectedDistances.append(MeasurementParams.getTotalLength());
             expectedDistances.mapMultiplyToSelf(Units.MIL().valueInSI());
             this.expectedDistances = new Distances(expectedDistances);
         }
     }
 
     private double readMilDouble(final String name) throws IOException {
-//        return UnitConversions.milToM(readDouble(name));
         return new Units.U(readDouble(name)).toSI(Units.MIL());
     }
 
