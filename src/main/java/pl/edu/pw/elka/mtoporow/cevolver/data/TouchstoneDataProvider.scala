@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.data
 
+import java.io.File
 import java.net.URL
 
 import org.apache.commons.math3.complex.Complex
@@ -17,11 +18,13 @@ import scala.io.Source
  * Data utworzenia: 05.06.15, 13:33
  * @author Michał Toporowski
  */
-class TouchstoneDataProvider(val fileUrl: URL) extends DataProvider {
+class TouchstoneDataProvider(private val source: Source) extends DataProvider {
   private val SEPARATOR = " "
 
+  def this(fileUrl: URL) = this(Source.fromURL(fileUrl))
+  def this(file: File) = this(Source.fromFile(file))
+
   override def provide: CanalResponse = {
-    val source = Source.fromURL(fileUrl)
     // Odczytanie linii danych (z pominięciem komentarzy) + konwersja na Double
     val (data, comments) = source.getLines().partition(isValidData)
     val dataArray = data.map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray

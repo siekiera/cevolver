@@ -48,14 +48,12 @@ class EvolutionaryAlgorithm {
       parameters.ss,
       new JavaRNG())
 
-    val result = engine.evolve(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    engine.addEvolutionObserver(new EvolutionObserver[C] {
+      override def populationUpdate(data: PopulationData[_ <: C]): Unit = println("Pokolenie nr " + data.getGenerationNumber)
+    })
 
     // TODO jest też engine.evolvePopulation() - do rozważenia
-
-    // TODO - do badania przebiegu
-    //    engine.addEvolutionObserver(new EvolutionObserver[C] {
-    //      override def populationUpdate(data: PopulationData[_ <: C]): Unit = ???
-    //    })
+    val result = engine.evolve(parameters.populationSize, parameters.eliteCount, parameters.tc)
 
     result
   }

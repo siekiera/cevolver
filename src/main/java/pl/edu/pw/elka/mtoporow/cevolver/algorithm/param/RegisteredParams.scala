@@ -2,6 +2,8 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param
 
 import java.util
 
+import scala.collection.mutable
+
 /**
  * Obiekt przechowujący zarejestrowane parametry liczbowe algorytmu
  * Data utworzenia: 31.05.15, 12:02
@@ -22,7 +24,7 @@ object RegisteredParams {
   /**
    * Mapa zawierająca parametry wymagane przez dany typ algorytmu
    */
-  val partsParamDefs: util.Map[AlgorithmPartType, Array[ParamDef]] = new util.HashMap[AlgorithmPartType, Array[ParamDef]]()
+  val partsParamDefs: mutable.Map[AlgorithmPartType, Array[ParamDef]] = new mutable.HashMap[AlgorithmPartType, Array[ParamDef]]()
   put(TCType.DEFAULT, GENERATION_COUNT)
 
   /**

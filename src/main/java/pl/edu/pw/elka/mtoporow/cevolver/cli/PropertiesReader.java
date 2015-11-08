@@ -5,6 +5,7 @@ import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmPartParams;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.AlgorithmPartType;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.RegisteredParams;
+import scala.Option;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,9 +47,9 @@ public abstract class PropertiesReader {
         T partType = Enum.valueOf(partTypeClass, propVal.toUpperCase());
         AlgorithmPartParams<T> partParams = new AlgorithmPartParams<>(partType);
         // Odczytujemy informację nt. wszystkich parametrów danej części
-        RegisteredParams.ParamDef[] partParamDefs = RegisteredParams.partsParamDefs().get(partParams.partType());
-        if (partParamDefs != null) {
-            for (RegisteredParams.ParamDef partParamDef : partParamDefs) {
+        Option<RegisteredParams.ParamDef[]> partParamDefs = RegisteredParams.partsParamDefs().get(partParams.partType());
+        if (partParamDefs.isDefined()) {
+            for (RegisteredParams.ParamDef partParamDef : partParamDefs.get()) {
                 String parVal = getRequiredProperty(propName + "." + partParamDef.name());
                 partParams.setStringAsParamVal(partParamDef, parVal);
             }
