@@ -49,7 +49,11 @@ class EvolutionaryAlgorithm {
       new JavaRNG())
 
     engine.addEvolutionObserver(new EvolutionObserver[C] {
-      override def populationUpdate(data: PopulationData[_ <: C]): Unit = println("Pokolenie nr " + data.getGenerationNumber)
+      override def populationUpdate(data: PopulationData[_ <: C]): Unit = {
+        println("Pokolenie nr " + data.getGenerationNumber)
+        println("Najlepszy wynik: " + data.getBestCandidate)
+        println("F. celu: " + data.getBestCandidateFitness)
+      }
     })
 
     // TODO jest też engine.evolvePopulation() - do rozważenia

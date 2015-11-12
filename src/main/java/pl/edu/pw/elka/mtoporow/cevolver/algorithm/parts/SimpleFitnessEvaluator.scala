@@ -19,7 +19,7 @@ class SimpleFitnessEvaluator extends FitnessEvaluator[EvolutionaryAlgorithm.C] w
     // TODO:: czy to na pewno jest dobrze?
     val candResponse = candidate.response()
     val diff = candResponse.value.subtract(data.value)
-    MatrixOps.reduceComplexVector(diff, (a: Complex, b: Complex) => sqrAbs(a) + sqrAbs(b))
+    diff.toArray.map(sqrAbs).sum
   }
 
   override def isNatural: Boolean = false
