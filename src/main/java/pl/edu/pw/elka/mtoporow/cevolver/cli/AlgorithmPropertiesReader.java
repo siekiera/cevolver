@@ -1,7 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli;
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmParameters;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.AlgorithmPartParams;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.*;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions;
 
@@ -31,8 +30,9 @@ public class AlgorithmPropertiesReader extends PropertiesReader {
     @Override
     protected void read() throws IOException {
         parameters.candidateFactory_$eq(readOne(CFType.class, "cf"));
-        AlgorithmPartParams<EOType> operator = readOne(EOType.class, "eo");
-        parameters.operators_$eq(Conversions.objectToScalaList(operator)); //FIXME:: chcemy obsługiwać > 1
+//        AlgorithmPartParams<EOType> operator = readOne(EOType.class, "eo");
+//        parameters.operators_$eq(Conversions.objectToScalaList(operator)); //FIXME:: chcemy obsługiwać > 1
+        parameters.operators_$eq(Conversions.javaToScalaList(readMulti(EOType.class, "eo")));
         parameters.fitnessEvaluator_$eq(readOne(FEType.class, "fe"));
         parameters.selectionStrategy_$eq(readOne(SSType.class, "ss"));
         parameters.terminationCondition_$eq(readOne(TCType.class, "tc"));

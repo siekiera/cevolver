@@ -10,6 +10,8 @@ import scala.Option;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -55,6 +57,17 @@ public abstract class PropertiesReader {
             }
         }
         return partParams;
+    }
+
+    protected <T extends Enum<T> & AlgorithmPartType> List<AlgorithmPartParams<T>> readMulti(final Class<T> partTypeClass, final String propPrefix) throws IOException {
+        int counter = 0;
+        List<AlgorithmPartParams<T>> result = new LinkedList<>();
+        String key;
+        while (properties.containsKey(key = propPrefix + "." + counter)) {
+            result.add(readOne(partTypeClass, key));
+            counter++;
+        }
+        return result;
     }
 
     protected String getRequiredProperty(String propName) throws IOException {
