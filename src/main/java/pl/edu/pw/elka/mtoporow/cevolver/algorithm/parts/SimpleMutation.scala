@@ -21,6 +21,7 @@ class SimpleMutation extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with 
    * Współczynnik przez który mnożona jest wartość losowa
    */
   private lazy val randomCoeffScalar = 0.01 * MeasurementParams.getTotalLength
+  private lazy val minVal = MeasurementParams.getMicrostripParams.discL
 
   override def apply(selectedCandidates: util.List[EvolutionaryAlgorithm.C], rng: Random): util.List[EvolutionaryAlgorithm.C] = {
     Conversions.scalaToJavaList(Conversions.javaToScalaList(selectedCandidates).map(c => mutate(c, rng)))
@@ -41,7 +42,7 @@ class SimpleMutation extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with 
     candidate.distances.distances.mapToSelf(new UnivariateFunction {
       override def value(x: Double): Double = {
         var r = x + randomCoeffScalar * rng.nextGaussian()
-        if (r < 0) r = 0
+        if (r < minVal) r = minVal
         r
       }
     })

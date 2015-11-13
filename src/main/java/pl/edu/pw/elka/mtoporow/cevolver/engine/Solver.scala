@@ -6,7 +6,7 @@ import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.RankSelection
 import org.uncommons.watchmaker.framework.termination.GenerationCount
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{CFType, EOType, RegisteredParams}
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.{SimpleCandidateFactory, SimpleFitnessEvaluator, SimpleMutation}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.{DistArrayCrossover, SimpleCandidateFactory, SimpleFitnessEvaluator, SimpleMutation}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, EvolutionaryAlgorithm, InternalAlgorithmParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 
@@ -46,7 +46,8 @@ class Solver {
     val operators = new util.ArrayList[EvolutionaryAlgorithm.EO]()
     for (opType <- parameters.operators) {
       val operator = opType.partType match {
-        case EOType.DEFAULT => new SimpleMutation()
+        case EOType.SIMPLE_MUTATION => new SimpleMutation()
+        case EOType.DIST_ARRAY_CROSSOVER => new DistArrayCrossover
       }
       operators.add(operator)
     }
