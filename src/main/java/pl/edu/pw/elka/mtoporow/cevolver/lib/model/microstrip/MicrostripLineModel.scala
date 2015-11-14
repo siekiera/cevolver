@@ -30,6 +30,14 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   }
 
   /**
+   * Tworzy nowy model tego samego typu z innymi odległościami
+   *
+   * @param distances odległości
+   * @return
+   */
+  override def createNew(distances: Distances) = new MicrostripLineModel(distances, params)
+
+  /**
    * Liczy odpowiedź dla danej częstotliwości
    *
    * @param frequency częstotliwość fali

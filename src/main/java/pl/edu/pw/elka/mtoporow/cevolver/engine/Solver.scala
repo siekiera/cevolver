@@ -53,7 +53,7 @@ class Solver {
     }
     result.eo = new EvolutionPipeline[EvolutionaryAlgorithm.C](operators)
     // TODO - dodać case'y też tu
-    result.fe = new SimpleFitnessEvaluator
+    result.fe = new SimpleFitnessEvaluator(parameters.fitnessEvaluator.paramValueCasted[Double](RegisteredParams.PUNISHMENT_RATIO))
     result.ss = new RankSelection()
     result.tc = new GenerationCount(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT))
     result

@@ -20,6 +20,14 @@ abstract class AbstractCanalModel {
    * @return
    */
   def response(): CanalResponse
+
+  /**
+   * Tworzy nowy model tego samego typu z innymi odległościami
+   *
+   * @param distances odległości
+   * @return
+   */
+  def createNew(distances: Distances): AbstractCanalModel
 }
 
 

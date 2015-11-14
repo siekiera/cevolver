@@ -81,4 +81,8 @@ public class MeasurementParams {
     public static void setImpedance(Complex impedance) {
         MeasurementParams.impedance = impedance;
     }
+
+    public static double getMinMicrostripLength() {
+        return microstripParams.discL();
+    }
 }

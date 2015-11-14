@@ -123,10 +123,48 @@ object MatrixOps {
   }
 
   /**
+   * Zamienia [a, a+b, a+b+c, ...] na [a, b, c, ...]
+   *
+   * @param realVector wektor
+   */
+  def fromSums(realVector: RealVector) = {
+    var sum = 0.0
+    realVector.map(new UnivariateFunction {
+      override def value(x: Double): Double = {
+        val newX = x - sum
+        sum += x
+        newX
+      }
+    })
+  }
+
+  /**
    * Konwertuje wektor liczb zespolonych do Stringa
    *
    * @param v
    */
   def complexVecToString(v: FieldVector[Complex]) = "[" + v.toArray.map(_.toString).mkString(", ") + "]"
+
+  /**
+   * Zwraca iterowalną kolekcję
+   *
+   * @param v wektor
+   * @return kolekcja implementująca Iterable[Double]
+   */
+  def doubleIterable(v: RealVector): Iterable[Double] = {
+    val dim = v.getDimension
+    new Iterable[Double] {
+      override def iterator = new Iterator[Double] {
+        private var i = 0
+
+        override def hasNext: Boolean = i < dim
+
+        override def next(): Double = {
+          i += 1
+          v.getEntry(i - 1)
+        }
+      }
+    }
+  }
 
 }

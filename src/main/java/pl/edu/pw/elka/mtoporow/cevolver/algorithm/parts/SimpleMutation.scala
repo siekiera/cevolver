@@ -8,6 +8,7 @@ import org.uncommons.watchmaker.framework.EvolutionaryOperator
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
@@ -39,7 +40,7 @@ class SimpleMutation extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with 
     // wartości są bardzo małe i czasem wchodzi w liczby ujemne
     // rozważyć zmianę reprezentacji lub uzależnienie współcz. mutacji od wartości liczb
     // na razie - mnożenie przez randomCoeffScalar
-    candidate.distances.distances.mapToSelf(new UnivariateFunction {
+    val newDists = candidate.distances.distances.map(new UnivariateFunction {
       override def value(x: Double): Double = {
         var r = x + randomCoeffScalar * rng.nextGaussian()
         if (r < minVal) r = minVal
@@ -47,13 +48,13 @@ class SimpleMutation extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with 
       }
     })
     // Sprawdzamy, czy nie przekroczyło maxa
-    val sum = MatrixOps.sum(candidate.distances.distances)
+    val sum = MatrixOps.sum(newDists)
     val diff = MeasurementParams.getTotalLength - sum
     if (diff < 0) {
       // Na razie zmieniamy tylko ostatni
-      candidate.distances.distances.setEntry(candidate.distances.distances.getDimension - 1,
+      newDists.setEntry(candidate.distances.distances.getDimension - 1,
         candidate.distances.last + diff)
     }
-    candidate
+    candidate.createNew(new Distances(newDists))
   }
 }
