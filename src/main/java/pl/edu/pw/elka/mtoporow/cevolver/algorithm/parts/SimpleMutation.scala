@@ -4,6 +4,7 @@ import java.util
 import java.util.Random
 
 import org.apache.commons.math3.analysis.UnivariateFunction
+import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.EvolutionaryOperator
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
@@ -14,25 +15,42 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 /**
  * Prosta implementacja mutacji
  * Data utworzenia: 29.05.15, 19:08
+ *
+ * @param probability prawdopodobieństwo mutacji
  * @author Michał Toporowski
  */
-class SimpleMutation extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
+class SimpleMutation(val probability: Probability) extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
 
   /**
    * Współczynnik przez który mnożona jest wartość losowa
    */
   private lazy val randomCoeffScalar = 0.01 * MeasurementParams.getTotalLength
-  private lazy val minVal = MeasurementParams.getMicrostripParams.discL
+  private lazy val minVal = MeasurementParams.getMinMicrostripLength
 
   override def apply(selectedCandidates: util.List[EvolutionaryAlgorithm.C], rng: Random): util.List[EvolutionaryAlgorithm.C] = {
-    Conversions.scalaToJavaList(Conversions.javaToScalaList(selectedCandidates).map(c => mutate(c, rng)))
+    Conversions.scalaToJavaList(Conversions.javaToScalaList(selectedCandidates).map(c => mutateWithProbability(c, rng)))
+  }
+
+  /**
+   * Mutuje pojedynczego osobnika z prawdopodobieństwem probability
+   *
+   * @param candidate osobnik
+   * @param rng generator liczb pseudolosowych
+   * @return
+   */
+  private def mutateWithProbability(candidate: EvolutionaryAlgorithm.C, rng: Random) = {
+    if (probability.doubleValue() > rng.nextDouble()) {
+      mutate(candidate, rng)
+    } else {
+      candidate
+    }
   }
 
   /**
    * Mutuje pojedynczego osobnika za pomocą funkcji Gaussa
    *
-   * @param candidate
-   * @param rng
+   * @param candidate osobnik
+   * @param rng generator liczb pseudolosowych
    * @return
    */
   private def mutate(candidate: EvolutionaryAlgorithm.C, rng: Random): EvolutionaryAlgorithm.C = {

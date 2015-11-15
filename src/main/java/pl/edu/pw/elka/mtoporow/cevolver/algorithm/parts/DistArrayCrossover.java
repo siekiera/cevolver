@@ -2,6 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.operators.DoubleArrayCrossover;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams;
@@ -23,6 +24,12 @@ import java.util.stream.Collectors;
  */
 public class DistArrayCrossover implements EvolutionaryOperator<AbstractCanalModel> {
 
+    private final Probability probability;
+
+    public DistArrayCrossover(Probability probability) {
+        this.probability = probability;
+    }
+
     @Override
     public List<AbstractCanalModel> apply(List<AbstractCanalModel> selectedCandidates, Random rng) {
         // FIXME:: te paramsy chyba nie powinny być w modelu, to bez sensu
@@ -32,7 +39,7 @@ public class DistArrayCrossover implements EvolutionaryOperator<AbstractCanalMod
                 .map(MatrixOps::asSums)
                 .map(RealVector::toArray)
                 .collect(Collectors.toList());
-        List<double[]> crossed = new DoubleArrayCrossover().apply(distValues, rng);
+        List<double[]> crossed = new DoubleArrayCrossover(1, probability).apply(distValues, rng);
         return crossed.parallelStream()
 //                .map(this::sort)
                 .map(ArrayRealVector::new)

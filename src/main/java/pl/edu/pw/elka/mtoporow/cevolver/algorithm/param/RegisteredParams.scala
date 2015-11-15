@@ -21,6 +21,7 @@ object RegisteredParams {
   /* Parametry */
   val GENERATION_COUNT = new ParamDef("generation_count", classOf[Integer])
   val PUNISHMENT_RATIO = new ParamDef("punishment_ratio", classOf[Double])
+  val PROBABILITY = new ParamDef("probability", classOf[Double])
 
   /**
    * Mapa zawierająca parametry wymagane przez dany typ algorytmu
@@ -28,6 +29,8 @@ object RegisteredParams {
   val partsParamDefs: mutable.Map[AlgorithmPartType, Array[ParamDef]] = new mutable.HashMap[AlgorithmPartType, Array[ParamDef]]()
   put(TCType.DEFAULT, GENERATION_COUNT)
   put(FEType.DEFAULT, PUNISHMENT_RATIO)
+  put(EOType.SIMPLE_MUTATION, PROBABILITY)
+  put(EOType.DIST_ARRAY_CROSSOVER, PROBABILITY)
 
   /**
    * Umieszcza elementy w mapie partsParams

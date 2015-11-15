@@ -2,12 +2,13 @@ package pl.edu.pw.elka.mtoporow.cevolver.engine
 
 import java.util
 
+import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.RankSelection
 import org.uncommons.watchmaker.framework.termination.GenerationCount
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{CFType, EOType, RegisteredParams}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.{DistArrayCrossover, SimpleCandidateFactory, SimpleFitnessEvaluator, SimpleMutation}
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, EvolutionaryAlgorithm, InternalAlgorithmParams}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmPartParams, AlgorithmParameters, EvolutionaryAlgorithm, InternalAlgorithmParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 
 /**
@@ -33,7 +34,7 @@ class Solver {
   /**
    * Konwertuje parametry zewnętrzne (deklaratywne) na wewnętrzne (programowe)
    *
-   * @param parameters
+   * @param parameters parametry zewnętrzne
    * @return
    */
   private def convertParams(parameters: AlgorithmParameters): InternalAlgorithmParams = {
@@ -46,8 +47,8 @@ class Solver {
     val operators = new util.ArrayList[EvolutionaryAlgorithm.EO]()
     for (opType <- parameters.operators) {
       val operator = opType.partType match {
-        case EOType.SIMPLE_MUTATION => new SimpleMutation()
-        case EOType.DIST_ARRAY_CROSSOVER => new DistArrayCrossover
+        case EOType.SIMPLE_MUTATION => new SimpleMutation(readProbability(opType))
+        case EOType.DIST_ARRAY_CROSSOVER => new DistArrayCrossover(readProbability(opType))
       }
       operators.add(operator)
     }
@@ -58,4 +59,6 @@ class Solver {
     result.tc = new GenerationCount(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT))
     result
   }
+
+  private def readProbability(partParams: AlgorithmPartParams[EOType]) = new Probability(partParams.paramValueCasted(RegisteredParams.PROBABILITY))
 }
