@@ -40,6 +40,24 @@ class EvolutionaryAlgorithm {
    * @return wynik
    */
   def solve(data: I): C = {
+    val engine = prepareEngine(data)
+    val result = engine.evolve(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    result
+  }
+
+  /**
+   * Rozwiązuje problem
+   *
+   * @param data dane wejściowe
+   * @return wszystkie wyniki
+   */
+  def solveWithAllResults(data: I) = {
+    val engine = prepareEngine(data)
+    val result = engine.evolvePopulation(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    result
+  }
+
+  def prepareEngine(data: I) = {
     parameters.setData(data)
     val engine: EvolutionEngine[C] = new GenerationalEvolutionEngine[C](
       parameters.cf,
@@ -55,11 +73,7 @@ class EvolutionaryAlgorithm {
         println("F. celu: " + data.getBestCandidateFitness)
       }
     })
-
-    // TODO jest też engine.evolvePopulation() - do rozważenia
-    val result = engine.evolve(parameters.populationSize, parameters.eliteCount, parameters.tc)
-
-    result
+    engine
   }
 }
 

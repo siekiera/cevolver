@@ -32,6 +32,19 @@ class Solver {
   }
 
   /**
+   * Rozwiązuje problem
+   *
+   * @param parameters
+   * @param data
+   * @return
+   */
+  def solveWithAllResults(parameters: AlgorithmParameters, data: CanalResponse) = {
+    val algorithm = new EvolutionaryAlgorithm
+    algorithm.parameters = convertParams(parameters)
+    algorithm.solveWithAllResults(data)
+  }
+
+  /**
    * Konwertuje parametry zewnętrzne (deklaratywne) na wewnętrzne (programowe)
    *
    * @param parameters parametry zewnętrzne

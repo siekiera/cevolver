@@ -1,5 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
+import org.uncommons.watchmaker.framework.EvaluatedCandidate
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
@@ -23,17 +25,26 @@ object CevolverApp {
     //    val data = new CsvDataProvider(getClass.getClassLoader.getResource("sampledata.csv")).provide
     val data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro20.s2p")).provide
     println("Rozpoczynam obliczenia")
-    val result = new Solver().solve(parameters, data)
+//    val result = new Solver().solve(parameters, data)
+    val results = new Solver().solveWithAllResults(parameters, data)
     println("Zakończono obliczenia")
-    println("wynik: " + result)
+//    println("wynik: " + result)
     println("oczekiwany wynik: " + getExpectedResult(expectedDists))
+    printAllResults(results, 20)
     //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(50.0, 110.0)))))
     //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(20.0, 30.0)))))
     //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(20.0, 130.0)))))
     //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(90.0, 140.0)))))
   }
 
-  private def getExpectedResult(expectedDists: Distances) = {
+  def getExpectedResult(expectedDists: Distances) = {
     new MicrostripLineModel(expectedDists, MeasurementParams.getMicrostripParams)
+  }
+
+  private def printAllResults(results: java.util.List[EvaluatedCandidate[EvolutionaryAlgorithm.C]], maxResults: Int): Unit = {
+    for (i <- 0 until results.size().min(maxResults)) {
+      val ec = results.get(i)
+      println(i.toString + ": Funkcja celu: " + ec.getFitness + "; c: " + ec.getCandidate.hashCode() + "; wynik: " + ec.getCandidate)
+    }
   }
 }

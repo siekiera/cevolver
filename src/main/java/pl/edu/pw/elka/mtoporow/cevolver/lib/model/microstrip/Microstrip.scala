@@ -94,7 +94,7 @@ class Microstrip(
    * @return
    */
   def tMatrix(f: Double, z01: Complex): TMatrix = {
-    // wyznaczenie macierzy T (Korszeń s. 20)
+    // wyznaczenie macierzy T (Dybiec s. 20)
     val theta = electricalLength(f)
     val z0 = Complex.valueOf(charImpedance())
     val r = z0.divide(z01)
@@ -106,7 +106,7 @@ class Microstrip(
     val t11 = commonSubstrate.add(costheta)
     val t22 = commonSubstrate.subtract(costheta)
     // t12 = -t21 =  j * 1/2 (r - 1/r) sin(theta)
-    val t12 = Complex.I.multiply(0.5).multiply(r.add(Complex.ONE.divide(r))).multiply(sintheta)
+    val t12 = Complex.I.multiply(0.5).multiply(r.subtract(Complex.ONE.divide(r))).multiply(sintheta)
     val t21 = t12.negate()
     new TMatrix(t11, t12, t21, t22)
   }
