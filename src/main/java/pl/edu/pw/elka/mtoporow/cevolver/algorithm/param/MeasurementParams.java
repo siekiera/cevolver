@@ -83,6 +83,6 @@ public class MeasurementParams {
     }
 
     public static double getMinMicrostripLength() {
-        return microstripParams.discL();
+        return 0;
     }
 }

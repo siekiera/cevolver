@@ -46,14 +46,15 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   private def response(frequency: Double): Complex = {
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
     val z01 = MeasurementParams.getImpedance
+    var thick = false // Cienki, czy gruby element paska - na zmianę
     for (dist <- distances.distances.toArray) {
       // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?
       // TODO:: Z01 wszędzie to samo - upewnić się, czy na pewno
-      // TODO:: Do zastanowienia czy na pewno jako length - params.discL to modelować
       // Właściwy mikropasek
-      resultTMatrix *= calculateTMatrix(params.w, dist - params.discL, frequency, z01)
-      // Przerwanie - modelujemy jako mikropasek o większym W
-      resultTMatrix *= calculateTMatrix(params.discW, params.discL, frequency, z01)
+      // Przerwanie - modelowane na styku pasków o mniejszym i większym W
+      val w = if (thick) params.biggerW else params.w
+      resultTMatrix *= calculateTMatrix(w, dist, frequency, z01)
+      thick = !thick
     }
     // Ostatni element mikropaska
     resultTMatrix *= calculateTMatrix(params.w, MeasurementParams.getTotalLength - distances.last, frequency, z01)

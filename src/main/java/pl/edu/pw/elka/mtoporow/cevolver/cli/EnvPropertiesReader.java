@@ -36,8 +36,7 @@ public class EnvPropertiesReader extends PropertiesReader {
                 readMilDouble("microstrip.t"),
                 readMilDouble("microstrip.h"),
                 readDouble("microstrip.epsr"),
-                readMilDouble("microstrip.discW"),
-                readMilDouble("microstrip.discL")
+                readMilDouble("microstrip.biggerW")
         ));
         MeasurementParams.setTotalLength(readMilDouble("totalLength"));
         MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
