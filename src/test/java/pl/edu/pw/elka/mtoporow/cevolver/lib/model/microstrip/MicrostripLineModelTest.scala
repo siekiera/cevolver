@@ -1,8 +1,16 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
+import org.apache.commons.math3.linear.MatrixUtils
 import org.scalatest.FunSuite
 import pl.edu.pw.elka.mtoporow.cevolver.TestDataHolder
+import pl.edu.pw.elka.mtoporow.cevolver.TestDataHolder._
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.cli.CevolverApp
+import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Test linii mikropaskowej
@@ -26,6 +34,18 @@ class MicrostripLineModelTest extends FunSuite {
     println("Odpowiedź obliczona dla wczytanych danych: " + calculatedResponse)
     println("Odpowiedź obliczona przez program zewnętrzny: " + externallyCalculatedResponse)
     assert(calculatedResponse.value.equals(externallyCalculatedResponse.value))
+  }
+
+  test("Test pojedynczego fragmentu") {
+    val extResponse = new TouchstoneDataProvider(getClass.getClassLoader.getResource("single.s2p")).provide
+    val result = MeasurementParams.getFrequencies.toArray.map(f => {
+      val params = MeasurementParams.getMicrostripParams
+      new Microstrip(params.w, Units.MIL.toSI(50), params.t, params.h, params.epsr).tMatrix(f, MeasurementParams.getImpedance).toSMatrix.s11
+    }).array
+    val calculatedResponse = MatrixUtils.createFieldVector(result)
+    println("Odpowiedź obliczona dla wczytanych danych: " + new CanalResponse(calculatedResponse))
+    println("Odpowiedź obliczona przez program zewnętrzny: " + extResponse)
+    assert(calculatedResponse.equals(extResponse.value))
   }
 
 

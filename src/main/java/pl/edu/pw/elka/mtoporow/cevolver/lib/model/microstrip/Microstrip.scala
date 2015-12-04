@@ -103,8 +103,8 @@ class Microstrip(
     val costheta = math.cos(theta)
     val sintheta = math.sin(theta)
     val commonSubstrate = Complex.I.multiply(0.5).multiply(r.add(Complex.ONE.divide(r))).multiply(sintheta)
-    val t11 = commonSubstrate.add(costheta)
-    val t22 = commonSubstrate.subtract(costheta)
+    val t11 = commonSubstrate.subtract(costheta).negate() // = costheta - commonSubstrate
+    val t22 = commonSubstrate.add(costheta)
     // t12 = -t21 =  j * 1/2 (r - 1/r) sin(theta)
     val t12 = Complex.I.multiply(0.5).multiply(r.subtract(Complex.ONE.divide(r))).multiply(sintheta)
     val t21 = t12.negate()
