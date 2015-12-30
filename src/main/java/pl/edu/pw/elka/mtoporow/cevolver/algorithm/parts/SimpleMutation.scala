@@ -69,7 +69,7 @@ class SimpleMutation(val probability: Probability) extends EvolutionaryOperator[
     val sum = MatrixOps.sum(newDists)
     val diff = MeasurementParams.getTotalLength - sum
     if (diff < 0) {
-      // Na razie zmieniamy tylko ostatni
+      // Na razie zmieniamy tylko ostatni TODO:: pewnie do zmiany
       newDists.setEntry(candidate.distances.distances.getDimension - 1,
         candidate.distances.last + diff)
     }

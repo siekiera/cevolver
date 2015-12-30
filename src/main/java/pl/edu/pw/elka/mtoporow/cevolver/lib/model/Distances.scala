@@ -1,6 +1,8 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model
 
 import org.apache.commons.math3.linear.RealVector
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Klasa reprezentująca odległości w kanale
@@ -14,5 +16,12 @@ class Distances(val distances: RealVector) {
    * Zwraca ostatnią odległośc
    * @return ostatnia odległość
    */
-  def last = distances.getEntry(distances.getDimension - 1)
+  def last = MeasurementParams.getTotalLength - absolute.getEntry(distances.getDimension - 1)
+
+  /**
+   * Zwraca odległości bezwzględne (tzn. od początku linii)
+   *
+   * @return wektor odległości
+   */
+  def absolute = MatrixOps.asSums(distances)
 }
