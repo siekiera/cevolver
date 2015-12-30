@@ -35,7 +35,7 @@ class MicrostripLineModelTest extends FunSuite {
     println("Odpowiedź obliczona przez program zewnętrzny: " + externallyCalculatedResponse)
     assert(calculatedResponse.value.equals(externallyCalculatedResponse.value))
   }
-
+/*
   test("Test pojedynczego fragmentu") {
     val extResponse = new TouchstoneDataProvider(getClass.getClassLoader.getResource("single.s2p")).provide
     val result = MeasurementParams.getFrequencies.toArray.map(f => {
@@ -47,6 +47,6 @@ class MicrostripLineModelTest extends FunSuite {
     println("Odpowiedź obliczona przez program zewnętrzny: " + extResponse)
     assert(calculatedResponse.equals(extResponse.value))
   }
-
+*/
 
 }

@@ -9,6 +9,6 @@ import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider
  * @author Michał Toporowski
  */
 object TestDataHolder {
-  val dists = new EnvPropertiesReader(getClass.getClassLoader.getResourceAsStream("micro20.properties")).getExpectedDistances
-  val externallyCalculatedResponse = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro20.s2p")).provide
+  val dists = new EnvPropertiesReader(getClass.getClassLoader.getResourceAsStream("micro2_nboxp1.properties")).getExpectedDistances
+  val externallyCalculatedResponse = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro2_nboxp1.s2p")).provide
 }
