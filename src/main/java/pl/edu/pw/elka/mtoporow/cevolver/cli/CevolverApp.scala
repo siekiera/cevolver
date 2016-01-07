@@ -17,13 +17,20 @@ object CevolverApp {
 
 
   def main(args: Array[String]) {
+    val useFake = args.contains("--fake")
+
     val algInputStream = getClass.getClassLoader.getResourceAsStream("algorithm.properties")
-    val envInputStream = getClass.getClassLoader.getResourceAsStream("micro20.properties")
+    val envInputStream = getClass.getClassLoader.getResourceAsStream("micro2_nboxp1.properties")
     val parameters = new AlgorithmPropertiesReader(algInputStream).getParameters
     // TODO:: docelowo może dobrze byłoby powiązać EnvProperties z .s2p
     val expectedDists = new EnvPropertiesReader(envInputStream).getExpectedDistances
-    //    val data = new CsvDataProvider(getClass.getClassLoader.getResource("sampledata.csv")).provide
-    val data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro20.s2p")).provide
+    var data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro2_nboxp1.s2p")).provide
+
+    if (useFake) {
+      // Dane "fałszywe" - liczone za pomocą tego kodu, a nie zewnętrznego programu
+      data = getExpectedResult(expectedDists).response()
+    }
+
     println("Rozpoczynam obliczenia")
 //    val result = new Solver().solve(parameters, data)
     val results = new Solver().solveWithAllResults(parameters, data)
@@ -31,10 +38,6 @@ object CevolverApp {
 //    println("wynik: " + result)
     println("oczekiwany wynik: " + getExpectedResult(expectedDists))
     printAllResults(results, 20)
-    //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(50.0, 110.0)))))
-    //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(20.0, 30.0)))))
-    //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(20.0, 130.0)))))
-    //    println(getExpectedResult(new Distances(new ArrayRealVector(Array(90.0, 140.0)))))
   }
 
   def getExpectedResult(expectedDists: Distances) = {
