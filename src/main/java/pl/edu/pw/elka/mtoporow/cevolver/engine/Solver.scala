@@ -4,11 +4,11 @@ import java.util
 
 import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
-import org.uncommons.watchmaker.framework.selection.RankSelection
+import org.uncommons.watchmaker.framework.selection.{RankSelection, RouletteWheelSelection, StochasticUniversalSampling, TournamentSelection}
 import org.uncommons.watchmaker.framework.termination.GenerationCount
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{CFType, EOType, RegisteredParams}
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.{DistArrayCrossover, SimpleCandidateFactory, SimpleFitnessEvaluator, SimpleMutation}
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmPartParams, AlgorithmParameters, EvolutionaryAlgorithm, InternalAlgorithmParams}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{CFType, EOType, RegisteredParams, SSType}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm, InternalAlgorithmParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 
 /**
@@ -59,19 +59,29 @@ class Solver {
     }
     val operators = new util.ArrayList[EvolutionaryAlgorithm.EO]()
     for (opType <- parameters.operators) {
+      val probability = readProbability(opType)
       val operator = opType.partType match {
-        case EOType.SIMPLE_MUTATION => new SimpleMutation(readProbability(opType))
-        case EOType.DIST_ARRAY_CROSSOVER => new DistArrayCrossover(readProbability(opType))
+        case EOType.SIMPLE_MUTATION => new SimpleMutation(probability)
+        case EOType.DIST_ARRAY_CROSSOVER => new DistArrayCrossover(probability)
+        case EOType.INVERSION => new Inversion(probability)
+        case EOType.STANDARD_GAUSSIAN_MUTATION => new StandardGaussianMutation(probability,
+          opType.paramValueCasted(RegisteredParams.STANDARD_DEVIATION))
+        case EOType.AVERAGE_VALUE_CROSSOVER => new AverageValueCrossover(probability)
       }
       operators.add(operator)
     }
     result.eo = new EvolutionPipeline[EvolutionaryAlgorithm.C](operators)
     // TODO - dodać case'y też tu
     result.fe = new SimpleFitnessEvaluator(parameters.fitnessEvaluator.paramValueCasted[Double](RegisteredParams.PUNISHMENT_RATIO))
-    result.ss = new RankSelection()
+    result.ss = parameters.selectionStrategy.partType match {
+      case SSType.RANK => new RankSelection()
+      case SSType.ROULETTE_WHEEL => new RouletteWheelSelection()
+      case SSType.SUS => new StochasticUniversalSampling()
+      case SSType.TOURNAMENT => new TournamentSelection(readProbability(parameters.selectionStrategy))
+    }
     result.tc = new GenerationCount(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT))
     result
   }
 
-  private def readProbability(partParams: AlgorithmPartParams[EOType]) = new Probability(partParams.paramValueCasted(RegisteredParams.PROBABILITY))
+  private def readProbability(partParams: AlgorithmPartParams[_]) = new Probability(partParams.paramValueCasted(RegisteredParams.PROBABILITY))
 }

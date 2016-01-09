@@ -138,6 +138,10 @@ object MatrixOps {
     })
   }
 
+  def invert(realVector: RealVector) = {
+    new ArrayRealVector(realVector.toArray.reverse)
+  }
+
   /**
    * Konwertuje wektor liczb zespolonych do Stringa
    *

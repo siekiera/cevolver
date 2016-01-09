@@ -22,6 +22,7 @@ object RegisteredParams {
   val GENERATION_COUNT = new ParamDef("generation_count", classOf[Integer])
   val PUNISHMENT_RATIO = new ParamDef("punishment_ratio", classOf[Double])
   val PROBABILITY = new ParamDef("probability", classOf[Double])
+  val STANDARD_DEVIATION = new ParamDef("standardDeviation", classOf[Double])
 
   /**
    * Mapa zawierająca parametry wymagane przez dany typ algorytmu
@@ -31,6 +32,11 @@ object RegisteredParams {
   put(FEType.DEFAULT, PUNISHMENT_RATIO)
   put(EOType.SIMPLE_MUTATION, PROBABILITY)
   put(EOType.DIST_ARRAY_CROSSOVER, PROBABILITY)
+  put(EOType.INVERSION, PROBABILITY)
+  put(EOType.STANDARD_GAUSSIAN_MUTATION, PROBABILITY)
+  put(EOType.STANDARD_GAUSSIAN_MUTATION, STANDARD_DEVIATION)
+  put(EOType.AVERAGE_VALUE_CROSSOVER, PROBABILITY)
+  put(SSType.SUS, PROBABILITY)
 
   /**
    * Umieszcza elementy w mapie partsParams

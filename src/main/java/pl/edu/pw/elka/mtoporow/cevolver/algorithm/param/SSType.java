@@ -7,5 +7,8 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  * @author Michał Toporowski
  */
 public enum SSType implements AlgorithmPartType  {
-    DEFAULT
+    RANK,
+    SUS,
+    ROULETTE_WHEEL,
+    TOURNAMENT
 }

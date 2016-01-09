@@ -8,5 +8,8 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  */
 public enum EOType implements AlgorithmPartType  {
     SIMPLE_MUTATION,
-    DIST_ARRAY_CROSSOVER
+    DIST_ARRAY_CROSSOVER,
+    INVERSION,
+    STANDARD_GAUSSIAN_MUTATION,
+    AVERAGE_VALUE_CROSSOVER
 }

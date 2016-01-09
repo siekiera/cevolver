@@ -10,18 +10,14 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
- * Prosta implementacja mutacji
- * Data utworzenia: 29.05.15, 19:08
+ * Implementacja mutacji wykorzystująca funkcję Gaussa
+ * Data utworzenia: 9.01.2016
  *
  * @param probability prawdopodobieństwo mutacji
  * @author Michał Toporowski
  */
-class SimpleMutation(private val probability: Probability) extends BaseMutation(probability) {
+class StandardGaussianMutation(private val probability: Probability, val standardDeviation: Double) extends BaseMutation(probability) {
 
-  /**
-   * Współczynnik przez który mnożona jest wartość losowa
-   */
-  private lazy val randomCoeffScalar = 0.01 * MeasurementParams.getTotalLength
   private lazy val minVal = MeasurementParams.getMinMicrostripLength
 
   /**
@@ -38,7 +34,7 @@ class SimpleMutation(private val probability: Probability) extends BaseMutation(
     // na razie - mnożenie przez randomCoeffScalar
     val newDists = candidate.distances.distances.map(new UnivariateFunction {
       override def value(x: Double): Double = {
-        var r = x + randomCoeffScalar * rng.nextGaussian()
+        var r = x * standardDeviation * (1 + rng.nextGaussian())
         if (r < minVal) r = minVal
         r
       }
