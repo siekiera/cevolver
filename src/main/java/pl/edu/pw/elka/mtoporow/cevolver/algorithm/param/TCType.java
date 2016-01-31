@@ -7,5 +7,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  * @author Michał Toporowski
  */
 public enum TCType implements AlgorithmPartType {
-    DEFAULT
+    GENERATION_COUNT,
+    STAGNATION,
+    TARGET_FITNESS
 }

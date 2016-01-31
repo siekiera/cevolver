@@ -23,12 +23,15 @@ object RegisteredParams {
   val PUNISHMENT_RATIO = new ParamDef("punishment_ratio", classOf[Double])
   val PROBABILITY = new ParamDef("probability", classOf[Double])
   val STANDARD_DEVIATION = new ParamDef("standardDeviation", classOf[Double])
+  val TARGET_FITNESS = new ParamDef("targetFitness", classOf[Double])
 
   /**
    * Mapa zawierająca parametry wymagane przez dany typ algorytmu
    */
   val partsParamDefs: mutable.Map[AlgorithmPartType, Array[ParamDef]] = new mutable.HashMap[AlgorithmPartType, Array[ParamDef]]()
-  put(TCType.DEFAULT, GENERATION_COUNT)
+  put(TCType.GENERATION_COUNT, GENERATION_COUNT)
+  put(TCType.STAGNATION, GENERATION_COUNT)
+  put(TCType.TARGET_FITNESS, TARGET_FITNESS)
   put(FEType.DEFAULT, PUNISHMENT_RATIO)
   put(EOType.SIMPLE_MUTATION, PROBABILITY)
   put(EOType.DIST_ARRAY_CROSSOVER, PROBABILITY)

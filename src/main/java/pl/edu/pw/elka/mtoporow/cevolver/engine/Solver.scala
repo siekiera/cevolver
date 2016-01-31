@@ -5,8 +5,8 @@ import java.util
 import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.{RankSelection, RouletteWheelSelection, StochasticUniversalSampling, TournamentSelection}
-import org.uncommons.watchmaker.framework.termination.GenerationCount
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.{CFType, EOType, RegisteredParams, SSType}
+import org.uncommons.watchmaker.framework.termination.{TargetFitness, Stagnation, GenerationCount}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm, InternalAlgorithmParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
@@ -79,7 +79,12 @@ class Solver {
       case SSType.SUS => new StochasticUniversalSampling()
       case SSType.TOURNAMENT => new TournamentSelection(readProbability(parameters.selectionStrategy))
     }
-    result.tc = new GenerationCount(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT))
+
+    result.tc = parameters.terminationCondition.partType match {
+      case TCType.GENERATION_COUNT => new GenerationCount(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT))
+      case TCType.STAGNATION => new Stagnation(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT), result.fe.isNatural)
+      case TCType.TARGET_FITNESS => new TargetFitness(parameters.terminationCondition.paramValueCasted(RegisteredParams.TARGET_FITNESS), result.fe.isNatural)
+    }
     result
   }
 
