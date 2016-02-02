@@ -3,12 +3,9 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math3.linear.FieldMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-
-import java.util.Arrays;
 
 /**
- * Klasa X
+ * Alternatywna implementacja macierzy T
  * Data utworzenia: 29.01.16, 16:38
  *
  * @author Michał Toporowski

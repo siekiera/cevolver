@@ -10,7 +10,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 
 /**
- * Klasa X
+ * Model linii mikropaskowej
  * Data utworzenia: 29.01.16, 15:56
  *
  * @author Michał Toporowski
@@ -40,6 +40,12 @@ public class MicrostripLineModelAlt extends AbstractCanalModel {
         return new CanalResponse(new ArrayFieldVector<>(respValues));
     }
 
+    /**
+     * Oblicza odpowiedź dla danej częstotliwości
+     *
+     * @param freq częstotliwość (Hz)
+     * @return odpowiedź (S11) jako liczba zespolona
+     */
     private Complex calcResponse(double freq) {
         TMatrixAlt tMatrixAlt = TMatrixAlt.identity();
         boolean thick = false;
