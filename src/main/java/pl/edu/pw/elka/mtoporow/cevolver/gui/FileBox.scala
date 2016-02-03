@@ -8,7 +8,7 @@ import scalafx.scene.layout.HBox
 import scalafx.stage.{FileChooser, Window}
 
 /**
- * Klasa X
+ * Kontrolka pozwalająca na wczytanie pliku
  * Data utworzenia: 05.11.15, 12:42
  * @author Michał Toporowski
  */

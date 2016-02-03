@@ -4,7 +4,7 @@ import scalafx.scene.Node
 import scalafx.scene.layout.GridPane
 
 /**
- * Klasa X
+ * Kontrolka do budowania panelu
  * Data utworzenia: 01.11.15, 11:32
  * @author Michał Toporowski
  */

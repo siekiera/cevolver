@@ -20,12 +20,13 @@ import scalafx.scene.control._
 import scalafx.scene.layout.VBox
 
 /**
- * Klasa X
+ * Główna klasa interfejsu użytkownika
+ *
  * Data utworzenia: 23.10.15, 17:48
  * @author Michał Toporowski
  */
 object CevolverUI extends JFXApp {
-  val additionalParams: mutable.Map[ParamDef, Spinner[Int]] = new mutable.HashMap[ParamDef, Spinner[Int]]()
+  val additionalParams: mutable.Map[ParamDef, Spinner[_ <: AnyVal]] = new mutable.HashMap[ParamDef, Spinner[_ <: AnyVal]]()
   val populationSizeCtrl = new Spinner[Int](10, 10000, 100, 1)
   val eliteCountCtrl = new Spinner[Int](10, 10000, 10, 1)
   val cfCtrl = createPartComboBox(CFType.values())
@@ -43,8 +44,6 @@ object CevolverUI extends JFXApp {
     width = 600
     height = 450
     scene = new Scene {
-      //      fill = Color.LightGreen
-      //      content = createConfigPane()
       content = new VBox() {
         children += dataFileBox
         children += metaFileBox
@@ -79,6 +78,9 @@ object CevolverUI extends JFXApp {
   private def createPartComboBox[T](values: Seq[T]) = {
     new ComboBox[T](values) {
       value = values.head
+      onAction = handle {
+
+      }
     }
   }
 
@@ -90,8 +92,10 @@ object CevolverUI extends JFXApp {
         // TODO:: dodać dynamiczne zmienianie tego
         for (paramDef <- paramDefs) {
           builder += new Label(paramDef.name)
-          // TODO:: na razie tylko int
-          val spinner = new Spinner[Int](0, 1000, 0)
+          val spinner: Spinner[_ <: AnyVal] = if (paramDef.cls == classOf[Integer])
+            new Spinner[Int](0, 1000, 0)
+          else
+            new Spinner[Double](0, 1000, 0, 0.5)
           spinner.editable = true
           builder += spinner
           additionalParams.put(paramDef, spinner)
