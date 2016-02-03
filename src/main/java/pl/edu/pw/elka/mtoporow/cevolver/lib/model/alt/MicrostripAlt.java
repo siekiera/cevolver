@@ -4,7 +4,7 @@ import org.apache.commons.math3.complex.Complex;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.PhysicalConstants;
 
 /**
- * Klasa X
+ * Alternatywny model linii mikropaskowej
  * Data utworzenia: 29.01.16, 15:57
  *
  * @author Michał Toporowski
@@ -18,6 +18,13 @@ public class MicrostripAlt {
     private double z0;
     private double eef;
 
+    /**
+     * @param w    wysokość paska (m)
+     * @param l    długość paska (m)
+     * @param t    wysokość paska (m)
+     * @param h    wysokość dielektrycznego podłoża (m)
+     * @param epsr względna przenikalność elektryczna podłoża
+     */
     public MicrostripAlt(double w, double t, double l, double h, double epsr) {
         this.w = w;
         this.t = t;
@@ -27,6 +34,9 @@ public class MicrostripAlt {
         this.calculate();
     }
 
+    /**
+     * Liczy eef oraz Z0
+     */
     private void calculate() {
         double wph = w / h;
         if (wph < 1) {
@@ -38,11 +48,24 @@ public class MicrostripAlt {
         }
     }
 
+    /**
+     * Liczy długość elektryczną
+     *
+     * @param f częstotliwość (Hz)
+     * @return długość elektryczna
+     */
     public double getELen(double f) {
         double vphi = PhysicalConstants.LIGHT_SPEED_MPS() / Math.sqrt(eef);
         return 2. * Math.PI * l * f / vphi;
     }
 
+    /**
+     * Liczy macierz T dla tego mikropaska
+     *
+     * @param z01  impedancja (om)
+     * @param freq częstotliwość (Hz)
+     * @return Macierz T
+     */
     public TMatrixAlt getTMatrix(Complex z01, double freq) {
         double theta = getELen(freq);
         Complex r = Complex.valueOf(z0).divide(z01);
@@ -59,7 +82,6 @@ public class MicrostripAlt {
     public double getZ0() {
         return z0;
     }
-
 
 
 }
