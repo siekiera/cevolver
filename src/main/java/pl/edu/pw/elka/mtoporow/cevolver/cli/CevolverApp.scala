@@ -2,8 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.cli
 
 import org.uncommons.watchmaker.framework.EvaluatedCandidate
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
-import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
@@ -19,12 +18,14 @@ object CevolverApp {
   def main(args: Array[String]) {
     val useFake = args.contains("--fake")
 
+    // Ładujemy zestaw danych
+    DataHolder.load("20")
+
     val algInputStream = getClass.getClassLoader.getResourceAsStream("algorithm.properties")
-    val envInputStream = getClass.getClassLoader.getResourceAsStream("20.properties")
     val parameters = new AlgorithmPropertiesReader(algInputStream).getParameters
-    // TODO:: docelowo może dobrze byłoby powiązać EnvProperties z .s2p
-    val expectedDists = new EnvPropertiesReader(envInputStream).getExpectedDistances
-    var data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("20.s2p")).provide
+
+    val expectedDists = DataHolder.getCurrent.expectedDistances
+    var data = DataHolder.getCurrent.canalResponse
 
     if (useFake) {
       // Dane "fałszywe" - liczone za pomocą tego kodu, a nie zewnętrznego programu
@@ -32,16 +33,16 @@ object CevolverApp {
     }
 
     println("Rozpoczynam obliczenia")
-//    val result = new Solver().solve(parameters, data)
+    //    val result = new Solver().solve(parameters, data)
     val results = new Solver().solveWithAllResults(parameters, data)
     println("Zakończono obliczenia")
-//    println("wynik: " + result)
+    //    println("wynik: " + result)
     println("oczekiwany wynik: " + getExpectedResult(expectedDists))
     printAllResults(results, 20)
   }
 
   def getExpectedResult(expectedDists: Distances) = {
-    new MicrostripLineModel(expectedDists, MeasurementParams.getMicrostripParams)
+    new MicrostripLineModel(expectedDists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
   }
 
   private def printAllResults(results: java.util.List[EvaluatedCandidate[EvolutionaryAlgorithm.C]], maxResults: Int): Unit = {

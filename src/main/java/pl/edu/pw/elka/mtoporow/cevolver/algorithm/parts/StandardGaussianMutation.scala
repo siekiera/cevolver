@@ -5,7 +5,7 @@ import java.util.Random
 import org.apache.commons.math3.analysis.UnivariateFunction
 import org.uncommons.maths.random.Probability
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -18,7 +18,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  */
 class StandardGaussianMutation(private val probability: Probability, val standardDeviation: Double) extends BaseMutation(probability) {
 
-  private lazy val minVal = MeasurementParams.getMinMicrostripLength
+  private lazy val minVal = 0.0 //MeasurementParams.getMinMicrostripLength
 
   /**
    * Mutuje pojedynczego osobnika za pomocą funkcji Gaussa
@@ -41,7 +41,7 @@ class StandardGaussianMutation(private val probability: Probability, val standar
     })
     // Sprawdzamy, czy nie przekroczyło maxa
     val sum = MatrixOps.sum(newDists)
-    val diff = MeasurementParams.getTotalLength - sum
+    val diff = DataHolder.getCurrent.measurementParams.getTotalLength - sum
     if (diff < 0) {
       // Na razie zmieniamy tylko ostatni TODO:: pewnie do zmiany
       newDists.setEntry(candidate.distances.distances.getDimension - 1,

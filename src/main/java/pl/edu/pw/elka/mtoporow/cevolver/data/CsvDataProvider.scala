@@ -3,7 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.data
 import java.net.URL
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -22,7 +22,7 @@ class CsvDataProvider(val fileUrl: URL) extends DataProvider {
     val dataArray = source.getLines().map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray
     val matrix = new Array2DRowRealMatrix(dataArray)
     // Pierwsza kolumna: częstotliwości - ustawienia globalne
-    MeasurementParams.setFrequencies(matrix.getColumnVector(0))
+    DataHolder.getCurrent.measurementParams.setFrequencies(matrix.getColumnVector(0))
     new CanalResponse(MatrixOps.createComplexVector(matrix.getColumnVector(1), matrix.getColumnVector(2)))
   }
 }

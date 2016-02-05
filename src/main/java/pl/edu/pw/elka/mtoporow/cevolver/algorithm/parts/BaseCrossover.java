@@ -4,7 +4,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.operators.AbstractCrossover;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel;
@@ -41,7 +41,7 @@ class BaseCrossover implements EvolutionaryOperator<AbstractCanalModel> {
     @Override
     public List<AbstractCanalModel> apply(List<AbstractCanalModel> selectedCandidates, Random rng) {
         // FIXME:: te paramsy chyba nie powinny być w modelu, to bez sensu
-        MicrostripParams params = MeasurementParams.getMicrostripParams();
+        MicrostripParams params = DataHolder.getCurrent().measurementParams().getMicrostripParams();
         List<double[]> distValues = selectedCandidates.parallelStream()
                 .map(c -> c.distances().distances())
                 .map(asSums)

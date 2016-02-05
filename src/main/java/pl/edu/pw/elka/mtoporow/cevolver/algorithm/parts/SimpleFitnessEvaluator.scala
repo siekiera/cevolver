@@ -5,7 +5,6 @@ import java.util
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.RealVector
 import org.uncommons.watchmaker.framework.FitnessEvaluator
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
@@ -49,7 +48,7 @@ object FitnessFunction {
    * @return
    */
   private def punishment(distances: RealVector, punishmentRatio: Double) = {
-    val minVal = MeasurementParams.getMinMicrostripLength
+    val minVal = 0.0 //MeasurementParams.getMinMicrostripLength
     var p = 0.0
     // Jeśli różnica pomiędzy kolejnymi odległościami jest mniejsza od minVal - karamy
     // Jeśli kolejność się odwróci, również będzie kara
@@ -58,7 +57,7 @@ object FitnessFunction {
         p += minVal - i
       }
     }
-//    println(p * punishmentRatio)
+    //    println(p * punishmentRatio)
     p * punishmentRatio
   }
 }

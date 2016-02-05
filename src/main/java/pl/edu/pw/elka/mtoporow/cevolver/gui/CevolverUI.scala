@@ -3,6 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.gui
 import java.io.FileInputStream
 import javafx.concurrent
 
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.RegisteredParams.ParamDef
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm}
@@ -141,7 +142,7 @@ object CevolverUI extends JFXApp {
     override def call(): Void = {
       val data = new TouchstoneDataProvider(dataFileBox.dataFile).provide
       val expectedDists = new EnvPropertiesReader(new FileInputStream(metaFileBox.dataFile)).getExpectedDistances
-      expResult = new MicrostripLineModel(expectedDists, MeasurementParams.getMicrostripParams)
+      expResult = new MicrostripLineModel(expectedDists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
       result = new Solver().solve(paramValues(), data)
       null
     }

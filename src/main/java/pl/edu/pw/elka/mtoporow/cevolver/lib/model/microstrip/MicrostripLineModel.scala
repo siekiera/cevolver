@@ -2,7 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.MatrixUtils
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
@@ -16,7 +16,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResp
 class MicrostripLineModel(val distances: Distances, val params: MicrostripParams)
   extends AbstractCanalModel {
 
-  private val frequences = MeasurementParams.getFrequencies
+  private val frequences = DataHolder.getCurrent.measurementParams.getFrequencies
 
   /**
    * Zwraca odpowiedź modelu
@@ -45,7 +45,7 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
    */
   private def response(frequency: Double): Complex = {
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
-    val z01 = MeasurementParams.getImpedance
+    val z01 = DataHolder.getCurrent.measurementParams.getImpedance
     var thick = false // Cienki, czy gruby element paska - na zmianę
     for (dist <- distances.distances.toArray) {
       // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?

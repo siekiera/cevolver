@@ -3,7 +3,8 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.ArrayFieldVector;
 import org.apache.commons.math3.linear.RealVector;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
@@ -18,8 +19,9 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 public class MicrostripLineModelAlt extends AbstractCanalModel {
 
     private final Distances dists;
-    private final MicrostripParams pars = MeasurementParams.getMicrostripParams();
-    private final RealVector frequencies = MeasurementParams.getFrequencies();
+    private final MeasurementParams measurementParams = DataHolder.getCurrent().measurementParams();
+    private final MicrostripParams pars = measurementParams.getMicrostripParams();
+    private final RealVector frequencies = measurementParams.getFrequencies();
 
     public MicrostripLineModelAlt(Distances distances) {
         this.dists = distances;
@@ -51,14 +53,14 @@ public class MicrostripLineModelAlt extends AbstractCanalModel {
         boolean thick = false;
         for (double dist : dists.distances().toArray()) {
             MicrostripAlt microstripAlt = new MicrostripAlt(thick ? pars.biggerW() : pars.w(), pars.t(), dist, pars.h(), pars.epsr());
-            Complex z01 = MeasurementParams.getImpedance();
+            Complex z01 = measurementParams.getImpedance();
 //            Complex z01 = Complex.valueOf(microstripAlt.getZ0());
             TMatrixAlt matrixAlt = microstripAlt.getTMatrix(z01, freq);
             tMatrixAlt = tMatrixAlt.multiply(matrixAlt);
             thick = !thick;
         }
         MicrostripAlt lastM = new MicrostripAlt(thick ? pars.biggerW() : pars.w(), pars.t(), dists.last(), pars.h(), pars.epsr());
-        TMatrixAlt matrixAlt = lastM.getTMatrix(MeasurementParams.getImpedance(), freq);
+        TMatrixAlt matrixAlt = lastM.getTMatrix(measurementParams.getImpedance(), freq);
         tMatrixAlt = tMatrixAlt.multiply(matrixAlt);
         return tMatrixAlt.getS11();
     }

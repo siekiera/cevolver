@@ -3,7 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.cli;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units;
@@ -29,22 +29,28 @@ public class EnvPropertiesReader extends PropertiesReader {
      */
     private Distances expectedDistances;
 
+    /**
+     * Parametry pomiaru
+     */
+    private MeasurementParams measurementParams;
+
     public EnvPropertiesReader(InputStream is) throws IOException {
         super(is);
     }
 
     @Override
     protected void read() throws IOException {
-        MeasurementParams.setMicrostripParams(new MicrostripParams(
+        measurementParams = new MeasurementParams();
+        measurementParams.setMicrostripParams(new MicrostripParams(
                 readDoubleInUnit("microstrip.w"),
                 readDoubleInUnit("microstrip.t"),
                 readDoubleInUnit("microstrip.h"),
                 readDouble("microstrip.epsr"),
                 readDoubleInUnit("microstrip.biggerW")
         ));
-        MeasurementParams.setImpedance(Complex.valueOf(readDouble("impedance")));
-        MeasurementParams.setTotalLength(readDoubleInUnit("totalLength"));
-        MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
+        measurementParams.setImpedance(Complex.valueOf(readDouble("impedance")));
+        measurementParams.setTotalLength(readDoubleInUnit("totalLength"));
+        measurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
         RealVector expectedDistances = readOptionalDoubles("discontinuities");
         if (expectedDistances == null) {
             expectedDistances = new ArrayRealVector();
@@ -60,5 +66,9 @@ public class EnvPropertiesReader extends PropertiesReader {
 
     public Distances getExpectedDistances() {
         return expectedDistances;
+    }
+
+    public MeasurementParams getMeasurementParams() {
+        return measurementParams;
     }
 }
