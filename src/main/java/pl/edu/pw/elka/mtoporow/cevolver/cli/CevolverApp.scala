@@ -20,11 +20,11 @@ object CevolverApp {
     val useFake = args.contains("--fake")
 
     val algInputStream = getClass.getClassLoader.getResourceAsStream("algorithm.properties")
-    val envInputStream = getClass.getClassLoader.getResourceAsStream("micro2_nboxp1.properties")
+    val envInputStream = getClass.getClassLoader.getResourceAsStream("20.properties")
     val parameters = new AlgorithmPropertiesReader(algInputStream).getParameters
     // TODO:: docelowo może dobrze byłoby powiązać EnvProperties z .s2p
     val expectedDists = new EnvPropertiesReader(envInputStream).getExpectedDistances
-    var data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("micro2_nboxp1.s2p")).provide
+    var data = new TouchstoneDataProvider(getClass.getClassLoader.getResource("20.s2p")).provide
 
     if (useFake) {
       // Dane "fałszywe" - liczone za pomocą tego kodu, a nie zewnętrznego programu
