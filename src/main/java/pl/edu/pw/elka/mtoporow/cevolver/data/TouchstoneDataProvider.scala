@@ -19,23 +19,25 @@ import scala.io.Source
  * @author Michał Toporowski
  */
 class TouchstoneDataProvider(private val source: Source) extends DataProvider {
-  private val SEPARATOR = " "
+  private val SEPARATOR = "\\s+"
 
   def this(fileUrl: URL) = this(Source.fromURL(fileUrl))
   def this(file: File) = this(Source.fromFile(file))
 
   override def provide: CanalResponse = {
     // Odczytanie linii danych (z pominięciem komentarzy) + konwersja na Double
-    val (data, comments) = source.getLines().partition(isValidData)
+//    val (data, comments) = source.getLines().partition(isValidData)
+    val data = source.getLines().filter(isValidData)
     val dataArray = data.map(_.split(SEPARATOR)).map(_.map(_.toDouble)).toArray
     val matrix = new Array2DRowRealMatrix(dataArray)
     // Z komentarzy !<P1 odczytujemy Z0, jeśli jest
-    val p1Row = comments.filter(_.startsWith("!< P1")).toArray.head
-    MeasurementParams.setImpedance(readZ0(p1Row))
+//    val p1Row = comments.filter(_.startsWith("!< P1")).toArray.head
+//    MeasurementParams.setImpedance(readZ0(p1Row))
     // Pierwsza kolumna: częstotliwości - ustawienia globalne + konwersja do Hz
     MeasurementParams.setFrequencies(matrix.getColumnVector(0).mapMultiply(Units.GIGA.valueInSI))
     // Odczytujemy dwie pierwsze wartości - S11
     new CanalResponse(MatrixOps.createComplexVector(matrix.getColumnVector(1), matrix.getColumnVector(2)))
+//    new CanalResponse(MatrixOps.createComplexVector(matrix.getColumnVector(5), matrix.getColumnVector(6)))
   }
 
   private def isValidData(s: String): Boolean = {
@@ -50,6 +52,7 @@ class TouchstoneDataProvider(private val source: Source) extends DataProvider {
    *
    * @param p1Row
    */
+  @Deprecated
   private def readZ0(p1Row: String): Complex = {
     if (p1Row != null) {
       val startId = p1Row.indexOf("Z0=(") + 4

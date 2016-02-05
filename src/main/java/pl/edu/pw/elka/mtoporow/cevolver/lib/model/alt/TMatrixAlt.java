@@ -26,7 +26,7 @@ public class TMatrixAlt {
     }
 
     public Complex getS11() {
-        return matrix.getEntry(0, 0).divide(matrix.getEntry(1, 1));
+        return matrix.getEntry(0, 1).divide(matrix.getEntry(1, 1));
     }
 
     public static TMatrixAlt identity() {

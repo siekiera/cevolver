@@ -81,8 +81,8 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     sb ++= "Microstrip Line Model: "
     sb ++= "distances (m): ["
     sb ++= distances.distances.toArray.map(_.toString).mkString(", ")
-    sb ++= "]; distances (mils): ["
-    sb ++= distances.distances.toArray.map(Units.MIL.fromSI(_).toString).mkString(", ")
+    sb ++= "]; distances (mm): ["
+    sb ++= distances.distances.toArray.map(Units.MILLI.fromSI(_).toString).mkString(", ")
     sb ++= "]; response: " + response()
     sb.toString()
   }

@@ -1,5 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli;
 
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
@@ -20,6 +22,8 @@ import java.io.InputStream;
  */
 public class EnvPropertiesReader extends PropertiesReader {
 
+    private static final Units.BaseUnit UNIT = Units.MILLI();
+
     /**
      * Odległości do rzeczywistych miejsc nieciągłości (opcjonalne)
      */
@@ -32,23 +36,26 @@ public class EnvPropertiesReader extends PropertiesReader {
     @Override
     protected void read() throws IOException {
         MeasurementParams.setMicrostripParams(new MicrostripParams(
-                readMilDouble("microstrip.w"),
-                readMilDouble("microstrip.t"),
-                readMilDouble("microstrip.h"),
+                readDoubleInUnit("microstrip.w"),
+                readDoubleInUnit("microstrip.t"),
+                readDoubleInUnit("microstrip.h"),
                 readDouble("microstrip.epsr"),
-                readMilDouble("microstrip.biggerW")
+                readDoubleInUnit("microstrip.biggerW")
         ));
-        MeasurementParams.setTotalLength(readMilDouble("totalLength"));
+        MeasurementParams.setImpedance(Complex.valueOf(readDouble("impedance")));
+        MeasurementParams.setTotalLength(readDoubleInUnit("totalLength"));
         MeasurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
         RealVector expectedDistances = readOptionalDoubles("discontinuities");
-        if (expectedDistances != null) {
-            expectedDistances.mapMultiplyToSelf(Units.MIL().valueInSI());
-            this.expectedDistances = new Distances(expectedDistances);
+        if (expectedDistances == null) {
+            expectedDistances = new ArrayRealVector();
         }
+        expectedDistances.mapMultiplyToSelf(UNIT.valueInSI());
+        this.expectedDistances = new Distances(expectedDistances);
+
     }
 
-    private double readMilDouble(final String name) throws IOException {
-        return new Units.U(readDouble(name)).toSI(Units.MIL());
+    private double readDoubleInUnit(final String name) throws IOException {
+        return new Units.U(readDouble(name)).toSI(UNIT);
     }
 
     public Distances getExpectedDistances() {

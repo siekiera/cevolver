@@ -40,7 +40,7 @@ object Units {
   /**
    * Mil (1/1000 cala)
    */
-  val MIL = new BaseUnit(0.0254 * 0.001)
+//  val MIL = new BaseUnit(0.0254 * 0.001)
 
   val MILLI = new BaseUnit(0.001)
   val MEGA = new BaseUnit(1000000)

@@ -13,7 +13,7 @@ class TMatrix(val t11: Complex, val t12: Complex, val t21: Complex, val t22: Com
   def asMatrix: FieldMatrix[Complex] = new Array2DRowFieldMatrix[Complex](Array(Array(t11, t12), Array(t21, t22)))
 
   def toSMatrix: SMatrix = {
-    val s11 = t11.divide(t22)
+    val s11 = t12.divide(t22)
     val s12 = t11.multiply(t22).subtract(t12.multiply(t21)).divide(t22)
     val s21 = Complex.ONE.divide(t22)
     val s22 = t21.negate().divide(t22)

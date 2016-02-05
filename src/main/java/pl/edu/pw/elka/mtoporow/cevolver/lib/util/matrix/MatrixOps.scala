@@ -147,7 +147,7 @@ object MatrixOps {
    *
    * @param v
    */
-  def complexVecToString(v: FieldVector[Complex]) = "[" + v.toArray.map(_.toString).mkString(", ") + "]"
+  def complexVecToString(v: FieldVector[Complex]) = "[" + v.toArray.map(c => c.toString + "|" + c.abs + "|").mkString(", ") + "]"
 
   /**
    * Zwraca iterowalną kolekcję
