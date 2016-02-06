@@ -79,7 +79,6 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     sb ++= distances.distances.toArray.map(_.toString).mkString(", ")
     sb ++= "]; distances (mm): ["
     sb ++= distances.toStringMM
-    // FIXME:: zmienić to... liczy odpowiedź 2 razy?
     sb ++= "]; response: " + lastResponse()
     sb.toString()
   }

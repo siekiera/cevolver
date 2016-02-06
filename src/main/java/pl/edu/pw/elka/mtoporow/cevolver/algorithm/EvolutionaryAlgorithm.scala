@@ -4,6 +4,7 @@ import org.uncommons.maths.random.JavaRNG
 import org.uncommons.watchmaker.framework._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.AsyncRunner
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse}
 
 /**
@@ -52,10 +53,12 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
 
     engine.addEvolutionObserver(new EvolutionObserver[C] {
       override def populationUpdate(data: PopulationData[_ <: C]): Unit = {
-        if (verboseLevel.generationCount) println("Pokolenie nr " + data.getGenerationNumber)
-        if (verboseLevel.distances) println("Najlepszy wynik: " + data.getBestCandidate.distances.toStringMM)
-        if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.lastResponse())
-        if (verboseLevel.fitness) println("F. celu: " + data.getBestCandidateFitness)
+        PROGRESS_WRITE_EXECUTOR.execute(() => {
+          if (verboseLevel.generationCount) println("Pokolenie nr " + data.getGenerationNumber)
+          if (verboseLevel.distances) println("Najlepszy wynik: " + data.getBestCandidate.distances.toStringMM)
+          if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.lastResponse())
+          if (verboseLevel.fitness) println("F. celu: " + data.getBestCandidateFitness)
+        })
       }
     })
     engine
@@ -63,6 +66,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
 }
 
 object EvolutionaryAlgorithm {
+  private val PROGRESS_WRITE_EXECUTOR = new AsyncRunner()
   /**
    * Typ osobnika
    */
