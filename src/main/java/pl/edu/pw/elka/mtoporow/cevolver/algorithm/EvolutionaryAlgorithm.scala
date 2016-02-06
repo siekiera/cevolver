@@ -57,7 +57,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
       override def populationUpdate(data: PopulationData[_ <: C]): Unit = {
         if (verboseLevel.generationCount) println("Pokolenie nr " + data.getGenerationNumber)
         if (verboseLevel.distances) println("Najlepszy wynik: " + data.getBestCandidate.distances.toStringMM)
-        if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.response())
+        if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.lastResponse())
         if (verboseLevel.fitness) println("F. celu: " + data.getBestCandidateFitness)
       }
     })

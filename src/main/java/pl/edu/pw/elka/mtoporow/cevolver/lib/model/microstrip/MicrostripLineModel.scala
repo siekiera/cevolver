@@ -2,7 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.MatrixUtils
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
 
@@ -15,16 +15,15 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResp
 class MicrostripLineModel(val distances: Distances, val params: MicrostripParams)
   extends AbstractCanalModel {
 
-  private val frequences = DataHolder.getCurrent.measurementParams.getFrequencies
-
   /**
    * Zwraca odpowiedź modelu
    *
    * @return odpowiedź modelu
    */
-  override def response(): CanalResponse = {
+  override def calculateResponse(measurementParams: MeasurementParams): CanalResponse = {
     // Liczymy odpowiedź dla każdej częstotliwości
-    val responseArray = frequences.toArray.map(f => response(f)).array
+    val impedance = measurementParams.getImpedance
+    val responseArray = measurementParams.getFrequencies.toArray.map(f => response(f, impedance)).array
     new CanalResponse(MatrixUtils.createFieldVector(responseArray))
   }
 
@@ -40,11 +39,11 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
    * Liczy odpowiedź dla danej częstotliwości
    *
    * @param frequency częstotliwość fali
+   * @param z01 impedancja Z0 na złączach
    * @return
    */
-  private def response(frequency: Double): Complex = {
+  private def response(frequency: Double, z01: Complex): Complex = {
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
-    val z01 = DataHolder.getCurrent.measurementParams.getImpedance
     var thick = false // Cienki, czy gruby element paska - na zmianę
     for (dist <- distances.distances.toArray) {
       // Właściwy mikropasek
@@ -81,7 +80,7 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     sb ++= "]; distances (mm): ["
     sb ++= distances.toStringMM
     // FIXME:: zmienić to... liczy odpowiedź 2 razy?
-    sb ++= "]; response: " + response()
+    sb ++= "]; response: " + lastResponse()
     sb.toString()
   }
 }

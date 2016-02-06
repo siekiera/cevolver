@@ -29,7 +29,7 @@ object CevolverApp {
 
     if (useFake) {
       // Dane "fałszywe" - liczone za pomocą tego kodu, a nie zewnętrznego programu
-      data = getExpectedResult(expectedDists).response()
+      data = getExpectedResult(expectedDists).response(DataHolder.getCurrent.measurementParams)
     }
 
     println("Rozpoczynam obliczenia")

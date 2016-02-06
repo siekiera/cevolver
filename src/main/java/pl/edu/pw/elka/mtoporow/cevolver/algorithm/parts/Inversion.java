@@ -3,11 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts;
 import org.apache.commons.math3.linear.RealVector;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 
 import java.util.List;
@@ -29,11 +25,8 @@ public class Inversion implements EvolutionaryOperator<AbstractCanalModel> {
 
     @Override
     public List<AbstractCanalModel> apply(List<AbstractCanalModel> selectedCandidates, Random rng) {
-        MicrostripParams params = DataHolder.getCurrent().measurementParams().getMicrostripParams();
         return selectedCandidates.parallelStream()
-                .map(c -> c.distances().distances())
-                .map(v -> process(v, rng))
-                .map(v -> new MicrostripLineModel(new Distances(v), params))
+                .map(c -> c.createNew(process(c.distances().distances(), rng)))
                 .collect(Collectors.toList());
     }
 

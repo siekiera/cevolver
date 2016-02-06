@@ -14,7 +14,7 @@ class FitnessFunctionTest extends FunSuite {
 
   test("Test funkcji celu - dla siebie samego 0") {
     val c = new MicrostripLineModel(TestDataHolder.dists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
-    val fitness = FitnessFunction.apply(c, c.response(), 0)
+    val fitness = FitnessFunction.apply(c, c.response(DataHolder.getCurrent.measurementParams), 0)
     assert(fitness == 0.0)
   }
   test("Test funkcji celu - dla dobrych wyników ma być 0") {

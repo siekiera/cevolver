@@ -5,6 +5,7 @@ import java.util
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.RealVector
 import org.uncommons.watchmaker.framework.FitnessEvaluator
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
@@ -27,7 +28,7 @@ class SimpleFitnessEvaluator(val punishmentRatio: Double) extends FitnessEvaluat
 object FitnessFunction {
 
   def apply(candidate: EvolutionaryAlgorithm.C, realResp: CanalResponse, punishmentRatio: Double): Double = {
-    val candResponse = candidate.response()
+    val candResponse = candidate.response(DataHolder.getCurrent.measurementParams)
     val diff = candResponse.value.subtract(realResp.value)
     val fitness = diff.toArray.map(sqrAbs).sum
     if (punishmentRatio <= 0.0)
