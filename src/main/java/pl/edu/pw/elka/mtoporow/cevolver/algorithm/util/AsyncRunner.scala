@@ -26,4 +26,10 @@ class AsyncRunner {
       override def run(): Unit = function()
     })
   }
+
+  /**
+   * Wyłącza wykonywacza
+   *
+   */
+  def shutdown(): Unit = executor.shutdownNow()
 }

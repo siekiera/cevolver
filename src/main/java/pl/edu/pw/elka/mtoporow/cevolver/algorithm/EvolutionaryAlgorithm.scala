@@ -14,6 +14,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResp
  * @author Michał Toporowski
  */
 class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, private val verboseLevel: VerboseLevel) {
+  private val progressWriteExecutor = new AsyncRunner()
 
   /**
    * Rozwiązuje problem
@@ -23,6 +24,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
   def solve(): C = {
     val engine = prepareEngine()
     val result = engine.evolve(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    progressWriteExecutor.shutdown()
     result
   }
 
@@ -35,6 +37,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
   def solveWithAllResults() = {
     val engine = prepareEngine()
     val result = engine.evolvePopulation(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    progressWriteExecutor.shutdown()
     result
   }
 
@@ -53,7 +56,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
 
     engine.addEvolutionObserver(new EvolutionObserver[C] {
       override def populationUpdate(data: PopulationData[_ <: C]): Unit = {
-        PROGRESS_WRITE_EXECUTOR.execute(() => {
+        progressWriteExecutor.execute(() => {
           if (verboseLevel.generationCount) println("Pokolenie nr " + data.getGenerationNumber)
           if (verboseLevel.distances) println("Najlepszy wynik: " + data.getBestCandidate.distances.toStringMM)
           if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.lastResponse())
@@ -66,7 +69,6 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
 }
 
 object EvolutionaryAlgorithm {
-  private val PROGRESS_WRITE_EXECUTOR = new AsyncRunner()
   /**
    * Typ osobnika
    */
