@@ -21,6 +21,8 @@ object CevolverCli {
 
   def main(args: Array[String]) {
     loadDefaultProperties()
+    about()
+    help()
     print(": ")
     for (ln <- Source.stdin.getLines()) {
       val input = ln.trim.split(" ")
@@ -29,6 +31,8 @@ object CevolverCli {
         case Array("q") =>
           println("Do widzenia!")
           return
+        case Array("about") => about()
+        case Array("help") => help()
         case Array("load", dataset@_) => load(dataset)
         case Array("set", key@_, value@_) => setProperty(key, value)
         case Array("remove", key@_) => removeProperty(key)
@@ -127,4 +131,34 @@ object CevolverCli {
     println("Dostępne zbiory danych:")
     println(Conversions.javaToScalaList(DataHolder.getAvailableDataSets).mkString(", "))
   }
+
+  /**
+   * Wypisuje informacje o programie
+   */
+  private def about(): Unit = {
+    println("Cevolver - narzędzie do obliczania odległości w kanałach transmisyjnych za pomocą algorytmów ewolucyjnych" +
+      "\n Autor: Michał Toporowski")
+  }
+
+  /**
+   * Wypisuje informację, jak używać CLI
+   */
+  private def help(): Unit = {
+    println("Polecenia: " +
+      "\n\thelp\t\tten komunikat" +
+      "\n\tabout\t\tinformacje o programie" +
+      "\n\tdatasets\twypisanie dostępnych zbiorów danych" +
+      "\n\tload <id>\tzaładowanie zbioru danych" +
+      "\n\tset <k> <v>\tustawienie wartości parametru algorytmu" +
+      "\n\tremove <k>\tusunięcie parametru algorytmu" +
+      "\n\tprops\t\twypisanie wszystkich parametrów algorytmu" +
+      "\n\tmparams\t\twypisanie parametrów pomiaru" +
+      "\n\trun [ndfr]\turuchomienie algorytmu, poziom logowania:" +
+      "\n\t\tn - nr pokolenia" +
+      "\n\t\td - odległości w najlepszym modelu" +
+      "\n\t\tr - odpowiedź najlepszego modelu" +
+      "\n\t\tf - wartość funkcji przystosowania najlepszego modelu" +
+      "\n\tq\t\twyjście")
+  }
+
 }
