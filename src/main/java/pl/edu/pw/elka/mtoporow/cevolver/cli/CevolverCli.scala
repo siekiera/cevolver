@@ -69,16 +69,20 @@ object CevolverCli {
       println("Nie załadowano danych!")
       return
     }
-    printAllProperties()
-    val algParameters = new AlgorithmPropertiesReader(properties).getParameters
-    val expectedDists = DataHolder.getCurrent.expectedDistances
-    val data = DataHolder.getCurrent.canalResponse
-    printMeasurementParams()
-    println("Rozpoczynam obliczenia...")
-    val results = new Solver().solveWithAllResults(algParameters, data, verboseLevel)
-    println("Zakończono obliczenia")
-    println("oczekiwany wynik: " + expectedDists.toStringMM)
-    CevolverApp.printAllResults(results, 20)
+    try {
+      printAllProperties()
+      val algParameters = new AlgorithmPropertiesReader(properties).getParameters
+      val expectedDists = DataHolder.getCurrent.expectedDistances
+      val data = DataHolder.getCurrent.canalResponse
+      printMeasurementParams()
+      println("Rozpoczynam obliczenia...")
+      val results = new Solver().solveWithAllResults(algParameters, data, verboseLevel)
+      println("Zakończono obliczenia")
+      println("oczekiwany wynik: " + expectedDists.toStringMM)
+      CevolverApp.printAllResults(results, 20)
+    } catch {
+      case e: Exception => println("Błąd podczas uruchamiania algorytmu: " + e.getMessage)
+    }
   }
 
   /**
