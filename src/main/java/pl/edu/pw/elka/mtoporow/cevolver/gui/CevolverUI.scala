@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.gui
 
+import java.util
 import javafx.concurrent
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
@@ -16,7 +17,7 @@ import scalafx.application.JFXApp
 import scalafx.concurrent.Task
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.layout.{HBox, VBox}
+import scalafx.scene.layout.{Pane, HBox, VBox}
 
 /**
  * Główna klasa interfejsu użytkownika
@@ -29,11 +30,11 @@ object CevolverUI extends JFXApp {
   private val populationSizeCtrl = new Spinner[Int](10, 10000, 100, 1)
   private val eliteCountCtrl = new Spinner[Int](10, 10000, 10, 1)
   private val additionalParamsPane = loadAdditionalParamsPane()
-  private val cfCtrl = createPartComboBox(CFType.values())
-  private val ssCtrl = createPartComboBox(SSType.values())
-  private val eoCtrl = createPartComboBox(EOType.values())
-  private val tcCtrl = createPartComboBox(TCType.values())
-  private val feCtrl = createPartComboBox(FEType.values())
+  private val cfCtrl = new ComboBox(CFType.values())
+  private val ssCtrl = new ComboBox(SSType.values())
+  private val eoCtrl = new ComboBox(EOType.values())
+  private val tcCtrl = new ComboBox(TCType.values())
+  private val feCtrl = new ComboBox(FEType.values())
   private val dataSetBox = new ComboBox[String](Conversions.javaToScalaList(DataHolder.getAvailableDataSets))
   private val expectedResLabel = new Label()
   private val resultLabel = new Label()
@@ -61,56 +62,46 @@ object CevolverUI extends JFXApp {
     builder += populationSizeCtrl
     builder += new Label("Wielkość elity")
     builder += eliteCountCtrl
-    builder += new Label("Metoda inicjacji")
-    builder += cfCtrl
-    builder += new Label("Strategia selekcji")
-    builder += ssCtrl
-    builder += new Label("Operator ewolucyjny")
-    builder += eoCtrl
-    builder += new Label("Kryterium zakończenia")
-    builder += tcCtrl
-    builder += new Label("Funkcja oceny jakości")
-    builder += feCtrl
+    createPartInput(builder, cfCtrl, "Metoda inicjacji")
+    createPartInput(builder, ssCtrl, "Strategia selekcji")
+    createPartInput(builder, eoCtrl, "Operator ewolucyjny")
+    createPartInput(builder, tcCtrl, "Kryterium zakończenia")
+    createPartInput(builder, feCtrl, "Funkcja oceny jakości")
     builder.gridPane
   }
 
-  private def createPartComboBox[T](values: Seq[T]) = {
-    new ComboBox[T](values) {
-      value = values.head
-      onAction = handle {
-        refreshAdditionalParams(this)
+  private def createPartInput[T](builder: GridPaneBuilder, cb: ComboBox[T], caption: String) = {
+    val additionalPane = new VBox()
+    cb.onAction = handle {
+        refreshAdditionalParams2(cb.value.value.asInstanceOf[AlgorithmPartType], additionalPane)
       }
-      refreshAdditionalParams(this)
-    }
+    builder += new Label(caption)
+    builder += cb
+    builder += new Label("Parametry")
+    builder += additionalPane
+    refreshAdditionalParams2(cb.value.value.asInstanceOf[AlgorithmPartType], additionalPane)
   }
 
   private def loadAdditionalParamsPane() = {
     additionalParamsMap.clear()
     val builder = new GridPaneBuilder(1)
     RegisteredParams.partsParamDefs.foreach {
-      case (partType, paramDefs) => {
-        // TODO:: dodać dynamiczne zmienianie tego
+      case (partType, paramDefs) =>
         for (paramDef <- paramDefs) {
-          val vb = additionalParamsMap.put(paramDef)
-          builder += vb
+          additionalParamsMap.put(paramDef)
         }
-      }
     }
     builder.gridPane
   }
 
-  private def refreshAdditionalParams[T](comboBox: ComboBox[T]) = {
-    RegisteredParams.partsParamDefs.foreach {
-      case (partType, paramDefs) => {
-        if (comboBox.value.value.getClass == partType.getClass) {
-          val active = comboBox.value.value.equals(partType)
-          paramDefs.foreach {
-            d => additionalParamsMap.setVisible(d, active)
-          }
-        }
-      }
+  private def refreshAdditionalParams2[T](partType: AlgorithmPartType, additionalPane: Pane) = {
+    additionalPane.children.clear()
+//    println("Adding: " + RegisteredParams.partParamDefs(partType).mkString(", "))
+    for (paramDef <- RegisteredParams.partParamDefs(partType)) {
+      additionalPane.children += additionalParamsMap.getCtrl(paramDef)
     }
   }
+
 
   private def createRunButton() = {
     new Button("Uruchom...") {
@@ -146,6 +137,7 @@ object CevolverUI extends JFXApp {
     private var expResult: EvolutionaryAlgorithm.C = _
 
     override def call(): Void = {
+      println("Obliczanie...")
       DataHolder.load(dataSetBox.value.value)
       expResult = new MicrostripLineModel(DataHolder.getCurrent.expectedDistances, DataHolder.getCurrent.measurementParams.getMicrostripParams)
       result = new Solver().solve(paramValues(), DataHolder.getCurrent.canalResponse)
@@ -183,9 +175,8 @@ object CevolverUI extends JFXApp {
      * Utworzona zostaje odpowiednia kontrolka (tekst + spinner)
      *
      * @param paramDef definicja parametru
-     * @return wynikowa kontrolka
      */
-    def put(paramDef: ParamDef) = {
+    def put(paramDef: ParamDef): Unit = {
       val spinner: Spinner[_ <: AnyVal] = if (paramDef.cls == classOf[Integer])
         new Spinner[Int](0, 1000, 0)
       else
@@ -193,8 +184,15 @@ object CevolverUI extends JFXApp {
       spinner.editable = true
       val vb = new ValueBox(paramDef.name, spinner)
       map.put(paramDef, vb)
-      vb
     }
+
+    /**
+     * Zwraca kontrolkę dla danego parametru
+     *
+     * @param paramDef definicja parametru
+     * @return kontrolka
+     */
+    def getCtrl(paramDef: ParamDef) = map.get(paramDef).get
 
     /**
      * Ustawia widoczność danej kontrolki
@@ -214,8 +212,8 @@ object CevolverUI extends JFXApp {
    * @tparam T typ wartości w spinnerze
    */
   private class ValueBox[T <: AnyVal](val caption: String, val spinner: Spinner[T]) extends HBox {
-    children += new Label(caption)
     children += spinner
+    children += new Label(caption)
   }
 
 }

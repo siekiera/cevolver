@@ -36,8 +36,7 @@ object RegisteredParams {
   put(EOType.SIMPLE_MUTATION, PROBABILITY)
   put(EOType.DIST_ARRAY_CROSSOVER, PROBABILITY)
   put(EOType.INVERSION, PROBABILITY)
-  put(EOType.STANDARD_GAUSSIAN_MUTATION, PROBABILITY)
-  put(EOType.STANDARD_GAUSSIAN_MUTATION, STANDARD_DEVIATION)
+  put(EOType.STANDARD_GAUSSIAN_MUTATION, PROBABILITY, STANDARD_DEVIATION)
   put(EOType.AVERAGE_VALUE_CROSSOVER, PROBABILITY)
   put(SSType.SUS, PROBABILITY)
 
@@ -49,4 +48,12 @@ object RegisteredParams {
    * @return
    */
   private def put(t: AlgorithmPartType, params: ParamDef*) = partsParamDefs.put(t, params.toArray)
+
+  /**
+   * Pobiera definicje parametrów dla danego typu części algorytmu
+   *
+   * @param partType typ
+   * @return definicje
+   */
+  def partParamDefs(partType: AlgorithmPartType) = RegisteredParams.partsParamDefs.getOrElse(partType, Array[RegisteredParams.ParamDef]())
 }

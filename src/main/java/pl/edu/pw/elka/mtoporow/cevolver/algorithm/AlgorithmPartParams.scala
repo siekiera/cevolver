@@ -66,5 +66,5 @@ class AlgorithmPartParams[T <: AlgorithmPartType](val partType: T) {
    *
    * @return
    */
-  def partsParamsDefs = RegisteredParams.partsParamDefs.getOrElse(partType, Array[RegisteredParams.ParamDef]())
+  def partsParamsDefs = RegisteredParams.partParamDefs(partType)
 }
