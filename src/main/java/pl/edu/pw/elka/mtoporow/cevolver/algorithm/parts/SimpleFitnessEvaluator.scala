@@ -5,8 +5,8 @@ import java.util
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.RealVector
 import org.uncommons.watchmaker.framework.FitnessEvaluator
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -16,9 +16,10 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  * Data utworzenia: 29.05.15, 20:15
  * @author Michał Toporowski
  */
-class SimpleFitnessEvaluator(val punishmentRatio: Double) extends FitnessEvaluator[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
+class SimpleFitnessEvaluator(val punishmentRatio: Double) extends FitnessEvaluator[EvolutionaryAlgorithm.C] {
+  private val data = DataHolder.getCurrent.canalResponse
+
   override def getFitness(candidate: EvolutionaryAlgorithm.C, population: util.List[_ <: EvolutionaryAlgorithm.C]): Double = {
-    // TODO:: czy to na pewno jest dobrze?
     FitnessFunction.apply(candidate, data, punishmentRatio)
   }
 

@@ -1,6 +1,5 @@
 package pl.edu.pw.elka.mtoporow.cevolver.gui
 
-import java.util
 import javafx.concurrent
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
@@ -17,7 +16,7 @@ import scalafx.application.JFXApp
 import scalafx.concurrent.Task
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.layout.{Pane, HBox, VBox}
+import scalafx.scene.layout.{HBox, Pane, VBox}
 
 /**
  * Główna klasa interfejsu użytkownika
@@ -73,8 +72,8 @@ object CevolverUI extends JFXApp {
   private def createPartInput[T](builder: GridPaneBuilder, cb: ComboBox[T], caption: String) = {
     val additionalPane = new VBox()
     cb.onAction = handle {
-        refreshAdditionalParams2(cb.value.value.asInstanceOf[AlgorithmPartType], additionalPane)
-      }
+      refreshAdditionalParams2(cb.value.value.asInstanceOf[AlgorithmPartType], additionalPane)
+    }
     builder += new Label(caption)
     builder += cb
     builder += new Label("Parametry")
@@ -96,7 +95,7 @@ object CevolverUI extends JFXApp {
 
   private def refreshAdditionalParams2[T](partType: AlgorithmPartType, additionalPane: Pane) = {
     additionalPane.children.clear()
-//    println("Adding: " + RegisteredParams.partParamDefs(partType).mkString(", "))
+    //    println("Adding: " + RegisteredParams.partParamDefs(partType).mkString(", "))
     for (paramDef <- RegisteredParams.partParamDefs(partType)) {
       additionalPane.children += additionalParamsMap.getCtrl(paramDef)
     }
@@ -140,7 +139,7 @@ object CevolverUI extends JFXApp {
       println("Obliczanie...")
       DataHolder.load(dataSetBox.value.value)
       expResult = new MicrostripLineModel(DataHolder.getCurrent.expectedDistances, DataHolder.getCurrent.measurementParams.getMicrostripParams)
-      result = new Solver().solve(paramValues(), DataHolder.getCurrent.canalResponse)
+      result = new Solver().solve(paramValues())
       null
     }
 

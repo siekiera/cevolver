@@ -17,11 +17,10 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
   /**
    * Rozwiązuje problem
    *
-   * @param data dane wejściowe
    * @return wynik
    */
-  def solve(data: I): C = {
-    val engine = prepareEngine(data)
+  def solve(): C = {
+    val engine = prepareEngine()
     val result = engine.evolve(parameters.populationSize, parameters.eliteCount, parameters.tc)
     result
   }
@@ -32,8 +31,8 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
    * @param data dane wejściowe
    * @return wszystkie wyniki
    */
-  def solveWithAllResults(data: I) = {
-    val engine = prepareEngine(data)
+  def solveWithAllResults() = {
+    val engine = prepareEngine()
     val result = engine.evolvePopulation(parameters.populationSize, parameters.eliteCount, parameters.tc)
     result
   }
@@ -41,11 +40,9 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
   /**
    * Przygotowuje silnik algorytmu ewolucyjnego
    *
-   * @param data dane
    * @return obiekt typu EvolutionEngine
    */
-  private def prepareEngine(data: I) = {
-    parameters.setData(data)
+  private def prepareEngine() = {
     val engine: EvolutionEngine[C] = new GenerationalEvolutionEngine[C](
       parameters.cf,
       parameters.eo,

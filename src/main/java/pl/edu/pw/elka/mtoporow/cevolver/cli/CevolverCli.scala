@@ -76,7 +76,7 @@ object CevolverCli {
       val data = DataHolder.getCurrent.canalResponse
       printMeasurementParams()
       println("Rozpoczynam obliczenia...")
-      val results = new Solver().solveWithAllResults(algParameters, data, verboseLevel)
+      val results = new Solver().solveWithAllResults(algParameters, verboseLevel)
       println("Zakończono obliczenia")
       println("oczekiwany wynik: " + expectedDists.toStringMM)
       CevolverApp.printAllResults(results, 20)

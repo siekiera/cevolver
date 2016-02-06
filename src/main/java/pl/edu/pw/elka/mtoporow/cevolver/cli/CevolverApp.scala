@@ -16,7 +16,6 @@ object CevolverApp {
 
 
   def main(args: Array[String]) {
-    val useFake = args.contains("--fake")
 
     // Ładujemy zestaw danych
     DataHolder.load("20")
@@ -25,16 +24,10 @@ object CevolverApp {
     val parameters = new AlgorithmPropertiesReader(algInputStream).getParameters
 
     val expectedDists = DataHolder.getCurrent.expectedDistances
-    var data = DataHolder.getCurrent.canalResponse
-
-    if (useFake) {
-      // Dane "fałszywe" - liczone za pomocą tego kodu, a nie zewnętrznego programu
-      data = getExpectedResult(expectedDists).response(DataHolder.getCurrent.measurementParams)
-    }
 
     println("Rozpoczynam obliczenia")
     //    val result = new Solver().solve(parameters, data)
-    val results = new Solver().solveWithAllResults(parameters, data)
+    val results = new Solver().solveWithAllResults(parameters)
     println("Zakończono obliczenia")
     //    println("wynik: " + result)
     println("oczekiwany wynik: " + getExpectedResult(expectedDists))

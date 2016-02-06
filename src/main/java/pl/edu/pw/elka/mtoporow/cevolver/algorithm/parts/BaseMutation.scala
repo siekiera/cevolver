@@ -5,15 +5,15 @@ import java.util.Random
 
 import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.EvolutionaryOperator
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
 
 /**
  * Klasa bazowa dla operatorów mutacji
  * Data utworzenia: 09.01.16, 16:00
  * @author Michał Toporowski
  */
-abstract class BaseMutation(private val probability: Probability) extends EvolutionaryOperator[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
+abstract class BaseMutation(private val probability: Probability) extends EvolutionaryOperator[EvolutionaryAlgorithm.C] {
 
   override def apply(selectedCandidates: util.List[EvolutionaryAlgorithm.C], rng: Random): util.List[EvolutionaryAlgorithm.C] = {
     Conversions.scalaToJavaList(Conversions.javaToScalaList(selectedCandidates).map(c => mutateWithProbability(c, rng)))

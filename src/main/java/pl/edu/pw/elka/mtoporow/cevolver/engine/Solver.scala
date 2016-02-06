@@ -9,7 +9,6 @@ import org.uncommons.watchmaker.framework.termination.{GenerationCount, Stagnati
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm, InternalAlgorithmParams}
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 
 /**
  * Silnik rozwiązujący problem
@@ -22,40 +21,37 @@ class Solver {
    * Rozwiązuje problem
    *
    * @param parameters parametry
-   * @param data dane
    * @return wynik (najlepszy osobnik)
    */
-  def solve(parameters: AlgorithmParameters, data: CanalResponse): EvolutionaryAlgorithm.C = {
+  def solve(parameters: AlgorithmParameters): EvolutionaryAlgorithm.C = {
     val internalParameters = convertParams(parameters)
     val algorithm = new EvolutionaryAlgorithm(internalParameters, VerboseLevel.allOn())
-    algorithm.solve(data)
+    algorithm.solve()
   }
 
   /**
    * Rozwiązuje problem
    *
    * @param parameters parametry
-   * @param data dane
    * @return wynik (lista osobników posortowana od najlepszego)
    */
-  def solveWithAllResults(parameters: AlgorithmParameters, data: CanalResponse) = {
+  def solveWithAllResults(parameters: AlgorithmParameters) = {
     val internalParameters = convertParams(parameters)
     val algorithm = new EvolutionaryAlgorithm(internalParameters, VerboseLevel.allOn())
-    algorithm.solveWithAllResults(data)
+    algorithm.solveWithAllResults()
   }
 
   /**
    * Rozwiązuje problem
    *
    * @param parameters parametry
-   * @param data dane
    * @param verboseLevel poziom logowania
    * @return wynik (lista osobników posortowana od najlepszego)
    */
-  def solveWithAllResults(parameters: AlgorithmParameters, data: CanalResponse, verboseLevel: VerboseLevel) = {
+  def solveWithAllResults(parameters: AlgorithmParameters, verboseLevel: VerboseLevel) = {
     val internalParameters = convertParams(parameters)
     val algorithm = new EvolutionaryAlgorithm(internalParameters, verboseLevel)
-    algorithm.solveWithAllResults(data)
+    algorithm.solveWithAllResults()
   }
 
   /**

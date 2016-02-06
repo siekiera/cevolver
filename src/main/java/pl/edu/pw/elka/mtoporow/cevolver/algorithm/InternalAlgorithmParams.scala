@@ -23,18 +23,4 @@ class InternalAlgorithmParams {
   var ss: EvolutionaryAlgorithm.SS = _
 
   var tc: EvolutionaryAlgorithm.TC = _
-
-
-  /**
-   * Przekazuje dane wszystkim obiektom algorytmu
-   *
-   * @param data dane
-   */
-  def setData(data: EvolutionaryAlgorithm.I): Unit = {
-    val objects = List(cf, fe, ss, tc)
-    objects
-      .filter(p => p.isInstanceOf[Data[_]])
-      .foreach(f => f.asInstanceOf[Data[EvolutionaryAlgorithm.I]].data = data)
-  }
-
 }

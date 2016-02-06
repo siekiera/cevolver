@@ -3,8 +3,8 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts
 import java.util.Random
 
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{Data, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
@@ -14,8 +14,8 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  * Data utworzenia: 29.05.15, 19:04
  * @author Michał Toporowski
  */
-class SimpleCandidateFactory extends AbstractCandidateFactory[EvolutionaryAlgorithm.C] with Data[EvolutionaryAlgorithm.I] {
-  private lazy val measurementParams = DataHolder.getCurrent.measurementParams
+class SimpleCandidateFactory extends AbstractCandidateFactory[EvolutionaryAlgorithm.C] {
+  private val measurementParams = DataHolder.getCurrent.measurementParams
 
   override def generateRandomCandidate(rng: Random): EvolutionaryAlgorithm.C = {
     // Tworzymy N+1 liczb losowych i skalujemy je tak, żeby ich suma wynosiła długość kabla
