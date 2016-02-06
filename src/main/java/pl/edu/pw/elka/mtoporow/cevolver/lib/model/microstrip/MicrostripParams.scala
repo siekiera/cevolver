@@ -17,4 +17,7 @@ class MicrostripParams(val w: Double,
                        val t: Double,
                        val h: Double,
                        val epsr: Double,
-                       val biggerW: Double)
+                       val biggerW: Double) {
+
+  override def toString = s"(w=$w, t=$t, h=$h, epsr=$epsr, biggerW=$biggerW)"
+}

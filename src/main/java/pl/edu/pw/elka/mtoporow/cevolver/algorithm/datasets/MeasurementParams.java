@@ -3,6 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 
 import java.util.Objects;
 
@@ -82,5 +83,16 @@ public class MeasurementParams {
 
     public double getMinMicrostripLength() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Parametry pomiaru: {" +
+//                "\n częstotliwości=" + frequencies +
+                "\n parametry mikropaska=" + microstripParams +
+                "\n długość całkowita=" + totalLength +
+                "\n impedancja=" + impedance +
+                "\n liczba punktów nieciągłości=" + discontinuitiesCount +
+                '}';
     }
 }

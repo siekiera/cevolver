@@ -6,6 +6,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Klasa odczytująca plik konfiguracji parametrów algorytmu
@@ -20,6 +21,10 @@ public class AlgorithmPropertiesReader extends PropertiesReader {
 
     public AlgorithmPropertiesReader(InputStream is) throws IOException {
         super(is);
+    }
+
+    public AlgorithmPropertiesReader(Properties properties) throws IOException {
+        super(properties);
     }
 
     @Override

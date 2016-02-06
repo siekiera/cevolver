@@ -63,7 +63,7 @@ public final class DataHolder {
                 current.measurementParams().setFrequencies(dataProvider.frequencies());
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DataLoadingException(e);
         }
     }
 
@@ -76,15 +76,24 @@ public final class DataHolder {
         return current;
     }
 
+    /**
+     * Sprawdza, czy dane zostały załadowane
+     *
+     * @return true, jeśli tak
+     */
+    public static boolean isLoaded() {
+        return current != null;
+    }
+
     static {
         try {
             URL dataUrl = DataHolder.class.getClassLoader().getResource("data");
             if (dataUrl == null) {
-                throw new RuntimeException("No data to read!");
+                throw new DataLoadingException("No data to read!");
             }
             dataDir = new File(dataUrl.toURI());
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            throw new DataLoadingException(e);
         }
     }
 }

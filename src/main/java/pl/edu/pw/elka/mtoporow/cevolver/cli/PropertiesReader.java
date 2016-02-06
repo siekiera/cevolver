@@ -22,10 +22,17 @@ import java.util.Properties;
  */
 public abstract class PropertiesReader {
 
-    private final Properties properties = new Properties();
+    private final Properties properties;
 
     public PropertiesReader(final InputStream is) throws IOException {
+        this.properties = new Properties();
         properties.load(is);
+        init();
+        read();
+    }
+
+    public PropertiesReader(final Properties properties) throws IOException {
+        this.properties = properties;
         init();
         read();
     }
