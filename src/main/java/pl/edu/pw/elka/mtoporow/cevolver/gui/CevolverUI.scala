@@ -1,14 +1,12 @@
 package pl.edu.pw.elka.mtoporow.cevolver.gui
 
-import java.io.FileInputStream
 import javafx.concurrent
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.RegisteredParams.ParamDef
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm}
-import pl.edu.pw.elka.mtoporow.cevolver.cli.EnvPropertiesReader
-import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
 
@@ -18,7 +16,7 @@ import scalafx.application.JFXApp
 import scalafx.concurrent.Task
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.layout.VBox
+import scalafx.scene.layout.{HBox, VBox}
 
 /**
  * Główna klasa interfejsu użytkownika
@@ -27,29 +25,27 @@ import scalafx.scene.layout.VBox
  * @author Michał Toporowski
  */
 object CevolverUI extends JFXApp {
-  val additionalParams: mutable.Map[ParamDef, Spinner[_ <: AnyVal]] = new mutable.HashMap[ParamDef, Spinner[_ <: AnyVal]]()
-  val populationSizeCtrl = new Spinner[Int](10, 10000, 100, 1)
-  val eliteCountCtrl = new Spinner[Int](10, 10000, 10, 1)
-  val cfCtrl = createPartComboBox(CFType.values())
-  val ssCtrl = createPartComboBox(SSType.values())
-  val eoCtrl = createPartComboBox(EOType.values())
-  val tcCtrl = createPartComboBox(TCType.values())
-  val feCtrl = createPartComboBox(FEType.values())
-  val dataFileBox = new FileBox("Plik danych", stage)
-  val metaFileBox = new FileBox("Plik metadanych", stage)
-  val expectedResLabel = new Label()
-  val resultLabel = new Label()
+  private val additionalParamsMap = new AdditionalParamsMap
+  private val populationSizeCtrl = new Spinner[Int](10, 10000, 100, 1)
+  private val eliteCountCtrl = new Spinner[Int](10, 10000, 10, 1)
+  private val additionalParamsPane = loadAdditionalParamsPane()
+  private val cfCtrl = createPartComboBox(CFType.values())
+  private val ssCtrl = createPartComboBox(SSType.values())
+  private val eoCtrl = createPartComboBox(EOType.values())
+  private val tcCtrl = createPartComboBox(TCType.values())
+  private val feCtrl = createPartComboBox(FEType.values())
+  private val dataSetBox = new ComboBox[String](Conversions.javaToScalaList(DataHolder.getAvailableDataSets))
+  private val expectedResLabel = new Label()
+  private val resultLabel = new Label()
 
   stage = new JFXApp.PrimaryStage {
     title.value = "Cevolver"
-    width = 600
-    height = 450
+    //    width = 600
+    //    height = 450
     scene = new Scene {
       content = new VBox() {
-        children += dataFileBox
-        children += metaFileBox
         children += createConfigPane()
-        children += loadAdditionalParamsPane()
+        children += additionalParamsPane
         children += createRunButton()
         children += expectedResLabel
         children += resultLabel
@@ -59,6 +55,8 @@ object CevolverUI extends JFXApp {
 
   private def createConfigPane() = {
     val builder = new GridPaneBuilder(2)
+    builder += new Label("Zestaw danych")
+    builder += dataSetBox
     builder += new Label("Wielkość populacji")
     builder += populationSizeCtrl
     builder += new Label("Wielkość elity")
@@ -80,30 +78,38 @@ object CevolverUI extends JFXApp {
     new ComboBox[T](values) {
       value = values.head
       onAction = handle {
-
+        refreshAdditionalParams(this)
       }
+      refreshAdditionalParams(this)
     }
   }
 
   private def loadAdditionalParamsPane() = {
-    additionalParams.clear()
-    val builder = new GridPaneBuilder(2)
+    additionalParamsMap.clear()
+    val builder = new GridPaneBuilder(1)
     RegisteredParams.partsParamDefs.foreach {
       case (partType, paramDefs) => {
         // TODO:: dodać dynamiczne zmienianie tego
         for (paramDef <- paramDefs) {
-          builder += new Label(paramDef.name)
-          val spinner: Spinner[_ <: AnyVal] = if (paramDef.cls == classOf[Integer])
-            new Spinner[Int](0, 1000, 0)
-          else
-            new Spinner[Double](0, 1000, 0, 0.5)
-          spinner.editable = true
-          builder += spinner
-          additionalParams.put(paramDef, spinner)
+          val vb = additionalParamsMap.put(paramDef)
+          builder += vb
         }
       }
     }
     builder.gridPane
+  }
+
+  private def refreshAdditionalParams[T](comboBox: ComboBox[T]) = {
+    RegisteredParams.partsParamDefs.foreach {
+      case (partType, paramDefs) => {
+        if (comboBox.value.value.getClass == partType.getClass) {
+          val active = comboBox.value.value.equals(partType)
+          paramDefs.foreach {
+            d => additionalParamsMap.setVisible(d, active)
+          }
+        }
+      }
+    }
   }
 
   private def createRunButton() = {
@@ -130,7 +136,7 @@ object CevolverUI extends JFXApp {
     val partType = ctrl.value.value
     val partParams = new AlgorithmPartParams[T](partType)
     partParams.partsParamsDefs.foreach(paramDef => {
-      partParams.setParamValue(paramDef, additionalParams.get(paramDef).get.value.value)
+      partParams.setParamValue(paramDef, additionalParamsMap.getValue(paramDef))
     })
     partParams
   }
@@ -140,10 +146,9 @@ object CevolverUI extends JFXApp {
     private var expResult: EvolutionaryAlgorithm.C = _
 
     override def call(): Void = {
-      val data = new TouchstoneDataProvider(dataFileBox.dataFile).provide
-      val expectedDists = new EnvPropertiesReader(new FileInputStream(metaFileBox.dataFile)).getExpectedDistances
-      expResult = new MicrostripLineModel(expectedDists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
-      result = new Solver().solve(paramValues(), data)
+      DataHolder.load(dataSetBox.value.value)
+      expResult = new MicrostripLineModel(DataHolder.getCurrent.expectedDistances, DataHolder.getCurrent.measurementParams.getMicrostripParams)
+      result = new Solver().solve(paramValues(), DataHolder.getCurrent.canalResponse)
       null
     }
 
@@ -153,5 +158,64 @@ object CevolverUI extends JFXApp {
       resultLabel.text = "Wynik" + result.toString
     }
   })
+
+  /**
+   * Klasa przechowująca kontrolki oraz informację nt. parametrów dodatkowych
+   */
+  private class AdditionalParamsMap {
+    private val map: mutable.Map[ParamDef, ValueBox[_ <: AnyVal]] = new mutable.HashMap[ParamDef, ValueBox[_ <: AnyVal]]()
+
+    /**
+     * Pobiera wartość dla danej definicji parametru
+     *
+     * @param paramDef definicja parametru
+     * @return wartość (Int lub Double)
+     */
+    def getValue(paramDef: ParamDef) = map.get(paramDef).get.spinner.value.value
+
+    /**
+     * Czyści mapę
+     */
+    def clear() = map.clear()
+
+    /**
+     * Umieszcza nową definicję parametru.
+     * Utworzona zostaje odpowiednia kontrolka (tekst + spinner)
+     *
+     * @param paramDef definicja parametru
+     * @return wynikowa kontrolka
+     */
+    def put(paramDef: ParamDef) = {
+      val spinner: Spinner[_ <: AnyVal] = if (paramDef.cls == classOf[Integer])
+        new Spinner[Int](0, 1000, 0)
+      else
+        new Spinner[Double](0, 1000, 0, 0.5)
+      spinner.editable = true
+      val vb = new ValueBox(paramDef.name, spinner)
+      map.put(paramDef, vb)
+      vb
+    }
+
+    /**
+     * Ustawia widoczność danej kontrolki
+     *
+     * @param paramDef definicja parametru
+     * @param visible wartość logiczna
+     */
+    def setVisible(paramDef: ParamDef, visible: Boolean) = map.get(paramDef).get.visible = visible
+
+  }
+
+  /**
+   * Kontrolka zawierająca tekst oraz Spinner
+   *
+   * @param caption tekst
+   * @param spinner spinner
+   * @tparam T typ wartości w spinnerze
+   */
+  private class ValueBox[T <: AnyVal](val caption: String, val spinner: Spinner[T]) extends HBox {
+    children += new Label(caption)
+    children += spinner
+  }
 
 }

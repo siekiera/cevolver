@@ -32,7 +32,7 @@ public final class DataHolder {
      *
      * @return lista zestawów danych
      */
-    public List<String> getAvailableDataSets() {
+    public static List<String> getAvailableDataSets() {
         if (availableDataSets == null) {
             // Zbieramy wszystkie pliki .properties z katalogu data z jara
             File[] propertyFiles = dataDir.listFiles((d, name) -> name.endsWith(".properties"));

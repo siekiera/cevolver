@@ -6,5 +6,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm
  * @author Michał Toporowski
  */
 trait Data[I] {
+  // TODO:: to trzeba wywalić, albo przerobić, dane i tak są przechowywane statycznie
   var data: I = _
 }
