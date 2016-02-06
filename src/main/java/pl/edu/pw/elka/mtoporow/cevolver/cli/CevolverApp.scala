@@ -49,7 +49,7 @@ object CevolverApp {
     println("Najlepsze wyniki")
     for (i <- 0 until results.size().min(maxResults)) {
       val ec = results.get(i)
-      println(i.toString + ": Funkcja celu: " + ec.getFitness + "; c: " + ec.getCandidate.hashCode() + "; wynik: " + ec.getCandidate)
+      println(i.toString + ": Funkcja celu: " + ec.getFitness + "; c: " + ec.getCandidate.hashCode() + "; " + ec.getCandidate.distances.toStringMM)
     }
   }
 }

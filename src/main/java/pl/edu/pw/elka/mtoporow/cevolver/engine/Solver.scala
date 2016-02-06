@@ -5,7 +5,7 @@ import java.util
 import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.{RankSelection, RouletteWheelSelection, StochasticUniversalSampling, TournamentSelection}
-import org.uncommons.watchmaker.framework.termination.{TargetFitness, Stagnation, GenerationCount}
+import org.uncommons.watchmaker.framework.termination.{GenerationCount, Stagnation, TargetFitness}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm, InternalAlgorithmParams}
@@ -21,26 +21,40 @@ class Solver {
   /**
    * Rozwiązuje problem
    *
-   * @param parameters
-   * @param data
-   * @return
+   * @param parameters parametry
+   * @param data dane
+   * @return wynik (najlepszy osobnik)
    */
   def solve(parameters: AlgorithmParameters, data: CanalResponse): EvolutionaryAlgorithm.C = {
-    val algorithm = new EvolutionaryAlgorithm
-    algorithm.parameters = convertParams(parameters)
+    val internalParameters = convertParams(parameters)
+    val algorithm = new EvolutionaryAlgorithm(internalParameters, VerboseLevel.allOn())
     algorithm.solve(data)
   }
 
   /**
    * Rozwiązuje problem
    *
-   * @param parameters
-   * @param data
-   * @return
+   * @param parameters parametry
+   * @param data dane
+   * @return wynik (lista osobników posortowana od najlepszego)
    */
   def solveWithAllResults(parameters: AlgorithmParameters, data: CanalResponse) = {
-    val algorithm = new EvolutionaryAlgorithm
-    algorithm.parameters = convertParams(parameters)
+    val internalParameters = convertParams(parameters)
+    val algorithm = new EvolutionaryAlgorithm(internalParameters, VerboseLevel.allOn())
+    algorithm.solveWithAllResults(data)
+  }
+
+  /**
+   * Rozwiązuje problem
+   *
+   * @param parameters parametry
+   * @param data dane
+   * @param verboseLevel poziom logowania
+   * @return wynik (lista osobników posortowana od najlepszego)
+   */
+  def solveWithAllResults(parameters: AlgorithmParameters, data: CanalResponse, verboseLevel: VerboseLevel) = {
+    val internalParameters = convertParams(parameters)
+    val algorithm = new EvolutionaryAlgorithm(internalParameters, verboseLevel)
     algorithm.solveWithAllResults(data)
   }
 
@@ -48,7 +62,7 @@ class Solver {
    * Konwertuje parametry zewnętrzne (deklaratywne) na wewnętrzne (programowe)
    *
    * @param parameters parametry zewnętrzne
-   * @return
+   * @return parametry wewnętrzne
    */
   private def convertParams(parameters: AlgorithmParameters): InternalAlgorithmParams = {
     val result = new InternalAlgorithmParams

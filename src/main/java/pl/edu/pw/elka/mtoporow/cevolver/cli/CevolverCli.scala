@@ -4,6 +4,7 @@ import java.io.StringWriter
 import java.util.Properties
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 
@@ -34,7 +35,8 @@ object CevolverCli {
         case Array("props") => printAllProperties()
         case Array("mparams") => printMeasurementParams()
         case Array("datasets") => printDataSets()
-        case Array("run") => run()
+        case Array("run") => run(VerboseLevel.allOff())
+        case Array("run", verbose@_) => run(VerboseLevel(verbose))
         case _ => println("Nieznane polecenie!")
       }
       print(": ")
@@ -58,7 +60,7 @@ object CevolverCli {
   /**
    * Uruchamia obliczenia
    */
-  private def run(): Unit = {
+  private def run(verboseLevel: VerboseLevel): Unit = {
     if (!DataHolder.isLoaded) {
       println("Nie załadowano danych!")
       return
@@ -69,9 +71,9 @@ object CevolverCli {
     val data = DataHolder.getCurrent.canalResponse
     printMeasurementParams()
     println("Rozpoczynam obliczenia...")
-    val results = new Solver().solveWithAllResults(algParameters, data)
+    val results = new Solver().solveWithAllResults(algParameters, data, verboseLevel)
     println("Zakończono obliczenia")
-    println("oczekiwany wynik: " + CevolverApp.getExpectedResult(expectedDists))
+    println("oczekiwany wynik: " + expectedDists.toStringMM)
     CevolverApp.printAllResults(results, 20)
   }
 

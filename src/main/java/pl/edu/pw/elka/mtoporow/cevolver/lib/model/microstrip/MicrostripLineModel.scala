@@ -4,7 +4,6 @@ import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.MatrixUtils
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
 
 /**
@@ -48,8 +47,6 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     val z01 = DataHolder.getCurrent.measurementParams.getImpedance
     var thick = false // Cienki, czy gruby element paska - na zmianę
     for (dist <- distances.distances.toArray) {
-      // TODO:: do zastanowienia, czy to wystarczy - co ze skokiem imp.?
-      // TODO:: Z01 wszędzie to samo - upewnić się, czy na pewno
       // Właściwy mikropasek
       // Przerwanie - modelowane na styku pasków o mniejszym i większym W
       val w = if (thick) params.biggerW else params.w
@@ -66,10 +63,10 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   /**
    * Oblicza macierz T zadanego mikropaska
    *
-   * @param w
-   * @param l
-   * @param frequency
-   * @param z01
+   * @param w szerokość
+   * @param l długość
+   * @param frequency częstotliwość
+   * @param z01 impedancja
    */
   private def calculateTMatrix(w: Double, l: Double, frequency: Double, z01: Complex): TMatrix = {
     val microstrip = new Microstrip(w, l, params.t, params.h, params.epsr)
@@ -82,7 +79,8 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     sb ++= "distances (m): ["
     sb ++= distances.distances.toArray.map(_.toString).mkString(", ")
     sb ++= "]; distances (mm): ["
-    sb ++= distances.distances.toArray.map(Units.MILLI.fromSI(_).toString).mkString(", ")
+    sb ++= distances.toStringMM
+    // FIXME:: zmienić to... liczy odpowiedź 2 razy?
     sb ++= "]; response: " + response()
     sb.toString()
   }

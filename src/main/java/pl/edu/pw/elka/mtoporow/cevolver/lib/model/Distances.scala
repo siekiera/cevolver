@@ -2,6 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model
 
 import org.apache.commons.math3.linear.RealVector
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
@@ -24,4 +25,10 @@ class Distances(val distances: RealVector) {
    * @return wektor odległości
    */
   def absolute = MatrixOps.asSums(distances)
+
+  /**
+   * Konwertuje odległości na milimetry i przedstawia w postaci łańcucha znaków
+   * @return String
+   */
+  def toStringMM = "odległości [mm]: (" + distances.toArray.map(Units.MILLI.fromSI(_).toString).mkString(", ") + ")"
 }
