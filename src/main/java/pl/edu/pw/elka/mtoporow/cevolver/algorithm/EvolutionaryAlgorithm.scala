@@ -1,5 +1,8 @@
 package pl.edu.pw.elka.mtoporow.cevolver.algorithm
 
+import java.lang.Double
+import java.util.{ArrayList => JArrayList}
+
 import org.uncommons.maths.random.JavaRNG
 import org.uncommons.watchmaker.framework._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm._
@@ -15,6 +18,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResp
  */
 class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, private val verboseLevel: VerboseLevel) {
   private val progressWriteExecutor = new AsyncRunner()
+  private val fitnessTrace = new JArrayList[Double]()
 
   /**
    * Rozwiązuje problem
@@ -36,9 +40,11 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
    */
   def solveWithAllResults() = {
     val engine = prepareEngine()
-    val result = engine.evolvePopulation(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    val startMoment = System.currentTimeMillis()
+    val population = engine.evolvePopulation(parameters.populationSize, parameters.eliteCount, parameters.tc)
+    val duration = System.currentTimeMillis() - startMoment
     progressWriteExecutor.shutdown()
-    result
+    new EvolutionResult(population, duration, fitnessTrace)
   }
 
   /**
@@ -61,6 +67,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
           if (verboseLevel.distances) println("Najlepszy wynik: " + data.getBestCandidate.distances.toStringMM)
           if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.lastResponse())
           if (verboseLevel.fitness) println("F. celu: " + data.getBestCandidateFitness)
+          fitnessTrace.add(data.getBestCandidateFitness)
         })
       }
     })

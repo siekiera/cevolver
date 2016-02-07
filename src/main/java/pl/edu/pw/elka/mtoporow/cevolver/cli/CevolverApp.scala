@@ -27,7 +27,7 @@ object CevolverApp {
 
     println("Rozpoczynam obliczenia")
     //    val result = new Solver().solve(parameters, data)
-    val results = new Solver().solveWithAllResults(parameters)
+    val results = new Solver().solveWithAllResults(parameters).population
     println("Zakończono obliczenia")
     //    println("wynik: " + result)
     println("oczekiwany wynik: " + getExpectedResult(expectedDists))
@@ -39,7 +39,6 @@ object CevolverApp {
   }
 
   def printAllResults(results: java.util.List[EvaluatedCandidate[EvolutionaryAlgorithm.C]], maxResults: Int): Unit = {
-    println("Najlepsze wyniki")
     for (i <- 0 until results.size().min(maxResults)) {
       val ec = results.get(i)
       println(i.toString + ": Funkcja celu: " + ec.getFitness + "; c: " + ec.getCandidate.hashCode() + "; " + ec.getCandidate.distances.toStringMM)

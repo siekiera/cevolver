@@ -3,11 +3,13 @@ package pl.edu.pw.elka.mtoporow.cevolver.cli
 import java.io.StringWriter
 import java.util.Properties
 
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 
+import scala.concurrent.duration.Duration
 import scala.io.Source
 
 /**
@@ -18,6 +20,7 @@ import scala.io.Source
 object CevolverCli {
 
   private val properties = new Properties()
+  private var lastResult: EvolutionResult = null
 
   def main(args: Array[String]) {
     loadDefaultProperties()
@@ -25,23 +28,28 @@ object CevolverCli {
     help()
     print(": ")
     for (ln <- Source.stdin.getLines()) {
-      val input = ln.trim.split(" ")
-      input match {
-        case Array("") =>
-        case Array("q") =>
-          println("Do widzenia!")
-          return
-        case Array("about") => about()
-        case Array("help") => help()
-        case Array("load", dataset@_) => load(dataset)
-        case Array("set", key@_, value@_) => setProperty(key, value)
-        case Array("remove", key@_) => removeProperty(key)
-        case Array("props") => printAllProperties()
-        case Array("mparams") => printMeasurementParams()
-        case Array("datasets") => printDataSets()
-        case Array("run") => run(VerboseLevel.allOff())
-        case Array("run", verbose@_) => run(VerboseLevel(verbose))
-        case _ => println("Nieznane polecenie!")
+      try {
+        val input = ln.trim.split(" ")
+        input match {
+          case Array("") =>
+          case Array("q") =>
+            println("Do widzenia!")
+            return
+          case Array("about") => about()
+          case Array("help") => help()
+          case Array("load", dataset@_) => load(dataset)
+          case Array("set", key@_, value@_) => setProperty(key, value)
+          case Array("remove", key@_) => removeProperty(key)
+          case Array("props") => printAllProperties()
+          case Array("mparams") => printMeasurementParams()
+          case Array("datasets") => printDataSets()
+          case Array("pop", count@_) => printLastPopulation(count)
+          case Array("run") => run(VerboseLevel.allOff())
+          case Array("run", verbose@_) => run(VerboseLevel(verbose))
+          case _ => println("Nieznane polecenie!")
+        }
+      } catch {
+        case e: Exception => println("Błąd: " + e.getMessage)
       }
       print(": ")
     }
@@ -73,13 +81,14 @@ object CevolverCli {
       printAllProperties()
       val algParameters = new AlgorithmPropertiesReader(properties).getParameters
       val expectedDists = DataHolder.getCurrent.expectedDistances
-      val data = DataHolder.getCurrent.canalResponse
       printMeasurementParams()
       println("Rozpoczynam obliczenia...")
-      val results = new Solver().solveWithAllResults(algParameters, verboseLevel)
-      println("Zakończono obliczenia")
-      println("oczekiwany wynik: " + expectedDists.toStringMM)
-      CevolverApp.printAllResults(results, 20)
+      val result = new Solver().solveWithAllResults(algParameters, verboseLevel)
+      printf("Zakończono obliczenia po %s pokoleniach, czas obliczeń: %s\n", result.generationCount, result.durationSec)
+      println("Oczekiwany wynik: " + expectedDists.toStringMM)
+      println("Najlepszy wynik z populacji: ")
+      CevolverApp.printAllResults(result.population, 1)
+      lastResult = result
     } catch {
       case e: Exception => println("Błąd podczas uruchamiania algorytmu: " + e.getMessage)
     }
@@ -137,6 +146,18 @@ object CevolverCli {
   }
 
   /**
+   * Wypisuje populację z ostatniego eksperymentu
+   * @param count liczba wyników do wypisana
+   */
+  private def printLastPopulation(count: String): Unit = {
+    if (lastResult == null) {
+      println("Brak danych!")
+    } else {
+      CevolverApp.printAllResults(lastResult.population, count.toInt)
+    }
+  }
+
+  /**
    * Wypisuje informacje o programie
    */
   private def about(): Unit = {
@@ -157,6 +178,7 @@ object CevolverCli {
       "\n\tremove <k>\tusunięcie parametru algorytmu" +
       "\n\tprops\t\twypisanie wszystkich parametrów algorytmu" +
       "\n\tmparams\t\twypisanie parametrów pomiaru" +
+      "\n\tpop <n>\t\twypisanie n najlepszych osobników z ostatniej populacji" +
       "\n\trun [ndfr]\turuchomienie algorytmu, poziom logowania:" +
       "\n\t\tn - nr pokolenia" +
       "\n\t\td - odległości w najlepszym modelu" +
