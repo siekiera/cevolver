@@ -20,7 +20,7 @@ public class Exporter implements Closeable {
     }
 
     /**
-     * Dodaje linię do plikum
+     * Dodaje linię do pliku
      *
      * @param line linię
      * @throws IOException
@@ -29,6 +29,7 @@ public class Exporter implements Closeable {
         writer.append(line).append("\n");
     }
 
+    @Override
     public void close() throws IOException {
         writer.flush();
         writer.close();

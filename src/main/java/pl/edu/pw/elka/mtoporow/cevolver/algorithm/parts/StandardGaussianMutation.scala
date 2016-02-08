@@ -34,7 +34,7 @@ class StandardGaussianMutation(private val probability: Probability, val standar
     // na razie - mnożenie przez randomCoeffScalar
     val newDists = candidate.distances.distances.map(new UnivariateFunction {
       override def value(x: Double): Double = {
-        var r = x * standardDeviation * (1 + rng.nextGaussian())
+        var r = x * (1 + standardDeviation * rng.nextGaussian())
         if (r < minVal) r = minVal
         r
       }
