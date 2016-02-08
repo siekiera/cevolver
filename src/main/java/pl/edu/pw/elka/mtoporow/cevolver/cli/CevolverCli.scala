@@ -1,12 +1,13 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
-import java.io.StringWriter
+import java.io.{File, StringWriter}
 import java.util.Properties
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{TimeUtil, PropertiesUtil, Conversions}
+import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Exporter
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 
 import scala.concurrent.duration.Duration
@@ -44,6 +45,7 @@ object CevolverCli {
           case Array("mparams") => printMeasurementParams()
           case Array("datasets") => printDataSets()
           case Array("pop", count@_) => printLastPopulation(count)
+          case Array("store") => store()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
           case _ => println("Nieznane polecenie!")
@@ -115,10 +117,8 @@ object CevolverCli {
    * Listuje wszystkie właściwości algorytmu
    */
   private def printAllProperties(): Unit = {
-    val sw = new StringWriter()
-    properties.store(sw, null)
     println("Parametry algorytmu: ")
-    println(sw.toString)
+    println(PropertiesUtil.storeToString(properties))
   }
 
   /**
@@ -154,6 +154,23 @@ object CevolverCli {
       println("Brak danych!")
     } else {
       CevolverApp.printAllResults(lastResult.population, count.toInt)
+    }
+  }
+
+  /**
+   * Zapisuje do plików parametry algorytmu i ślad funkcji celu
+   */
+  private def store(): Unit = {
+    // Katalog: ${USER_HOME}/cevolver_out
+    val home = System.getProperty("user.home")
+    val dir = new File(home, "cevolver_out")
+    dir.mkdirs()
+    val timePart = TimeUtil.nowAsNoSepString()
+    // Parametry algorytmu
+    PropertiesUtil.storeToFile(properties, new File(dir, timePart + ".properties"), null)
+    if (lastResult != null) {
+      // Ślad funkcji celu
+      Exporter.serialize(new File(dir, timePart + ".csv"), lastResult.fitnessTrace)
     }
   }
 

@@ -20,7 +20,7 @@ public class Exporter implements Closeable {
     }
 
     /**
-     * Dodaje linię do pliku
+     * Dodaje linię do plikum
      *
      * @param line linię
      * @throws IOException
