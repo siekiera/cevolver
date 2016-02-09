@@ -2,7 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model
 
 import org.apache.commons.math3.linear.RealVector
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**

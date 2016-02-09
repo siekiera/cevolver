@@ -6,7 +6,7 @@ import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.Units;
 
 import java.io.IOException;
 import java.io.InputStream;

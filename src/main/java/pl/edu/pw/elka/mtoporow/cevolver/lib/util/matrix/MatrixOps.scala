@@ -5,6 +5,7 @@ import java.util.Random
 import org.apache.commons.math3.analysis.UnivariateFunction
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear._
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.MiscMathOps
 
 /**
  * Zawiera operacje na macierzach i wektorach
@@ -12,7 +13,8 @@ import org.apache.commons.math3.linear._
  * @author Michał Toporowski
  */
 object MatrixOps {
-  // TODO:: może warto zrobić refactor do ExtMatrix, ExtVector
+  type ComplexVector = FieldVector[Complex]
+
   /**
    * Tworzy wektor liczb zespolonych z wektorów Re oraz Im
    *
@@ -138,9 +140,53 @@ object MatrixOps {
     })
   }
 
+  /**
+   * Odwraca wektor liczb rzeczywistych
+   *
+   * @param realVector wektor
+   * @return wektor z odwróconą kolejnością
+   */
   def invert(realVector: RealVector) = {
     new ArrayRealVector(realVector.toArray.reverse)
   }
+
+  /**
+   * Porównuje 2 wektory liczb zespolonych
+   *
+   * @param measured wektor wartości zmierzonych
+   * @param precise wektor wartości dokładnych
+   * @param function funkcja porównująca
+   * @return wynik jako tablica liczb rzeczywistych
+   */
+  def compare(measured: ComplexVector, precise: ComplexVector, function: (Complex, Complex) => Double) = {
+    (asIterable(measured), asIterable(precise)).zipped.map(function).toArray
+  }
+
+  /**
+   * Liczy błąd względny na modułach (amplitudach) elementów wektora liczb zespolonych
+   *
+   * @param measured wektor wartości zmierzonych
+   * @param precise wektor wartości dokładnych
+   * @return wynik jako tablica liczb rzeczywistych
+   */
+  def relativeErrorAbs(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.relativeErrorAbs)
+
+  /**
+   * Liczy błąd względny na kątach (fazach) elementów wektora liczb zespolonych
+   *
+   * @param measured wektor wartości zmierzonych
+   * @param precise wektor wartości dokładnych
+   * @return wynik jako tablica liczb rzeczywistych
+   */
+  def relativeErrorPhase(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.relativeErrorPhase)
+
+  /**
+   * Liczy wartość średnią tablicy liczb rzeczywistych
+   *
+   * @param vals tablica
+   * @return wartość średnia
+   */
+  def avg(vals: Array[Double]) = vals.sum / vals.length
 
   /**
    * Konwertuje wektor liczb zespolonych do Stringa

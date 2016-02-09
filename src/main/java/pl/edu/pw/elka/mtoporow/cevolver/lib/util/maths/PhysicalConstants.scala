@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.mtoporow.cevolver.lib.model.util
+package pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths
 
 /**
  * Stałe do obliczeń

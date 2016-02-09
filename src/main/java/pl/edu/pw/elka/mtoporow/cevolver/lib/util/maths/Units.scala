@@ -1,4 +1,6 @@
-package pl.edu.pw.elka.mtoporow.cevolver.lib.model.util
+package pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths
+
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths
 
 /**
  * Klasa zawierająca definicje jednostek

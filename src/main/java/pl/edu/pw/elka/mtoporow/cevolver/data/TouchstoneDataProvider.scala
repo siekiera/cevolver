@@ -5,7 +5,7 @@ import java.net.URL
 
 import org.apache.commons.math3.linear.{Array2DRowRealMatrix, RealVector}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 import scala.io.Source

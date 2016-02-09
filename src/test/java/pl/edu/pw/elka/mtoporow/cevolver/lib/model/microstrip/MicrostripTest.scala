@@ -1,6 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.Units
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.Units
 
 /**
  * Test algorytmu obliczającego parametry mikropaska

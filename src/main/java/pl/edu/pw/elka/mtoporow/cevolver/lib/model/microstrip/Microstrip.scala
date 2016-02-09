@@ -2,7 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
 import org.apache.commons.math3.complex.Complex
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.{SMatrix, TMatrix}
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.PhysicalConstants
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.PhysicalConstants
 
 /**
  * Mikropasek

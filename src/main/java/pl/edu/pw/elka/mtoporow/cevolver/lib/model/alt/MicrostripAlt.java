@@ -1,7 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt;
 
 import org.apache.commons.math3.complex.Complex;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.util.PhysicalConstants;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.PhysicalConstants;
 
 /**
  * Alternatywny model linii mikropaskowej
