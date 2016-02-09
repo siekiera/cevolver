@@ -21,7 +21,7 @@ object MatrixOps {
    * @return
    */
   def createComplexVector(reVector: RealVector, imVector: RealVector): FieldVector[Complex] = {
-    val complexArray = (reVector.toArray, imVector.toArray).zipped.map((re, im) => new Complex(re, im)).array
+    val complexArray = (asIterable(reVector), asIterable(imVector)).zipped.map((re, im) => new Complex(re, im)).toArray
     MatrixUtils.createFieldVector(complexArray)
   }
 
@@ -33,7 +33,7 @@ object MatrixOps {
    * @return
    */
   def reduceComplexVector(vector: FieldVector[Complex], function: (Complex, Complex) => Complex): Complex = {
-    vector.toArray.reduce(function)
+    asIterable(vector).reduce(function)
   }
 
   /**
@@ -45,7 +45,7 @@ object MatrixOps {
    */
   def reduceComplexVector(vector: FieldVector[Complex], function: (Complex, Complex) => Double): Double = {
     // TODO to nie wygląda ładnie
-    vector.toArray.reduce((a, b) => new Complex(function.apply(a, b))).getReal
+    asIterable(vector).reduce((a, b) => new Complex(function.apply(a, b))).getReal
   }
 
   /**
@@ -105,7 +105,7 @@ object MatrixOps {
    * @param realVector
    * @return
    */
-  def sum(realVector: RealVector) = realVector.toArray.sum
+  def sum(realVector: RealVector): Double = asIterable(realVector).sum
 
   /**
    * Zamienia [a, b, c, ...] na [a, a+b, a+b+c, ...]
@@ -145,9 +145,9 @@ object MatrixOps {
   /**
    * Konwertuje wektor liczb zespolonych do Stringa
    *
-   * @param v
+   * @param v wektor
    */
-  def complexVecToString(v: FieldVector[Complex]) = "[" + v.toArray.map(c => c.toString + "|" + c.abs + "|").mkString(", ") + "]"
+  def complexVecToString(v: FieldVector[Complex]) = "[" + asIterable(v).map(c => c.toString + "|" + c.abs + "|").mkString(", ") + "]"
 
   /**
    * Zwraca iterowalną kolekcję
@@ -155,7 +155,7 @@ object MatrixOps {
    * @param v wektor
    * @return kolekcja implementująca Iterable[Double]
    */
-  def doubleIterable(v: RealVector): Iterable[Double] = {
+  def asIterable(v: RealVector): Iterable[Double] = {
     val dim = v.getDimension
     new Iterable[Double] {
       override def iterator = new Iterator[Double] {
@@ -164,8 +164,32 @@ object MatrixOps {
         override def hasNext: Boolean = i < dim
 
         override def next(): Double = {
+          val e = v.getEntry(i)
           i += 1
-          v.getEntry(i - 1)
+          e
+        }
+      }
+    }
+  }
+
+  /**
+   * Zwraca iterowalną kolekcję
+   *
+   * @param v wektor
+   * @return kolekcja implementująca Iterable[Complex]
+   */
+  def asIterable(v: FieldVector[Complex]): Iterable[Complex] = {
+    val dim = v.getDimension
+    new Iterable[Complex] {
+      override def iterator = new Iterator[Complex] {
+        private var i = 0
+
+        override def hasNext: Boolean = i < dim
+
+        override def next(): Complex = {
+          val e = v.getEntry(i)
+          i += 1
+          e
         }
       }
     }

@@ -5,6 +5,7 @@ import org.apache.commons.math3.linear.MatrixUtils
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Model kanału w postaci linii mikropaskowej
@@ -23,7 +24,7 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   override def calculateResponse(measurementParams: MeasurementParams): CanalResponse = {
     // Liczymy odpowiedź dla każdej częstotliwości
     val impedance = measurementParams.getImpedance
-    val responseArray = measurementParams.getFrequencies.toArray.map(f => response(f, impedance)).array
+    val responseArray = MatrixOps.asIterable(measurementParams.getFrequencies).map(f => response(f, impedance)).toArray
     new CanalResponse(MatrixUtils.createFieldVector(responseArray))
   }
 
@@ -45,7 +46,7 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
   private def response(frequency: Double, z01: Complex): Complex = {
     var resultTMatrix = new TMatrix(Complex.ONE, Complex.ZERO, Complex.ZERO, Complex.ONE)
     var thick = false // Cienki, czy gruby element paska - na zmianę
-    for (dist <- distances.distances.toArray) {
+    for (dist <- MatrixOps.asIterable(distances.distances)) {
       // Właściwy mikropasek
       // Przerwanie - modelowane na styku pasków o mniejszym i większym W
       val w = if (thick) params.biggerW else params.w
@@ -76,7 +77,7 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     val sb = StringBuilder.newBuilder
     sb ++= "Microstrip Line Model: "
     sb ++= "distances (m): ["
-    sb ++= distances.distances.toArray.map(_.toString).mkString(", ")
+    sb ++= MatrixOps.asIterable(distances.distances).map(_.toString).mkString(", ")
     sb ++= "]; distances (mm): ["
     sb ++= distances.toStringMM
     sb ++= "]; response: " + lastResponse()

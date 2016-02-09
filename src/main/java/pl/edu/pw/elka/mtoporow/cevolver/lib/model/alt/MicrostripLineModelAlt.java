@@ -8,6 +8,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps;
 
 /**
  * Model linii mikropaskowej - alternatywna implementacja
@@ -52,7 +53,7 @@ public class MicrostripLineModelAlt extends AbstractCanalModel {
     private Complex calcResponse(double freq, Complex z01) {
         TMatrixAlt tMatrixAlt = TMatrixAlt.identity();
         boolean thick = false;
-        for (double dist : dists.distances().toArray()) {
+        for (double dist : JavaVectorOps.asIterable(dists.distances())) {
             MicrostripAlt microstripAlt = new MicrostripAlt(thick ? pars.biggerW() : pars.w(), pars.t(), dist, pars.h(), pars.epsr());
             TMatrixAlt matrixAlt = microstripAlt.getTMatrix(z01, freq);
             tMatrixAlt = tMatrixAlt.multiply(matrixAlt);

@@ -30,5 +30,5 @@ class Distances(val distances: RealVector) {
    * Konwertuje odległości na milimetry i przedstawia w postaci łańcucha znaków
    * @return String
    */
-  def toStringMM = "odległości [mm]: (" + distances.toArray.map(Units.MILLI.fromSI(_).toString).mkString(", ") + ")"
+  def toStringMM = "odległości [mm]: (" + MatrixOps.asIterable(distances).map(Units.MILLI.fromSI(_).toString).mkString(", ") + ")"
 }

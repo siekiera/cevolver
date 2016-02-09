@@ -31,7 +31,7 @@ object FitnessFunction {
   def apply(candidate: EvolutionaryAlgorithm.C, realResp: CanalResponse, punishmentRatio: Double): Double = {
     val candResponse = candidate.response(DataHolder.getCurrent.measurementParams)
     val diff = candResponse.value.subtract(realResp.value)
-    val fitness = diff.toArray.map(sqrAbs).sum
+    val fitness = MatrixOps.asIterable(diff).map(sqrAbs).sum
     if (punishmentRatio <= 0.0)
       fitness
     else
@@ -54,7 +54,7 @@ object FitnessFunction {
     var p = 0.0
     // Jeśli różnica pomiędzy kolejnymi odległościami jest mniejsza od minVal - karamy
     // Jeśli kolejność się odwróci, również będzie kara
-    for (i <- MatrixOps.doubleIterable(distances)) {
+    for (i <- MatrixOps.asIterable(distances)) {
       if (i < minVal) {
         p += minVal - i
       }

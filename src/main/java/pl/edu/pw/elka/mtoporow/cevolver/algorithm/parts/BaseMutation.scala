@@ -16,6 +16,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 abstract class BaseMutation(private val probability: Probability) extends EvolutionaryOperator[EvolutionaryAlgorithm.C] {
 
   override def apply(selectedCandidates: util.List[EvolutionaryAlgorithm.C], rng: Random): util.List[EvolutionaryAlgorithm.C] = {
+    // TODO:: lepiej tych konwersji używać jak najmniej
     Conversions.scalaToJavaList(Conversions.javaToScalaList(selectedCandidates).map(c => mutateWithProbability(c, rng)))
   }
 
