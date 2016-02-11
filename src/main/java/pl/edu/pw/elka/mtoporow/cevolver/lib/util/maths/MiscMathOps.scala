@@ -17,7 +17,7 @@ object MiscMathOps {
    * @param p wartość dokładna
    * @return błąd względny
    */
-  def relativeError(x: Double, p: Double) = x / p - 1
+  def relativeError(x: Double, p: Double) = math.abs(x / p - 1)
 
   /**
    * Zwraca błąd względny liczony na modułach liczb zespolonych
@@ -36,4 +36,22 @@ object MiscMathOps {
    * @return błąd względny
    */
   def relativeErrorPhase(x: Complex, p: Complex) = relativeError(x.getArgument, p.getArgument)
+
+  /**
+   * Zwraca błąd bezwzględny
+   *
+   * @param x wartość zmierzona
+   * @param p wartość dokładna
+   * @return błąd bezwzględny
+   */
+  def absoluteError(x: Double, p: Double) = math.abs(x - p)
+
+  /**
+   * Zwraca błąd bezwzględny liczony na fazach (kątach) liczb zespolonych
+   *
+   * @param x wartość zmierzona
+   * @param p wartość dokładna
+   * @return błąd bezwzględny
+   */
+  def absoluteErrorPhase(x: Complex, p: Complex) = absoluteError(x.getArgument, p.getArgument)
 }

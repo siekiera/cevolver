@@ -181,6 +181,15 @@ object MatrixOps {
   def relativeErrorPhase(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.relativeErrorPhase)
 
   /**
+   * Liczy błąd bezwzględny na kątach (fazach) elementów wektora liczb zespolonych
+   *
+   * @param measured wektor wartości zmierzonych
+   * @param precise wektor wartości dokładnych
+   * @return wynik jako tablica liczb rzeczywistych
+   */
+  def absoluteErrorPhase(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.absoluteErrorPhase)
+
+  /**
    * Liczy wartość średnią tablicy liczb rzeczywistych
    *
    * @param vals tablica
