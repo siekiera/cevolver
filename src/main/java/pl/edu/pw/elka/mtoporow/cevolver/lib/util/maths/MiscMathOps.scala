@@ -47,11 +47,35 @@ object MiscMathOps {
   def absoluteError(x: Double, p: Double) = math.abs(x - p)
 
   /**
+   * Zwraca błąd bezwzględny liczony na modułach liczb zespolonych
+   *
+   * @param x wartość zmierzona
+   * @param p wartość dokładna
+   * @return błąd bezwzględny
+   */
+  def absoluteErrorAbs(x: Complex, p: Complex) = absoluteError(x.abs(), p.abs())
+
+  /**
    * Zwraca błąd bezwzględny liczony na fazach (kątach) liczb zespolonych
    *
    * @param x wartość zmierzona
    * @param p wartość dokładna
    * @return błąd bezwzględny
    */
-  def absoluteErrorPhase(x: Complex, p: Complex) = absoluteError(x.getArgument, p.getArgument)
+  def absoluteErrorPhase(x: Complex, p: Complex) = {
+    math.min(
+      absoluteError(x.getArgument, p.getArgument),
+      absoluteError(positiveArg(x), positiveArg(p)))
+  }
+
+  /**
+   * Zwraca dodatni kąt liczby zespolonej (dodaje pi, jeśli jest ujemny)
+   *
+   * @param z liczba zespolona
+   * @return kąt z zakresu [0, 2pi)
+   */
+  def positiveArg(z: Complex) = {
+    val arg = z.getArgument
+    if (arg < 0) arg + 2 * math.Pi else arg
+  }
 }

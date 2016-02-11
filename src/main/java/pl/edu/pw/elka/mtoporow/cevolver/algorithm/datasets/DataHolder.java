@@ -23,6 +23,7 @@ public final class DataHolder {
     private static List<String> availableDataSets;
     private static DataSet current;
     private static final File dataDir;
+    private static String currentId;
 
     private DataHolder() {
     }
@@ -61,6 +62,7 @@ public final class DataHolder {
                 current = new DataSet(reader.getMeasurementParams(), canalResponse, reader.getExpectedDistances());
                 // Dodajemy jeszcze częstotliwości pobrane z pliku z danymi
                 current.measurementParams().setFrequencies(dataProvider.frequencies());
+                currentId = dataSetId;
             }
         } catch (IOException e) {
             throw new DataLoadingException(e);
@@ -74,6 +76,15 @@ public final class DataHolder {
      */
     public static DataSet getCurrent() {
         return current;
+    }
+
+    /**
+     * Zwraca identyfikator aktywnego zestawu danych
+     *
+     * @return identyfikator aktywnego zestawu danych
+     */
+    public static String getCurrentId() {
+        return currentId;
     }
 
     /**

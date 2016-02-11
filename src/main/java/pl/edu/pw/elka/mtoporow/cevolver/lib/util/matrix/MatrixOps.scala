@@ -172,6 +172,15 @@ object MatrixOps {
   def relativeErrorAbs(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.relativeErrorAbs)
 
   /**
+   * Liczy błąd bezwzględny na modułach (amplitudach) elementów wektora liczb zespolonych
+   *
+   * @param measured wektor wartości zmierzonych
+   * @param precise wektor wartości dokładnych
+   * @return wynik jako tablica liczb rzeczywistych
+   */
+  def absoluteErrorAbs(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.absoluteErrorAbs)
+
+  /**
    * Liczy błąd względny na kątach (fazach) elementów wektora liczb zespolonych
    *
    * @param measured wektor wartości zmierzonych
