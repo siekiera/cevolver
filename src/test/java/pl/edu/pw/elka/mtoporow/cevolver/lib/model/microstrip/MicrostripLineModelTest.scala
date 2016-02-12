@@ -6,6 +6,8 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt.MicrostripLineModelAlt
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, Distances}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
+import scala.collection.mutable
+
 /**
  * Test linii mikropaskowej
  * Data utworzenia: 20.11.15, 14:59
@@ -23,6 +25,7 @@ class MicrostripLineModelTest extends FunSuite {
 
   private def testResponse(modelProducer: (Distances, MicrostripParams) => AbstractCanalModel): Unit = {
     val checker = new ModelChecker(modelProducer)
+    val failed = new mutable.HashSet[String]()
     while (checker.loadNext()) {
       println("Zestaw danych: " + DataHolder.getCurrentId)
       println("Odpowiedź obliczona dla wczytanych danych: " + checker.calculatedResponse())
@@ -35,9 +38,11 @@ class MicrostripLineModelTest extends FunSuite {
       printf("Błąd bezwzględny na fazach: (%s)\n", errorPhase.mkString(", "))
       val avgErrorPhase = MatrixOps.avg(errorPhase)
       printf("Wartość średnia: %s, min: %s, max: %s\n", avgErrorPhase, errorPhase.min, errorPhase.max)
-      assert(avgErrorAbs <= 0.1)
-      assert(avgErrorPhase <= 0.2)
+      if (avgErrorAbs > 0.1 || avgErrorPhase > 0.2) {
+        failed += DataHolder.getCurrentId
+      }
     }
+    assert(failed.isEmpty)
   }
 
 

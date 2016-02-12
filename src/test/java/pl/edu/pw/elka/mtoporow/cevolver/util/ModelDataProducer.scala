@@ -14,9 +14,9 @@ import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
  * @author Michał Toporowski
  */
 object ModelDataProducer {
-  private val dir = new File("/home/michalek/cevolver_out")
 
   def main(args: Array[String]) {
+    val dir = GeneralConstants.OUTPUT_DIR
     val checker = new ModelChecker((d, p) => new MicrostripLineModel(d, p))
     while (checker.loadNext()) {
       val datasetId = DataHolder.getCurrentId

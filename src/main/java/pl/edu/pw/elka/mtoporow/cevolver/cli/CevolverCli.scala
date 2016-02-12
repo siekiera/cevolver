@@ -9,6 +9,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{TimeUtil, PropertiesUtil, Conversions}
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Exporter
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
+import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 
 import scala.concurrent.duration.Duration
 import scala.io.Source
@@ -162,9 +163,7 @@ object CevolverCli {
    */
   private def store(): Unit = {
     // Katalog: ${USER_HOME}/cevolver_out
-    val home = System.getProperty("user.home")
-    val dir = new File(home, "cevolver_out")
-    dir.mkdirs()
+    val dir = GeneralConstants.OUTPUT_DIR
     val timePart = TimeUtil.nowAsNoSepString()
     // Parametry algorytmu
     PropertiesUtil.storeToFile(properties, new File(dir, timePart + ".properties"), null)
