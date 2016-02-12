@@ -207,6 +207,22 @@ object MatrixOps {
   def avg(vals: Array[Double]) = vals.sum / vals.length
 
   /**
+   * Liczy minimum tablicy
+   *
+   * @param vals tablica
+   * @return minimum
+   */
+  def min(vals: Array[Double]) = vals.min
+
+  /**
+   * Liczy maksimum tablicy
+   *
+   * @param vals tablica
+   * @return maksimum
+   */
+  def max(vals: Array[Double]) = vals.max
+
+  /**
    * Konwertuje wektor liczb zespolonych do Stringa
    *
    * @param v wektor

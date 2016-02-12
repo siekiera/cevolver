@@ -5,7 +5,12 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil;
 
 import java.io.File;
@@ -52,6 +57,8 @@ public class ChartViewer extends Application {
 
         lineChart.setTitle(chartData.getName());
 
+        final StringBuilder info = new StringBuilder();
+
         double[] xValues = chartData.getxValues().getValues();
         for (ChartData.Series ySeries : chartData.getyValues()) {
             double[] yValues = ySeries.getValues();
@@ -61,9 +68,17 @@ public class ChartViewer extends Application {
                 jfxSeries.getData().add(new XYChart.Data<>(xValues[i], yValues[i]));
             }
             lineChart.getData().add(jfxSeries);
+            info.append(String.format("%s:\n wartość średnia: %s\n minimum: %s\n maksimum: %s\n\n",
+                    ySeries.getName(),
+                    MatrixOps.avg(yValues),
+                    MatrixOps.min(yValues),
+                    MatrixOps.max(yValues)));
         }
 
-        Scene scene = new Scene(lineChart, 800, 600);
+        Pane content = new VBox(lineChart, new Label(info.toString()));
+
+        lineChart.setMinSize(800, 600);
+        Scene scene = new Scene(content);
         stage.setScene(scene);
         stage.show();
     }
