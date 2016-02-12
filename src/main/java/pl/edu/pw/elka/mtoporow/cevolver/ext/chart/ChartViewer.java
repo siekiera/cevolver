@@ -6,7 +6,6 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,6 +14,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Aplikacja JavaFX wyświetlająca wykresy
@@ -34,8 +34,15 @@ public class ChartViewer extends Application {
         if (parameters.isEmpty()) {
             throw new IllegalArgumentException("Nazwa pliku powinna być pierwszym parametrem!");
         }
-        File file = new File(parameters.get(0));
-        this.chartData = SerializationUtil.deserialize(file);
+        for (String parameter : parameters) {
+            File file = new File(parameter);
+            ChartData chartData = SerializationUtil.deserialize(file);
+            if (this.chartData == null) {
+                this.chartData = chartData;
+            } else {
+                this.chartData.join(chartData);
+            }
+        }
     }
 
     @Override
@@ -60,11 +67,18 @@ public class ChartViewer extends Application {
         final StringBuilder info = new StringBuilder();
 
         double[] xValues = chartData.getxValues().getValues();
+        if (xValues == null) {
+            // Generujemy od 1 do max Y
+            int len = chartData.getyValues().stream().mapToInt(s -> s.getValues().length).max().getAsInt();
+            xValues = IntStream.range(0, len).mapToDouble(i -> i).toArray();
+        }
+
         for (ChartData.Series ySeries : chartData.getyValues()) {
             double[] yValues = ySeries.getValues();
             XYChart.Series<Number, Number> jfxSeries = new XYChart.Series<>();
             jfxSeries.setName(ySeries.getName());
-            for (int i = 0; i < xValues.length; i++) {
+            int len = Integer.min(xValues.length, yValues.length);
+            for (int i = 0; i < len; i++) {
                 jfxSeries.getData().add(new XYChart.Data<>(xValues[i], yValues[i]));
             }
             lineChart.getData().add(jfxSeries);

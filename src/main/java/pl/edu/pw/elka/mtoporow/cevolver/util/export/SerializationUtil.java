@@ -1,6 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.util.export;
 
 import java.io.*;
+import java.util.function.Consumer;
 
 /**
  * Metody narzędziowe do serializacji obiektów
@@ -29,6 +30,20 @@ public final class SerializationUtil {
         } catch (ClassNotFoundException | ClassCastException e) {
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Deserializuje plik, modyfikuje obiekt i serializuje z powrotem
+     *
+     * @param file     plik
+     * @param modifier funkcja modyfikująca
+     * @param <T>      typ obiektu
+     * @throws IOException
+     */
+    public static <T extends Serializable> void modify(final File file, final Consumer<T> modifier) throws IOException {
+        T object = deserialize(file);
+        modifier.accept(object);
+        serialize(file, object);
     }
 
 }

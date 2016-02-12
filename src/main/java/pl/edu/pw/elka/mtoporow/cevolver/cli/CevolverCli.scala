@@ -1,17 +1,18 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
-import java.io.{File, StringWriter}
+import java.io.File
 import java.util.Properties
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{TimeUtil, PropertiesUtil, Conversions}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{Conversions, PropertiesUtil, TimeUtil}
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Exporter
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
+import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
 import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
+import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
 
-import scala.concurrent.duration.Duration
 import scala.io.Source
 
 /**
@@ -47,6 +48,7 @@ object CevolverCli {
           case Array("datasets") => printDataSets()
           case Array("pop", count@_) => printLastPopulation(count)
           case Array("store") => store()
+          case Array("storec") => storec()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
           case _ => println("Nieznane polecenie!")
@@ -170,6 +172,24 @@ object CevolverCli {
     if (lastResult != null) {
       // Ślad funkcji celu
       Exporter.serialize(new File(dir, timePart + ".csv"), lastResult.fitnessTrace)
+    }
+  }
+
+  /**
+   * Zapisuje do plików parametry algorytmu i ślad funkcji celu jako ChartData
+   */
+  private def storec(): Unit = {
+    // Katalog: ${USER_HOME}/cevolver_out
+    val dir = GeneralConstants.OUTPUT_DIR
+    val timePart = TimeUtil.nowAsNoSepString()
+    // Parametry algorytmu
+    PropertiesUtil.storeToFile(properties, new File(dir, timePart + ".properties"), null)
+    if (lastResult != null) {
+      // Ślad funkcji celu
+      val chartFile = new File(dir, timePart + ".cht")
+      val chartData: ChartData = new ChartData("Wykres wartości funkcji celu", "Nr pokolenia", null)
+      chartData.addSeries("Przebieg: " + timePart, lastResult.fitnessTrace)
+      SerializationUtil.serialize(chartFile, chartData)
     }
   }
 
