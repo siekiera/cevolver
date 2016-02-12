@@ -4,12 +4,13 @@ import pl.edu.pw.elka.mtoporow.cevolver.cli.EnvPropertiesReader;
 import pl.edu.pw.elka.mtoporow.cevolver.data.TouchstoneDataProvider;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
+import java.nio.file.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public final class DataHolder {
     private static List<String> availableDataSets;
     private static DataSet current;
-    private static final File dataDir;
+    private static final Path dataDir;
     private static String currentId;
 
     private DataHolder() {
@@ -35,10 +36,16 @@ public final class DataHolder {
      */
     public static List<String> getAvailableDataSets() {
         if (availableDataSets == null) {
-            // Zbieramy wszystkie pliki .properties z katalogu data z jara
-            File[] propertyFiles = dataDir.listFiles((d, name) -> name.endsWith(".properties"));
-            // i zapisujemy do listy ich nazwy bez rozszerzeń
-            availableDataSets = Arrays.stream(propertyFiles).map(f -> f.getName().replaceFirst("[.][^.]+$", "")).collect(Collectors.toList());
+            try {
+                // Zbieramy wszystkie pliki .properties z katalogu data z jara
+                // i zapisujemy do listy ich nazwy bez rozszerzeń
+                availableDataSets = Files.walk(dataDir).map(p -> p.getFileName().toString())
+                        .filter(name -> name.endsWith(".properties"))
+                        .map(f -> f.replaceFirst("[.][^.]+$", ""))
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new DataLoadingException(e);
+            }
         }
         return availableDataSets;
     }
@@ -50,14 +57,14 @@ public final class DataHolder {
      * @param dataSetId identyfikator (nazwa pliku bez rozszerzenia)
      */
     public static void load(final String dataSetId) {
-        File propertiesFile = new File(dataDir, dataSetId + ".properties");
-        File dataFile = new File(dataDir, dataSetId + ".s2p");
+        Path propertiesFile = dataDir.resolve(dataSetId + ".properties");
+        Path dataFile = dataDir.resolve(dataSetId + ".s2p");
         try {
             // Odczytanie danych
-            TouchstoneDataProvider dataProvider = new TouchstoneDataProvider(dataFile);
+            TouchstoneDataProvider dataProvider = new TouchstoneDataProvider(Files.newInputStream(dataFile));
             CanalResponse canalResponse = dataProvider.provide();
             // Odczytanie właściwości
-            try (FileInputStream fis = new FileInputStream(propertiesFile)) {
+            try (InputStream fis = Files.newInputStream(propertiesFile)) {
                 EnvPropertiesReader reader = new EnvPropertiesReader(fis);
                 current = new DataSet(reader.getMeasurementParams(), canalResponse, reader.getExpectedDistances());
                 // Dodajemy jeszcze częstotliwości pobrane z pliku z danymi
@@ -102,8 +109,15 @@ public final class DataHolder {
             if (dataUrl == null) {
                 throw new DataLoadingException("No data to read!");
             }
-            dataDir = new File(dataUrl.toURI());
-        } catch (URISyntaxException e) {
+            URI dataUri = dataUrl.toURI();
+            if (dataUri.getScheme().equals("jar")) {
+                // Jeśli ścieżka jest wewnątrz jara, trzeba się do niej dostać przez system plików ZIP
+                FileSystem fileSystem = FileSystems.newFileSystem(dataUri, Collections.<String, Object>emptyMap());
+                dataDir = fileSystem.getPath("/data");
+            } else {
+                dataDir = Paths.get(dataUri);
+            }
+        } catch (URISyntaxException | IOException e) {
             throw new DataLoadingException(e);
         }
     }

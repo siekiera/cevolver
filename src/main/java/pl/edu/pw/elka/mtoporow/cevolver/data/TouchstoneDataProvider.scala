@@ -1,6 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.data
 
-import java.io.File
+import java.io.{InputStream, File}
 import java.net.URL
 
 import org.apache.commons.math3.linear.{Array2DRowRealMatrix, RealVector}
@@ -23,6 +23,8 @@ class TouchstoneDataProvider(private val source: Source) extends DataProvider {
   def this(fileUrl: URL) = this(Source.fromURL(fileUrl))
 
   def this(file: File) = this(Source.fromFile(file))
+
+  def this(is: InputStream) = this(Source.fromInputStream(is))
 
   def frequencies() = _frequencies
 
