@@ -1,5 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli.export;
 
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
@@ -46,6 +48,21 @@ public class Exporter implements Closeable {
         try (Exporter exporter = new Exporter(file)) {
             for (Object obj : c) {
                 exporter.appendLine(obj.toString());
+            }
+        }
+    }
+
+    /**
+     * Eksportuje macierz do pliku
+     *
+     * @param file   plik
+     * @param matrix macierz
+     * @throws IOException
+     */
+    public static void serialize(File file, double[][] matrix) throws IOException {
+        try (Exporter exporter = new Exporter(file)) {
+            for (double[] row : matrix) {
+                exporter.appendLine(MatrixOps.mkString(row, ";"));
             }
         }
     }

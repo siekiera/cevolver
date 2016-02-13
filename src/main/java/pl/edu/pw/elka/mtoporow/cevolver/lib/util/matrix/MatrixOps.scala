@@ -223,6 +223,15 @@ object MatrixOps {
   def max(vals: Array[Double]) = vals.max
 
   /**
+   * Tworzy łańcuch znaków z tablicy przy użyciu separatora
+   *
+   * @param vals tablica
+   * @param sep separator
+   * @return String
+   */
+  def mkString(vals: Array[Double], sep: String) = vals.mkString(sep)
+
+  /**
    * Konwertuje wektor liczb zespolonych do Stringa
    *
    * @param v wektor

@@ -39,6 +39,7 @@ object RegisteredParams {
   put(EOType.STANDARD_GAUSSIAN_MUTATION, PROBABILITY, STANDARD_DEVIATION)
   put(EOType.AVERAGE_VALUE_CROSSOVER, PROBABILITY)
   put(SSType.SUS, PROBABILITY)
+  put(SSType.TOURNAMENT, PROBABILITY)
 
   /**
    * Umieszcza elementy w mapie partsParams

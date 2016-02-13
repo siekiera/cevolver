@@ -10,6 +10,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{Conversions, PropertiesU
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Exporter
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
+import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.FitnessProbe
 import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
 
@@ -49,6 +50,8 @@ object CevolverCli {
           case Array("pop", count@_) => printLastPopulation(count)
           case Array("store") => store()
           case Array("storec") => storec()
+          case Array("fprobe") => fitnessProbe()
+          case Array("fpcsv") => fitnessProbeCsv()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
           case _ => println("Nieznane polecenie!")
@@ -191,6 +194,32 @@ object CevolverCli {
       chartData.addSeries("Przebieg: " + timePart, lastResult.fitnessTrace)
       SerializationUtil.serialize(chartFile, chartData)
     }
+  }
+
+  /**
+   * Sonduje wartość f. celu i zapisuje do pliku
+   */
+  private def fitnessProbe(): Unit = {
+    if (!DataHolder.isLoaded) {
+      println("Nie załadowano danych!")
+      return
+    }
+    val chartData = FitnessProbe.asChartData()
+    val file = new File(GeneralConstants.OUTPUT_DIR, DataHolder.getCurrentId + "_probe.cht")
+    SerializationUtil.serialize(file, chartData)
+  }
+
+  /**
+   * Sonduje wartość f. celu i zapisuje do pliku
+   */
+  private def fitnessProbeCsv(): Unit = {
+    if (!DataHolder.isLoaded) {
+      println("Nie załadowano danych!")
+      return
+    }
+    val matrix = FitnessProbe.as2dMatrix()
+    val file = new File(GeneralConstants.OUTPUT_DIR, DataHolder.getCurrentId + "_probe.csv")
+    Exporter.serialize(file, matrix)
   }
 
   /**
