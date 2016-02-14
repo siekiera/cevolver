@@ -56,8 +56,7 @@ class MicrostripLineModel(val distances: Distances, val params: MicrostripParams
     // Ostatni element mikropaska
     resultTMatrix *= calculateTMatrix(params.w, distances.last, frequency, z01)
     // Obliczenie odpowiedzi całego kanału
-    val s11 = resultTMatrix.toSMatrix.s11
-    s11
+    resultTMatrix.s11
   }
 
   /**

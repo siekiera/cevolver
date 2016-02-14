@@ -30,4 +30,11 @@ class TMatrix(val t11: Complex, val t12: Complex, val t21: Complex, val t22: Com
     val matrix = asMatrix.multiply(that.asMatrix).getData
     new TMatrix(matrix(0)(0), matrix(0)(1), matrix(1)(0), matrix(1)(1))
   }
+
+  /**
+   * Zwraca element s11 bez obliczania pozostałych elementów macierzy S
+   */
+  def s11: Complex = {
+    t12.divide(t22)
+  }
 }

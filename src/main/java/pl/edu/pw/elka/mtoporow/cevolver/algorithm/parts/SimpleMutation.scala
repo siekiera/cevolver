@@ -44,13 +44,13 @@ class SimpleMutation(private val probability: Probability) extends BaseMutation(
       }
     })
     // Sprawdzamy, czy nie przekroczyło maxa
-    val sum = MatrixOps.sum(newDists)
-    val diff = DataHolder.getCurrent.measurementParams.getTotalLength - sum
-    if (diff < 0) {
-      // Na razie zmieniamy tylko ostatni TODO:: pewnie do zmiany
-      newDists.setEntry(candidate.distances.distances.getDimension - 1,
-        candidate.distances.last + diff)
-    }
+//    val sum = MatrixOps.sum(newDists)
+//    val diff = DataHolder.getCurrent.measurementParams.getTotalLength - sum
+//    if (diff < 0) {
+//      // Na razie zmieniamy tylko ostatni TODO:: pewnie do zmiany
+//      newDists.setEntry(candidate.distances.distances.getDimension - 1,
+//        candidate.distances.last + diff)
+//    }
     candidate.createNew(new Distances(newDists))
   }
 }

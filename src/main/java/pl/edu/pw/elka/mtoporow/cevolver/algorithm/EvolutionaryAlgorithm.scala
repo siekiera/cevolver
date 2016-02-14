@@ -3,7 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm
 import java.lang.Double
 import java.util.{ArrayList => JArrayList}
 
-import org.uncommons.maths.random.JavaRNG
+import org.uncommons.maths.random.MersenneTwisterRNG
 import org.uncommons.watchmaker.framework._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
@@ -58,7 +58,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
       parameters.eo,
       parameters.fe,
       parameters.ss,
-      new JavaRNG())
+      new MersenneTwisterRNG())
 
     engine.addEvolutionObserver(new EvolutionObserver[C] {
       override def populationUpdate(data: PopulationData[_ <: C]): Unit = {

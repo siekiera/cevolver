@@ -67,6 +67,6 @@ public class MicrostripLineModelAlt extends AbstractCanalModel {
 
     @Override
     public AbstractCanalModel createNew(Distances distances) {
-        return new MicrostripLineModelAlt(dists, pars);
+        return new MicrostripLineModelAlt(distances, pars);
     }
 }
