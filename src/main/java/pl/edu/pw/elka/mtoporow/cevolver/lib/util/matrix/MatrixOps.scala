@@ -58,7 +58,7 @@ object MatrixOps {
    * @return
    */
   def randomRealVector(random: Random, length: Int) = {
-    MatrixUtils.createRealVector(new Array[Double](length).map(x => random.nextDouble()))
+    MatrixUtils.createRealVector((1 to length).map(x => random.nextDouble()).toArray)
   }
 
   /**
