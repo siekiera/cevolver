@@ -16,7 +16,7 @@ class AverageValueCrossover(private val probability: Probability) extends BaseCr
 private class DoubleAverageCO(private val probability: Probability) extends AbstractCrossover[Array[Double]](1, probability) {
   override def mate(parent1: Array[Double], parent2: Array[Double], numberOfCrossoverPoints: Int, rng: Random): util.List[Array[Double]] = {
     val child1 = new Array[Double](parent1.length)
-    for (i <- 0 to parent1.length) {
+    for (i <- 0 until parent1.length) {
       val random = rng.nextDouble()
       child1(i) = random * parent1(i) + (1 - random) * parent2(i)
     }

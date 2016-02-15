@@ -61,6 +61,8 @@ object MatrixOps {
     MatrixUtils.createRealVector((1 to length).map(x => random.nextDouble()).toArray)
   }
 
+  def zeroComplexArray(length: Int) = (0 until length).map(i => Complex.ZERO).toArray
+
   /**
    * Dzieli wektor na dwie części - wektor długości n-1 oraz ostatni element
    *

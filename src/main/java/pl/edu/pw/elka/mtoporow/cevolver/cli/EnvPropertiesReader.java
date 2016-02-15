@@ -16,7 +16,7 @@ import java.io.InputStream;
  * <p>
  * Data utworzenia: 15.09.15 11:27
  * <p>
- * Założenie: odległości w MILach (1/1000 cala) TODO:: może warto zmienić na MM
+ * Założenie: odległości w MM
  *
  * @author Michał Toporowski
  */

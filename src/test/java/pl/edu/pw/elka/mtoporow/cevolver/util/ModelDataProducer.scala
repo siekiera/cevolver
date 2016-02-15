@@ -32,12 +32,21 @@ object ModelDataProducer {
       SerializationUtil.serialize(new File(dir, datasetId + "_fazy.dat"), cdPhase)
 
       val cdAbsError = newDataForFreqs("Wykres błędów na amplitudach zestawu nr " + DataHolder.getCurrentId)
-      cdAbsError.addSeries("Błąd względny na amplitudach", checker.errorAbs())
+      cdAbsError.addSeries("Błąd bezwzględny na amplitudach", checker.errorAbs())
       SerializationUtil.serialize(new File(dir, datasetId + "_błąd_amp.dat"), cdAbsError)
 
       val cdPhaseError = newDataForFreqs("Wykres błędów na fazach zestawu nr")
       cdPhaseError.addSeries("Błąd bezwzględny na fazach", checker.errorPhase())
       SerializationUtil.serialize(new File(dir, datasetId + "_błąd_faz.dat"), cdPhaseError)
+
+      val cdRelAbsError = newDataForFreqs("Wykres błędów na amplitudach zestawu nr " + DataHolder.getCurrentId)
+      cdRelAbsError.addSeries("Błąd względny na amplitudach", checker.relErrorAbs())
+      SerializationUtil.serialize(new File(dir, datasetId + "_błąd_w_amp.dat"), cdRelAbsError)
+
+      val cdRelPhaseError = newDataForFreqs("Wykres błędów na fazach zestawu nr")
+      cdRelPhaseError.addSeries("Błąd względny na fazach", checker.relErrorPhase())
+      SerializationUtil.serialize(new File(dir, datasetId + "_błąd_w_faz.dat"), cdRelPhaseError)
+
 
     }
   }

@@ -81,7 +81,6 @@ class Solver {
       operators.add(operator)
     }
     result.eo = new EvolutionPipeline[EvolutionaryAlgorithm.C](operators)
-    // TODO - dodać case'y też tu
     result.fe = new SimpleFitnessEvaluator(parameters.fitnessEvaluator.paramValueCasted[Double](RegisteredParams.PUNISHMENT_RATIO))
     result.ss = parameters.selectionStrategy.partType match {
       case SSType.RANK => new RankSelection()

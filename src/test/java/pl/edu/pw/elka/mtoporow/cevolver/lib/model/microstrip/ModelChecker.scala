@@ -34,6 +34,10 @@ class ModelChecker(val modelProducer: (Distances, MicrostripParams) => AbstractC
 
   def errorPhase() = MatrixOps.absoluteErrorPhase(_calculatedResponse.value, _externallyCalculatedResponse.value)
 
+  def relErrorAbs() = MatrixOps.relativeErrorAbs(_calculatedResponse.value, _externallyCalculatedResponse.value)
+
+  def relErrorPhase() = MatrixOps.relativeErrorPhase(_calculatedResponse.value, _externallyCalculatedResponse.value)
+
   def calculatedResponse() = _calculatedResponse
 
   def externallyCalculatedResponse() = _externallyCalculatedResponse

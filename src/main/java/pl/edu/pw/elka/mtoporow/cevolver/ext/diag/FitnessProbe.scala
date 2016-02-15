@@ -15,8 +15,8 @@ import scala.collection.immutable.NumericRange
  * @author Michał Toporowski
  */
 object FitnessProbe {
-  private val STEP = 0.0001
-  private val MARGIN = 0.005
+  private val STEP = 0.0005
+  private val MARGIN = 0.05
 
   /**
    * Zwraca wartości funkcji celu w postaci wykresu z dwiema seriami:

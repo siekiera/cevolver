@@ -38,7 +38,7 @@ class MicrostripLineModelTest extends FunSuite {
       printf("Błąd bezwzględny na fazach: (%s)\n", errorPhase.mkString(", "))
       val avgErrorPhase = MatrixOps.avg(errorPhase)
       printf("Wartość średnia: %s, min: %s, max: %s\n", avgErrorPhase, errorPhase.min, errorPhase.max)
-      if (avgErrorAbs > 0.1 || avgErrorPhase > 0.2) {
+      if (avgErrorAbs > 0.025 || avgErrorPhase > 0.2) {
         failed += DataHolder.getCurrentId
       }
     }

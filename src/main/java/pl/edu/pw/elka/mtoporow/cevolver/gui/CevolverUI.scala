@@ -143,7 +143,6 @@ object CevolverUI extends JFXApp {
       null
     }
 
-    // TODO
     override def succeeded(): Unit = {
       expectedResLabel.text = "Oczekiwany wynik: " + expResult
       resultLabel.text = "Wynik" + result.toString
