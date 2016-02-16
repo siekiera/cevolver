@@ -24,6 +24,7 @@ object RegisteredParams {
   val PROBABILITY = new ParamDef("probability", classOf[Double])
   val STANDARD_DEVIATION = new ParamDef("standardDeviation", classOf[Double])
   val TARGET_FITNESS = new ParamDef("targetFitness", classOf[Double])
+  val OFFSPRING_MOD = new ParamDef("offspringMod", classOf[Integer])
 
   /**
    * Mapa zawierająca parametry wymagane przez dany typ algorytmu
@@ -41,6 +42,8 @@ object RegisteredParams {
   put(EOType.PARAMETER_AVG_VAL_CROSSOVER, PROBABILITY)
   put(SSType.SUS, PROBABILITY)
   put(SSType.TOURNAMENT, PROBABILITY)
+  put(SSType.ES_PLUS, OFFSPRING_MOD)
+  put(SSType.ES_COMMA, OFFSPRING_MOD)
 
   /**
    * Umieszcza elementy w mapie partsParams

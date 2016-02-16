@@ -17,6 +17,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResp
  * @author Michał Toporowski
  */
 class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, private val verboseLevel: VerboseLevel) {
+  private val rng = new MersenneTwisterRNG()
   private val progressWriteExecutor = new AsyncRunner()
   private val fitnessTrace = new JArrayList[Double]()
 
@@ -35,7 +36,6 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
   /**
    * Rozwiązuje problem
    *
-   * @param data dane wejściowe
    * @return wszystkie wyniki
    */
   def solveWithAllResults() = {
@@ -53,12 +53,23 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
    * @return obiekt typu EvolutionEngine
    */
   private def prepareEngine() = {
-    val engine: EvolutionEngine[C] = new GenerationalEvolutionEngine[C](
-      parameters.cf,
-      parameters.eo,
-      parameters.fe,
-      parameters.ss,
-      new MersenneTwisterRNG())
+    val engine: EvolutionEngine[C] = if (parameters.es != null) {
+      new EvolutionStrategyEngine[C](
+        parameters.cf,
+        parameters.eo,
+        parameters.fe,
+        parameters.es.plusSelection,
+        parameters.es.offspringModifier,
+        rng
+      )
+    } else {
+      new GenerationalEvolutionEngine[C](
+        parameters.cf,
+        parameters.eo,
+        parameters.fe,
+        parameters.ss,
+        rng)
+    }
 
     engine.addEvolutionObserver(new EvolutionObserver[C] {
       override def populationUpdate(data: PopulationData[_ <: C]): Unit = {

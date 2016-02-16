@@ -6,9 +6,9 @@ import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.{RankSelection, RouletteWheelSelection, StochasticUniversalSampling, TournamentSelection}
 import org.uncommons.watchmaker.framework.termination.{GenerationCount, Stagnation, TargetFitness}
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm, InternalAlgorithmParams}
 
 /**
  * Silnik rozwiązujący problem
@@ -88,8 +88,13 @@ class Solver {
       case SSType.ROULETTE_WHEEL => new RouletteWheelSelection()
       case SSType.SUS => new StochasticUniversalSampling()
       case SSType.TOURNAMENT => new TournamentSelection(readProbability(parameters.selectionStrategy))
+      case _ => null
     }
-
+    result.es = parameters.selectionStrategy.partType match {
+      case SSType.ES_PLUS => ESParams(plusSelection = true, parameters.selectionStrategy.paramValueCasted(RegisteredParams.OFFSPRING_MOD))
+      case SSType.ES_COMMA => ESParams(plusSelection = false, parameters.selectionStrategy.paramValueCasted(RegisteredParams.OFFSPRING_MOD))
+      case _ => null
+    }
     result.tc = parameters.terminationCondition.partType match {
       case TCType.GENERATION_COUNT => new GenerationCount(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT))
       case TCType.STAGNATION => new Stagnation(parameters.terminationCondition.paramValueCasted[Int](RegisteredParams.GENERATION_COUNT), result.fe.isNatural)

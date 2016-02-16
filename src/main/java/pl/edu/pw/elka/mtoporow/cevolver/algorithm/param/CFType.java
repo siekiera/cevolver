@@ -1,7 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
 
 /**
- * Klasa X
+ * Typ fabryki osobników
  * Data utworzenia: 27.05.15, 15:59
  *
  * @author Michał Toporowski
