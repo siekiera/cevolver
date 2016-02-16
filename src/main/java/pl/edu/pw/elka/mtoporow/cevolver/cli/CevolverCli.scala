@@ -49,7 +49,6 @@ object CevolverCli {
           case Array("datasets") => printDataSets()
           case Array("pop", count@_) => printLastPopulation(count)
           case Array("store") => store()
-          case Array("storec") => storec()
           case Array("fprobe") => fitnessProbe()
           case Array("fpcsv") => fitnessProbeCsv()
           case Array("run") => run(VerboseLevel.allOff())
@@ -175,20 +174,7 @@ object CevolverCli {
     if (lastResult != null) {
       // Ślad funkcji celu
       Exporter.serialize(new File(dir, timePart + ".csv"), lastResult.fitnessTrace)
-    }
-  }
-
-  /**
-   * Zapisuje do plików parametry algorytmu i ślad funkcji celu jako ChartData
-   */
-  private def storec(): Unit = {
-    // Katalog: ${USER_HOME}/cevolver_out
-    val dir = GeneralConstants.OUTPUT_DIR
-    val timePart = TimeUtil.nowAsNoSepString()
-    // Parametry algorytmu
-    PropertiesUtil.storeToFile(properties, new File(dir, timePart + ".properties"), null)
-    if (lastResult != null) {
-      // Ślad funkcji celu
+      // Ślad funkcji celu jako chartData
       val chartFile = new File(dir, timePart + ".cht")
       val chartData: ChartData = new ChartData("Wykres wartości funkcji celu", "Nr pokolenia", null)
       chartData.addSeries("Przebieg: " + timePart, lastResult.fitnessTrace)

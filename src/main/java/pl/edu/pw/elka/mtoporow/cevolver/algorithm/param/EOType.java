@@ -6,10 +6,11 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  *
  * @author Michał Toporowski
  */
-public enum EOType implements AlgorithmPartType  {
+public enum EOType implements AlgorithmPartType {
     SIMPLE_MUTATION,
     DIST_ARRAY_CROSSOVER,
     INVERSION,
     STANDARD_GAUSSIAN_MUTATION,
-    AVERAGE_VALUE_CROSSOVER
+    AVERAGE_VALUE_CROSSOVER,
+    PARAMETER_AVG_VAL_CROSSOVER
 }

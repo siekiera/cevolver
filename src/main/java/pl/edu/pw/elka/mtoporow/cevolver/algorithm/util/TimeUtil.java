@@ -11,7 +11,7 @@ import java.util.Date;
  * @author Michał Toporowski
  */
 public final class TimeUtil {
-    private static final DateFormat NO_SEP_FORMAT = new SimpleDateFormat("YYYYMMDDHHmmss");
+    private static final DateFormat NO_SEP_FORMAT = new SimpleDateFormat("YYYYMMddHHmmss");
 
     private TimeUtil() {
 

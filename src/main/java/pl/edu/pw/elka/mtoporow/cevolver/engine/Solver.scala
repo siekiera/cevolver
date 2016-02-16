@@ -77,6 +77,7 @@ class Solver {
         case EOType.STANDARD_GAUSSIAN_MUTATION => new StandardGaussianMutation(probability,
           opType.paramValueCasted(RegisteredParams.STANDARD_DEVIATION))
         case EOType.AVERAGE_VALUE_CROSSOVER => new AverageValueCrossover(probability)
+        case EOType.PARAMETER_AVG_VAL_CROSSOVER => new ParameterAverageValueCrossover(probability)
       }
       operators.add(operator)
     }
