@@ -38,8 +38,9 @@ object FourierSolver {
   private def findNext2p(n: Int) = 1 << (32 - Integer.numberOfLeadingZeros(n - 1))
 
   def main(args: Array[String]) {
-    DataHolder.load("20")
+    DataHolder.load("0018")
     calculate()
+    println("OK.")
   }
 
 }
