@@ -23,7 +23,6 @@ public class SelfAdaptatingMutation extends BaseMutation {
     private final double tau0 = C / Math.sqrt(2 * n);
     private final double tau = C / Math.sqrt(2 * Math.sqrt(n));
     private final double randomCoeffScalar = 0.01 * DataHolder.getCurrent().measurementParams().getTotalLength();
-    private final RealVector initialDeviations = new ArrayRealVector(n, randomCoeffScalar);
 
     public SelfAdaptatingMutation(Probability probability) {
         super(probability);
@@ -33,7 +32,7 @@ public class SelfAdaptatingMutation extends BaseMutation {
     protected AbstractCanalModel mutate(final AbstractCanalModel candidate, final Random rng) {
         RealVector deviations = candidate.algorithmTempVector();
         if (deviations == null) {
-            deviations = initialDeviations;
+            deviations = new ArrayRealVector(n, randomCoeffScalar);
         }
         // Mutacja odchyleń standardowych
         RealVector mutatedDeviations = deviations.map(s -> s * expNormal(tau0, rng) * expNormal(tau, rng));
