@@ -8,7 +8,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  */
 public enum EOType implements AlgorithmPartType {
     /**
-     * Mutacja polegająca na dodawaniu wartości losowej
+     * Mutacja polegająca na dodawaniu wartości losowej o rozkładzie normalnym
      */
     SIMPLE_MUTATION,
     /**
@@ -20,7 +20,7 @@ public enum EOType implements AlgorithmPartType {
      */
     INVERSION,
     /**
-     * Mutacja polegająca na przemnożeniu wartości przez Gaussian
+     * Mutacja polegająca na przemnożeniu wartości przez wartość o rozkładzie normalnym
      */
     STANDARD_GAUSSIAN_MUTATION,
     /**
@@ -30,5 +30,9 @@ public enum EOType implements AlgorithmPartType {
     /**
      * Krzyżowanie uśredniające po parametrach
      */
-    PARAMETER_AVG_VAL_CROSSOVER
+    PARAMETER_AVG_VAL_CROSSOVER,
+    /**
+     * Samo-adoptująca mutacja
+     */
+    SELF_ADAPTATING_MUTATION
 }

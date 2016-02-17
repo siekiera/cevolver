@@ -10,6 +10,10 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams
  * @author Michał Toporowski
  */
 abstract class AbstractCanalModel {
+  /**
+   * Zmienna na użytek zapisywania tymczasowych parametrów algorytmu (np. odchyleń standardowych mutacji)
+   */
+  var algorithmTempVector: RealVector = _
   private var _lastResponse: CanalResponse = _
 
   /**
