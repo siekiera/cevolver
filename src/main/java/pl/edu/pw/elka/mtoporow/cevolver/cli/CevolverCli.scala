@@ -11,6 +11,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Exporter
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
 import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.FitnessProbe
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps
 import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
 
@@ -47,12 +48,14 @@ object CevolverCli {
           case Array("props") => printAllProperties()
           case Array("mparams") => printMeasurementParams()
           case Array("datasets") => printDataSets()
-          case Array("pop", count@_) => printLastPopulation(count)
+          case Array("pop", count@_) => printLastPopulation(getInt(count))
           case Array("store") => store()
           case Array("fprobe") => fitnessProbe()
           case Array("fpcsv") => fitnessProbeCsv()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
+          case Array("multi", n@_) => runMultipleTimes(getInt(n), VerboseLevel.allOff())
+          case Array("multi", n@_, verbose@_) => runMultipleTimes(getInt(n), VerboseLevel(verbose))
           case _ => println("Nieznane polecenie!")
         }
       } catch {
@@ -99,6 +102,42 @@ object CevolverCli {
     } catch {
       case e: Exception => println("Błąd podczas uruchamiania algorytmu: " + e.getMessage)
     }
+  }
+
+  /**
+   * Uruchamia algorytm wiele razy zapisując ślad funkcji celu oraz średnią
+   *
+   * @param n liczba iteracji
+   * @param verboseLevel poziom logowania
+   */
+  private def runMultipleTimes(n: Int, verboseLevel: VerboseLevel): Unit = {
+    val results = new Array[Array[Double]](n)
+    for (i <- 0 until n) {
+      // Uruchamiamy
+      run(verboseLevel)
+      // Zapamiętujemy wynik
+      results(i) = JavaVectorOps.toDoubleArray(lastResult.fitnessTrace)
+    }
+    // Zapisujemy wynik
+    val timePart = TimeUtil.nowAsNoSepString()
+    val dir = GeneralConstants.subdir(timePart)
+    // Ślad funkcji celu
+    Exporter.serialize(new File(dir, "funkcja_celu.csv"), results)
+    // Ślad funkcji celu jako chartData
+    val chartFile = new File(dir, "funkcja_celu.cht")
+    val chartData: ChartData = new ChartData("Wykres wartości funkcji celu", "Nr pokolenia", null)
+    for (i <- 0 until n) {
+      chartData.addSeries("Przebieg: " + i, results(i))
+    }
+    SerializationUtil.serialize(chartFile, chartData)
+    // Średnia wartość f. celu
+    val avg = JavaVectorOps.avg(JavaVectorOps.createMatrix(results))
+    Exporter.serialize(new File(dir, "średnia.csv"), avg)
+    val avgChartData = new ChartData("Wykres średnich wartości f. celu", "Nr pokolenia", null)
+    avgChartData.addSeries("Wartość średnia f. celu", avg)
+    SerializationUtil.serialize(new File(dir, "średnia.cht"), avgChartData)
+    // Parametry algorytmu
+    PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), null)
   }
 
   /**
@@ -154,11 +193,11 @@ object CevolverCli {
    * Wypisuje populację z ostatniego eksperymentu
    * @param count liczba wyników do wypisana
    */
-  private def printLastPopulation(count: String): Unit = {
+  private def printLastPopulation(count: Int): Unit = {
     if (lastResult == null) {
       println("Brak danych!")
     } else {
-      CevolverApp.printAllResults(lastResult.population, count.toInt)
+      CevolverApp.printAllResults(lastResult.population, count)
     }
   }
 
@@ -207,6 +246,14 @@ object CevolverCli {
     val file = new File(GeneralConstants.OUTPUT_DIR, DataHolder.getCurrentId + "_probe.csv")
     Exporter.serialize(file, matrix)
   }
+
+  /**
+   * Konwertuje string do integera
+   *
+   * @param string string
+   * @return integer
+   */
+  private def getInt(string: String) = string.toInt
 
   /**
    * Wypisuje informacje o programie

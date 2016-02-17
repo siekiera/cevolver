@@ -18,4 +18,16 @@ object GeneralConstants {
     dir.mkdirs()
     dir
   }
+
+  /**
+   * Zwraca podkatalog w katalogu domyślnym (tworzy, jeśli nie istnieje)
+   *
+   * @param name nazwa podkatalogu
+   * @return obiekt podkatalogu
+   */
+  def subdir(name: String): File = {
+    val dir = new File(OUTPUT_DIR, name)
+    dir.mkdir()
+    dir
+  }
 }
