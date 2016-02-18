@@ -112,11 +112,13 @@ object CevolverCli {
    */
   private def runMultipleTimes(n: Int, verboseLevel: VerboseLevel): Unit = {
     val results = new Array[Array[Double]](n)
+    val times = new Array[Double](n)
     for (i <- 0 until n) {
       // Uruchamiamy
       run(verboseLevel)
       // Zapamiętujemy wynik
       results(i) = JavaVectorOps.toDoubleArray(lastResult.fitnessTrace)
+      times(i) = lastResult.durationSec
     }
     // Zapisujemy wynik
     val timePart = TimeUtil.nowAsNoSepString()
@@ -141,6 +143,8 @@ object CevolverCli {
     // Wynikowa populacja ostatniego
     val population = Conversions.javaToScalaList(lastResult.population).map(c => c.getCandidate.distances.toStringMM)
     Exporter.serialize(new File(dir, "populacja.txt"), Conversions.scalaToJavaList(population))
+    // Czasy wykonania
+    Exporter.serialize(new File(dir, "czasy.csv"), Array(times))
   }
 
   /**
