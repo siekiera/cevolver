@@ -137,7 +137,7 @@ object CevolverCli {
     avgChartData.addSeries("Wartość średnia f. celu", avg)
     SerializationUtil.serialize(new File(dir, "średnia.cht"), avgChartData)
     // Parametry algorytmu
-    PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), null)
+    PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), "Zestaw danych: " + DataHolder.getCurrentId)
   }
 
   /**
