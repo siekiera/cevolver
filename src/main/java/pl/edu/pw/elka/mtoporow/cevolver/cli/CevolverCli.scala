@@ -138,6 +138,9 @@ object CevolverCli {
     SerializationUtil.serialize(new File(dir, "średnia.cht"), avgChartData)
     // Parametry algorytmu
     PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), "Zestaw danych: " + DataHolder.getCurrentId)
+    // Wynikowa populacja ostatniego
+    val population = Conversions.javaToScalaList(lastResult.population).map(c => c.getCandidate.distances.toStringMM)
+    Exporter.serialize(new File(dir, "populacja.txt"), Conversions.scalaToJavaList(population))
   }
 
   /**
