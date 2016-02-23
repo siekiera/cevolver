@@ -93,6 +93,7 @@ public class ChartViewer extends Application {
 
         lineChart.setMinSize(800, 600);
         Scene scene = new Scene(content);
+        scene.getStylesheets().add("chartstyle.css");
         stage.setScene(scene);
         stage.show();
     }
