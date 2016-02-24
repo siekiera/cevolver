@@ -113,12 +113,19 @@ object CevolverCli {
   private def runMultipleTimes(n: Int, verboseLevel: VerboseLevel): Unit = {
     val results = new Array[Array[Double]](n)
     val times = new Array[Double](n)
+    val avgFitnessVals = new Array[Double](n)
+    val bestAvgFitnessVals = new Array[Double](n)
+    val bestPercentage = 10.0
     for (i <- 0 until n) {
       // Uruchamiamy
       run(verboseLevel)
       // Zapamiętujemy wynik
       results(i) = JavaVectorOps.toDoubleArray(lastResult.fitnessTrace)
       times(i) = lastResult.durationSec
+      val population = Conversions.javaToScalaList(lastResult.population)
+      avgFitnessVals(i) = population.map(_.getFitness).sum / population.size
+      val bestCount = (bestPercentage * population.size / 100.0).toInt
+      bestAvgFitnessVals(i) = population.slice(0, bestCount).map(_.getFitness).sum / bestCount
     }
     // Zapisujemy wynik
     val timePart = TimeUtil.nowAsNoSepString()
@@ -141,10 +148,12 @@ object CevolverCli {
     // Parametry algorytmu
     PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), "Zestaw danych: " + DataHolder.getCurrentId)
     // Wynikowa populacja ostatniego
-    val population = Conversions.javaToScalaList(lastResult.population).map(c => c.getCandidate.distances.toStringMM)
-    Exporter.serialize(new File(dir, "populacja.txt"), Conversions.scalaToJavaList(population))
+    val population = Conversions.javaToScalaList(lastResult.population).map(c => c.getCandidate.distances.distances.toArray).toArray
+    Exporter.serialize(new File(dir, "populacja.csv"), population)
     // Czasy wykonania
     Exporter.serialize(new File(dir, "czasy.csv"), Array(times))
+    // Uśredniona wartość FC wszystkich i bestPercentage% najlepszych
+    Exporter.serialize(new File(dir, "fc.csv"), Array(avgFitnessVals, bestAvgFitnessVals))
   }
 
   /**
