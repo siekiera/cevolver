@@ -7,5 +7,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  * @author Michał Toporowski
  */
 public enum FEType implements AlgorithmPartType {
-    DEFAULT
+    DEFAULT,
+    PHASE_DEPENDENT
 }

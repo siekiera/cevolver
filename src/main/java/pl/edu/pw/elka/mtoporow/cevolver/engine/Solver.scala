@@ -83,7 +83,12 @@ class Solver {
       operators.add(operator)
     }
     result.eo = new EvolutionPipeline[EvolutionaryAlgorithm.C](operators)
-    result.fe = new SimpleFitnessEvaluator(parameters.fitnessEvaluator.paramValueCasted[Double](RegisteredParams.PUNISHMENT_RATIO))
+    val pf = parameters.fitnessEvaluator.partType match {
+      case FEType.DEFAULT => DefaultPF
+      case FEType.PHASE_DEPENDENT => PhaseDependentPF
+      case _ => null
+    }
+    result.fe = new BaseFitnessEvaluator(parameters.fitnessEvaluator.paramValueCasted[Double](RegisteredParams.PUNISHMENT_RATIO), pf)
     result.ss = parameters.selectionStrategy.partType match {
       case SSType.RANK => new RankSelection()
       case SSType.ROULETTE_WHEEL => new RouletteWheelSelection()
