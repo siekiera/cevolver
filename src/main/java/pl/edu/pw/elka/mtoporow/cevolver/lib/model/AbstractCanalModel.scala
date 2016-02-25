@@ -17,11 +17,18 @@ abstract class AbstractCanalModel {
   private var _lastResponse: CanalResponse = _
 
   /**
-   * Odległości miejsc nieciągłości od początku
+   * Wektor odległości modelu (wszystkich jego cech)
    *
    * @return
    */
   def distances: Distances
+
+  /**
+   * Zwraca wektor długości modelu (poszukiwane zmienne)
+   *
+   * @return
+   */
+  def lengths: RealVector
 
   /**
    * Odpowiedź kanału

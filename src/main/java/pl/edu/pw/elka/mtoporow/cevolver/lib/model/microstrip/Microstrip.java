@@ -1,6 +1,7 @@
-package pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt;
+package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip;
 
 import org.apache.commons.math3.complex.Complex;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.PhysicalConstants;
 
 /**
@@ -9,7 +10,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.PhysicalConstants;
  *
  * @author Michał Toporowski
  */
-public class MicrostripAlt {
+public class Microstrip {
     private final double w;
     private final double t;
     private final double l;
@@ -25,7 +26,7 @@ public class MicrostripAlt {
      * @param h    wysokość dielektrycznego podłoża (m)
      * @param epsr względna przenikalność elektryczna podłoża
      */
-    public MicrostripAlt(double w, double t, double l, double h, double epsr) {
+    public Microstrip(double w, double t, double l, double h, double epsr) {
         this.w = w;
         this.t = t;
         this.l = l;
@@ -66,7 +67,7 @@ public class MicrostripAlt {
      * @param freq częstotliwość (Hz)
      * @return Macierz T
      */
-    public TMatrixAlt getTMatrix(Complex z01, double freq) {
+    public TMatrix getTMatrix(Complex z01, double freq) {
         double theta = getELen(freq);
         Complex r = Complex.valueOf(z0).divide(z01);
         Complex rInv = Complex.ONE.divide(r);
@@ -75,10 +76,15 @@ public class MicrostripAlt {
         Complex t22 = Complex.valueOf(Math.cos(theta)).add(commonSubstrate);
         Complex t12 = Complex.I.multiply(0.5).multiply(r.subtract(rInv)).multiply(Math.sin(theta));
         Complex t21 = t12.negate();
-        return new TMatrixAlt(t11, t12, t21, t22);
+        return new TMatrix(t11, t12, t21, t22);
     }
 
 
+    /**
+     * Zwraca impedancję charakterystyczną tego mikropaska
+     *
+     * @return impedancja
+     */
     public double getZ0() {
         return z0;
     }

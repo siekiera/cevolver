@@ -44,9 +44,9 @@ class MicrostripTest extends org.scalatest.FunSuite {
    * @return
    */
   private def performTest(epsr: Double, wmm: Double, hmm: Double, lmm: Double, fGhz: Double, expectedZ0: Double, expectedELDeg: Double) = {
-    val microstrip = new Microstrip(Units.MILLI.toSI(wmm), Units.MILLI.toSI(lmm), 0, Units.MILLI.toSI(hmm), epsr)
-    val z0 = microstrip.charImpedance()
-    val el = microstrip.electricalLength(Units.GIGA.toSI(fGhz))
+    val microstrip = new Microstrip(Units.MILLI.toSI(wmm), 0, Units.MILLI.toSI(lmm), Units.MILLI.toSI(hmm), epsr)
+    val z0 = microstrip.getZ0
+    val el = microstrip.getELen(Units.GIGA.toSI(fGhz))
     println("Obliczone Z0: " + z0 + "; oczekiwane: " + expectedZ0)
     (100 * z0).round == (100 * expectedZ0).round
     val expectedEL = Units.DEG.toSI(expectedELDeg)

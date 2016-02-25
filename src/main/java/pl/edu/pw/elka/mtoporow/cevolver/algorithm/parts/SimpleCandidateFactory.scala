@@ -6,7 +6,6 @@ import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt.MicrostripLineModelAlt
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -25,6 +24,6 @@ class SimpleCandidateFactory extends AbstractCandidateFactory[EvolutionaryAlgori
     val distances = randomCoeffs.mapMultiply(measurementParams.getTotalLength / sum)
     // do modelu wrzucamy wektor N-elementowy
     val modelDistances = new Distances(MatrixOps.dropLast(distances))
-    new MicrostripLineModelAlt(modelDistances, measurementParams.getMicrostripParams)
+    new MicrostripLineModel(modelDistances, measurementParams.getMicrostripParams)
   }
 }

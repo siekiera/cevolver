@@ -2,7 +2,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
 import org.scalatest.FunSuite
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt.MicrostripLineModelAlt
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, Distances}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -17,10 +16,6 @@ class MicrostripLineModelTest extends FunSuite {
 
   test("Microstrip line model response calculation test") {
     testResponse((d, p) => new MicrostripLineModel(d, p))
-  }
-
-  test("Microstrip line model alternative response calculation test") {
-    testResponse((d, p) => new MicrostripLineModelAlt(d, p))
   }
 
   private def testResponse(modelProducer: (Distances, MicrostripParams) => AbstractCanalModel): Unit = {

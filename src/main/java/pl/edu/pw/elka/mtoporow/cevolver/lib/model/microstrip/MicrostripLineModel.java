@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.mtoporow.cevolver.lib.model.alt;
+package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip;
 
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -7,21 +7,21 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps;
 
 /**
- * Model linii mikropaskowej - alternatywna implementacja
+ * Model linii mikropaskowej
  * Data utworzenia: 29.01.16, 15:56
  *
  * @author Michał Toporowski
  */
-public class MicrostripLineModelAlt extends AbstractCanalModel {
+public class MicrostripLineModel extends AbstractCanalModel {
 
     private final Distances dists;
     private final MicrostripParams pars;
 
-    public MicrostripLineModelAlt(Distances distances, MicrostripParams pars) {
+    public MicrostripLineModel(Distances distances, MicrostripParams pars) {
         this.dists = distances;
         this.pars = pars;
     }
@@ -29,6 +29,12 @@ public class MicrostripLineModelAlt extends AbstractCanalModel {
     @Override
     public Distances distances() {
         return dists;
+    }
+
+    @Override
+    public RealVector lengths() {
+        // Jedyne odległości w tym modelu to długości
+        return dists.distances();
     }
 
     @Override
@@ -51,22 +57,22 @@ public class MicrostripLineModelAlt extends AbstractCanalModel {
      * @return odpowiedź (S11) jako liczba zespolona
      */
     private Complex calcResponse(double freq, Complex z01) {
-        TMatrixAlt tMatrixAlt = TMatrixAlt.identity();
+        TMatrix tMatrix = TMatrix.identity();
         boolean thick = false;
         for (double dist : JavaVectorOps.asIterable(dists.distances())) {
-            MicrostripAlt microstripAlt = new MicrostripAlt(thick ? pars.biggerW() : pars.w(), pars.t(), dist, pars.h(), pars.epsr());
-            TMatrixAlt matrixAlt = microstripAlt.getTMatrix(z01, freq);
-            tMatrixAlt = tMatrixAlt.multiply(matrixAlt);
+            Microstrip microstrip = new Microstrip(thick ? pars.biggerW() : pars.w(), pars.t(), dist, pars.h(), pars.epsr());
+            TMatrix matrixAlt = microstrip.getTMatrix(z01, freq);
+            tMatrix = tMatrix.multiply(matrixAlt);
             thick = !thick;
         }
-        MicrostripAlt lastM = new MicrostripAlt(thick ? pars.biggerW() : pars.w(), pars.t(), dists.last(), pars.h(), pars.epsr());
-        TMatrixAlt matrixAlt = lastM.getTMatrix(z01, freq);
-        tMatrixAlt = tMatrixAlt.multiply(matrixAlt);
-        return tMatrixAlt.getS11();
+        Microstrip lastM = new Microstrip(thick ? pars.biggerW() : pars.w(), pars.t(), dists.last(), pars.h(), pars.epsr());
+        TMatrix matrixAlt = lastM.getTMatrix(z01, freq);
+        tMatrix = tMatrix.multiply(matrixAlt);
+        return tMatrix.getS11();
     }
 
     @Override
     public AbstractCanalModel createNew(Distances distances) {
-        return new MicrostripLineModelAlt(distances, pars);
+        return new MicrostripLineModel(distances, pars);
     }
 }
