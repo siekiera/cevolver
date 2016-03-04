@@ -2,8 +2,8 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets;
 
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.RealVector;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.ModelType;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 
 import java.util.Objects;
 
@@ -34,10 +34,11 @@ public class MeasurementParams {
      * Impedancja na wejściu
      */
     private Complex impedance;
+
     /**
-     * Liczba nieciągłości
+     * Typ modelu
      */
-    private int discontinuitiesCount;
+    private ModelType modelType;
 
     public RealVector getFrequencies() {
         Objects.requireNonNull(frequencies, "Frequencies not set");
@@ -65,14 +66,6 @@ public class MeasurementParams {
         this.totalLength = totalLength;
     }
 
-    public int getDiscontinuitiesCount() {
-        return discontinuitiesCount;
-    }
-
-    public void setDiscontinuitiesCount(int discontinuitiesCount) {
-        this.discontinuitiesCount = discontinuitiesCount;
-    }
-
     public Complex getImpedance() {
         return impedance;
     }
@@ -85,14 +78,22 @@ public class MeasurementParams {
         return 0;
     }
 
+    public ModelType getModelType() {
+        return modelType;
+    }
+
+    public void setModelType(ModelType modelType) {
+        this.modelType = modelType;
+    }
+
     @Override
     public String toString() {
         return "Parametry pomiaru: {" +
 //                "\n częstotliwości=" + frequencies +
+                "\n typ modelu=" + modelType +
                 "\n parametry mikropaska=" + microstripParams +
                 "\n długość całkowita=" + totalLength +
                 "\n impedancja=" + impedance +
-                "\n liczba punktów nieciągłości=" + discontinuitiesCount +
                 '}';
     }
 }

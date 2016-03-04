@@ -7,7 +7,6 @@ import org.uncommons.maths.random.Probability
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
  * Prosta implementacja mutacji
@@ -16,7 +15,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  * @param probability prawdopodobieństwo mutacji
  * @author Michał Toporowski
  */
-class SimpleMutation(private val probability: Probability) extends BaseMutation(probability) {
+class SimpleMutation(probability: Probability) extends BaseMutation(probability) {
 
   /**
    * Współczynnik przez który mnożona jest wartość losowa
@@ -43,14 +42,6 @@ class SimpleMutation(private val probability: Probability) extends BaseMutation(
         r
       }
     })
-    // Sprawdzamy, czy nie przekroczyło maxa
-//    val sum = MatrixOps.sum(newDists)
-//    val diff = DataHolder.getCurrent.measurementParams.getTotalLength - sum
-//    if (diff < 0) {
-//      // Na razie zmieniamy tylko ostatni TODO:: pewnie do zmiany
-//      newDists.setEntry(candidate.distances.distances.getDimension - 1,
-//        candidate.distances.last + diff)
-//    }
     candidate.createNew(new Distances(newDists))
   }
 }

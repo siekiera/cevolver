@@ -16,6 +16,11 @@ class AlgorithmParameters {
 
   var eliteCount: Int = _
 
+  /**
+   * Liczba oczekiwanych punktów odbić, z którymi uruchomiony będzie algorytm
+   */
+  var breakCount: Int = _
+
   var operators: List[AlgorithmPartParams[EOType]] = _
 
   var candidateFactory: AlgorithmPartParams[CFType] = _

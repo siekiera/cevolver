@@ -7,6 +7,7 @@ import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
 import org.uncommons.watchmaker.framework.selection.{RankSelection, RouletteWheelSelection, StochasticUniversalSampling, TournamentSelection}
 import org.uncommons.watchmaker.framework.termination.{GenerationCount, Stagnation, TargetFitness}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm._
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
 
@@ -64,8 +65,10 @@ class Solver {
     val result = new InternalAlgorithmParams
     result.populationSize = parameters.populationSize
     result.eliteCount = parameters.eliteCount
-    result.cf = parameters.candidateFactory.partType match {
-      case CFType.DEFAULT => new SimpleCandidateFactory
+    // TODO:: rozważyć wykorzystanie tu klasy MicrostripLineModelFactory
+    result.cf = DataHolder.getCurrent.measurementParams.getModelType match {
+      case ModelType.LONGBREAK => new FixedWidthCandidateFactory(parameters.breakCount)
+      case ModelType.SHORTBREAK => new ShortbreakCandidateFactory(parameters.breakCount)
     }
     val operators = new util.ArrayList[EvolutionaryAlgorithm.EO]()
     for (opType <- parameters.operators) {
@@ -78,7 +81,7 @@ class Solver {
           opType.paramValueCasted(RegisteredParams.STANDARD_DEVIATION))
         case EOType.AVERAGE_VALUE_CROSSOVER => new AverageValueCrossover(probability)
         case EOType.PARAMETER_AVG_VAL_CROSSOVER => new ParameterAverageValueCrossover(probability)
-        case EOType.SELF_ADAPTATING_MUTATION => new SelfAdaptatingMutation(probability)
+        case EOType.SELF_ADAPTATING_MUTATION => new SelfAdaptatingMutation(parameters.breakCount, probability)
       }
       operators.add(operator)
     }

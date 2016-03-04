@@ -4,20 +4,30 @@ import java.io.File
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripLineModel, ModelChecker}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.ModelChecker
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
 
 /**
  * Narzędzie produkujące wyniki sprawdzania modelu
  * Data utworzenia: 11.02.16, 15:30
+ *
+ * Sposób uruchamiania:
+ * ModelDataProducer -> dla wszystkich zestawów
+ * ModelDataProducer [regex] -> dla zestawów spełniających wyrażenie
+ *
  * @author Michał Toporowski
  */
 object ModelDataProducer {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
+    val checker = if (args.isEmpty) new ModelChecker() else new ModelChecker(args(0))
+    produce(checker)
+  }
+
+
+  private def produce(checker: ModelChecker) {
     val dir = GeneralConstants.OUTPUT_DIR
-    val checker = new ModelChecker((d, p) => new MicrostripLineModel(d, p))
     while (checker.loadNext()) {
       val datasetId = DataHolder.getCurrentId
 
@@ -47,7 +57,7 @@ object ModelDataProducer {
       cdRelPhaseError.addSeries("Błąd względny na fazach", checker.relErrorPhase())
       SerializationUtil.serialize(new File(dir, datasetId + "_błąd_w_faz.dat"), cdRelPhaseError)
 
-
+      println(s"Utworzono dane dla zestawu $datasetId")
     }
   }
 

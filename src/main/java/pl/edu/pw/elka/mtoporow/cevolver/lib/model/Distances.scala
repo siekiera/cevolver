@@ -1,7 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model
 
 import org.apache.commons.math3.linear.RealVector
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.Units
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -13,12 +12,6 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  * @author Michał Toporowski
  */
 class Distances(val distances: RealVector) {
-  /**
-   * Zwraca ostatnią odległośc
-   * @return ostatnia odległość
-   */
-  def last = DataHolder.getCurrent.measurementParams.getTotalLength - absolute.getEntry(distances.getDimension - 1)
-
   /**
    * Zwraca odległości bezwzględne (tzn. od początku linii)
    *

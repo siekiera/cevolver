@@ -4,7 +4,7 @@ import org.apache.commons.math3.linear.ArrayRealVector
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.FitnessFunction
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripLineModel, MicrostripParams}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{FixedWidthLineModel, MicrostripParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{CanalResponse, Distances}
 
 import scala.collection.immutable.NumericRange
@@ -65,7 +65,7 @@ object FitnessProbe {
     val data = range1.map(varDist1 => {
       Array(varDist1) ++ range2.map(varDist2 => {
         val dists = Array(varDist1, varDist2)
-        val model = new MicrostripLineModel(new Distances(new ArrayRealVector(dists)), params)
+        val model = new FixedWidthLineModel(new Distances(new ArrayRealVector(dists)), params)
         FitnessFunction(model, realResp, 0)
       })
     })
@@ -86,7 +86,7 @@ object FitnessProbe {
   private def getValues(xRange: NumericRange[Double], fixedDist: Double, realResp: CanalResponse, params: MicrostripParams, isFirstFixed: Boolean) = {
     xRange.map(varDist => {
       val dists = if (isFirstFixed) Array(fixedDist, varDist) else Array(varDist, fixedDist)
-      val model = new MicrostripLineModel(new Distances(new ArrayRealVector(dists)), params)
+      val model = new FixedWidthLineModel(new Distances(new ArrayRealVector(dists)), params)
       FitnessFunction(model, realResp, 0)
     }).toArray
   }

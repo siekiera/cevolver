@@ -1,7 +1,9 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
+import java.util
+
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, CanalResponse, Distances}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
@@ -9,10 +11,24 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  * Data utworzenia: 11.02.16, 15:05
  * @author Michał Toporowski
  */
-class ModelChecker(val modelProducer: (Distances, MicrostripParams) => AbstractCanalModel) {
-  private val datasetIterator = DataHolder.getAvailableDataSets.iterator()
+class ModelChecker private(val datasetIterator: util.Iterator[String]) {
   private var _calculatedResponse: CanalResponse = null
   private var _externallyCalculatedResponse: CanalResponse = null
+
+  /**
+   * Tworzy instancję klasy dla wszystkich zestawów danych
+   *
+   * @return instancja
+   */
+  def this() = this(DataHolder.getAvailableDataSets.iterator())
+
+  /**
+   * Tworzy instancję klasy dla zestawów danych o nazwach pasujących do wyrażenia regularnego
+   *
+   * @param regex wyrażenie reg.
+   * @return
+   */
+  def this(regex: String) = this(DataHolder.getMatchingDataSets(regex))
 
   def loadNext() = {
     val hasNext = datasetIterator.hasNext
@@ -26,7 +42,7 @@ class ModelChecker(val modelProducer: (Distances, MicrostripParams) => AbstractC
   private def testResponse(): Unit = {
     val dists = DataHolder.getCurrent.expectedDistances
     _externallyCalculatedResponse = DataHolder.getCurrent.canalResponse
-    val result = modelProducer(dists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
+    val result = MicrostripLineModelFactory.newModel(dists)
     _calculatedResponse = result.response(DataHolder.getCurrent.measurementParams)
   }
 

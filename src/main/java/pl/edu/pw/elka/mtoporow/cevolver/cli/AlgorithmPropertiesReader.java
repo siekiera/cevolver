@@ -41,6 +41,7 @@ public class AlgorithmPropertiesReader extends PropertiesReader {
         parameters.terminationCondition_$eq(readOne(TCType.class, "tc"));
         parameters.populationSize_$eq(readInt("populationSize"));
         parameters.eliteCount_$eq(readInt("eliteCount"));
+        parameters.breakCount_$eq(readIntWithDefault("breakCount", 2));
     }
 
     public AlgorithmParameters getParameters() {

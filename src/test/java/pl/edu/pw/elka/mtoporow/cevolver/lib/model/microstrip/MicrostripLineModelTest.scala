@@ -2,7 +2,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
 import org.scalatest.FunSuite
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{AbstractCanalModel, Distances}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 import scala.collection.mutable
@@ -14,12 +13,16 @@ import scala.collection.mutable
  */
 class MicrostripLineModelTest extends FunSuite {
 
-  test("Microstrip line model response calculation test") {
-    testResponse((d, p) => new MicrostripLineModel(d, p))
+  test("Fixed width line model response calculation test") {
+    testResponse("\\d.*")
   }
 
-  private def testResponse(modelProducer: (Distances, MicrostripParams) => AbstractCanalModel): Unit = {
-    val checker = new ModelChecker(modelProducer)
+  test("Shortbreak line model response calculation test") {
+    testResponse("s.*")
+  }
+
+  private def testResponse(regex: String): Unit = {
+    val checker = new ModelChecker(regex)
     val failed = new mutable.HashSet[String]()
     while (checker.loadNext()) {
       println("Zestaw danych: " + DataHolder.getCurrentId)

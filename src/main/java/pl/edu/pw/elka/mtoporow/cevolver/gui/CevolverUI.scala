@@ -8,7 +8,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{AlgorithmParameters, AlgorithmPartParams, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.FixedWidthLineModel
 
 import scala.collection.mutable
 import scalafx.Includes._
@@ -138,7 +138,7 @@ object CevolverUI extends JFXApp {
     override def call(): Void = {
       println("Obliczanie...")
       DataHolder.load(dataSetBox.value.value)
-      expResult = new MicrostripLineModel(DataHolder.getCurrent.expectedDistances, DataHolder.getCurrent.measurementParams.getMicrostripParams)
+      expResult = new FixedWidthLineModel(DataHolder.getCurrent.expectedDistances, DataHolder.getCurrent.measurementParams.getMicrostripParams)
       result = new Solver().solve(paramValues())
       null
     }

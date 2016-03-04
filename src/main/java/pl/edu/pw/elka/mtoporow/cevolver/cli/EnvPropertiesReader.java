@@ -1,10 +1,11 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli;
 
 import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.ModelType;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.LWDists;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.Units;
 
@@ -50,13 +51,16 @@ public class EnvPropertiesReader extends PropertiesReader {
         ));
         measurementParams.setImpedance(Complex.valueOf(readDouble("impedance")));
         measurementParams.setTotalLength(readDoubleInUnit("totalLength"));
-        measurementParams.setDiscontinuitiesCount(readInt("discontinuitiesCount"));
+        measurementParams.setModelType(readEnumWithDefault(ModelType.class, "model", ModelType.LONGBREAK));
         RealVector expectedDistances = readOptionalDoubles("discontinuities");
-        if (expectedDistances == null) {
-            expectedDistances = new ArrayRealVector();
-        }
         expectedDistances.mapMultiplyToSelf(UNIT.valueInSI());
-        this.expectedDistances = new Distances(expectedDistances);
+        if (measurementParams.getModelType() == ModelType.SHORTBREAK) {
+            RealVector expectedWidths = readOptionalDoubles("widths");
+            expectedWidths.mapMultiplyToSelf(UNIT.valueInSI());
+            this.expectedDistances = new LWDists(expectedDistances, expectedWidths);
+        } else {
+            this.expectedDistances = new Distances(expectedDistances);
+        }
 
     }
 

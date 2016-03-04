@@ -5,7 +5,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionaryAlgorithm
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.MicrostripLineModel
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.FixedWidthLineModel
 
 /**
  * Główna klasa aplikacji
@@ -35,7 +35,7 @@ object CevolverApp {
   }
 
   def getExpectedResult(expectedDists: Distances) = {
-    new MicrostripLineModel(expectedDists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
+    new FixedWidthLineModel(expectedDists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
   }
 
   def printAllResults(results: java.util.List[EvaluatedCandidate[EvolutionaryAlgorithm.C]], maxResults: Int): Unit = {

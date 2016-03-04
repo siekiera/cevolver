@@ -95,6 +95,27 @@ public abstract class PropertiesReader {
         return Double.parseDouble(propVal);
     }
 
+    protected int readIntWithDefault(final String propName, final int defaultValue) {
+        String propVal = properties.getProperty(propName);
+        if (propVal != null) {
+            return Integer.parseInt(propVal);
+        } else {
+            return defaultValue;
+        }
+    }
+
+    protected <T extends Enum<T>> T readEnumWithDefault(final Class<T> enumClass, final String propName, final T defaultValue) {
+        String propVal = properties.getProperty(propName);
+        if (propVal != null) {
+            try {
+                return Enum.valueOf(enumClass, propVal.toUpperCase());
+            } catch (Exception ignored) {
+
+            }
+        }
+        return defaultValue;
+    }
+
     protected RealVector readOptionalDoubles(String propName) {
         String propVal = properties.getProperty(propName);
         if (propVal != null) {
@@ -102,7 +123,7 @@ public abstract class PropertiesReader {
             double[] doubleVals = Arrays.stream(values).mapToDouble(Double::valueOf).toArray();
             return new ArrayRealVector(doubleVals);
         }
-        return null;
+        return new ArrayRealVector();
     }
 
 }

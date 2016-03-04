@@ -19,13 +19,16 @@ import java.util.Random;
 public class SelfAdaptatingMutation extends BaseMutation {
     private static final double C = 1.0;
     /* To jest inicjalizowane raz na uruchomienie algorytmu */
-    private final int n = DataHolder.getCurrent().measurementParams().getDiscontinuitiesCount();
-    private final double tau0 = C / Math.sqrt(2 * n);
-    private final double tau = C / Math.sqrt(2 * Math.sqrt(n));
+    private final int n;
+    private final double tau0;
+    private final double tau;
     private final double randomCoeffScalar = 0.01 * DataHolder.getCurrent().measurementParams().getTotalLength();
 
-    public SelfAdaptatingMutation(Probability probability) {
+    public SelfAdaptatingMutation(final int breakCount, final Probability probability) {
         super(probability);
+        this.n = breakCount;
+        tau0 = C / Math.sqrt(2 * n);
+        tau = C / Math.sqrt(2 * Math.sqrt(n));
     }
 
     @Override

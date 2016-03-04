@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public final class DataHolder {
     /**
      * Zwraca listę dostępnych zestawów danych
      *
-     * @return lista zestawów danych
+     * @return lista nazw zestawów danych
      */
     public static List<String> getAvailableDataSets() {
         if (availableDataSets == null) {
@@ -48,6 +49,16 @@ public final class DataHolder {
             }
         }
         return availableDataSets;
+    }
+
+    /**
+     * Zwraca listę zestawów danych pasujących do wyrażenia regularnego
+     *
+     * @param regex wyrażenie regularne
+     * @return lista nazw zestawów danych
+     */
+    public static Iterator<String> getMatchingDataSets(final String regex) {
+        return getAvailableDataSets().stream().filter(s -> s.matches(regex)).iterator();
     }
 
     /**
@@ -82,6 +93,9 @@ public final class DataHolder {
      * @return aktywny zestaw danych
      */
     public static DataSet getCurrent() {
+        if (current == null) {
+            throw new IllegalArgumentException("Nie załadowano danych!");
+        }
         return current;
     }
 
