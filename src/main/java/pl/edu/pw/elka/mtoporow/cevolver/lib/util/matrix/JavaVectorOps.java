@@ -7,6 +7,7 @@ import org.apache.commons.math3.linear.RealVector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -91,4 +92,16 @@ public final class JavaVectorOps {
         return list.stream().mapToDouble(x -> x).toArray();
     }
 
+    /**
+     * Tworzy losowy wektor liczb rzeczywistych z przedziału [min, bound)
+     *
+     * @param rng    generator
+     * @param length długość wektora
+     * @param min    wartość minimalna
+     * @param bound  granica górna
+     * @return wektor
+     */
+    public static RealVector randomRealVector(final Random rng, final int length, final double min, final double bound) {
+        return MatrixUtils.createRealVector(rng.doubles(length, min, bound).toArray());
+    }
 }

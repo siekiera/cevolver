@@ -4,8 +4,9 @@ import org.apache.commons.math3.linear.ArrayRealVector
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.FitnessFunction
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{FixedWidthLineModel, MicrostripParams}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripLineModelFactory, FixedWidthLineModel, MicrostripParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{CanalResponse, Distances}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 import scala.collection.immutable.NumericRange
 
@@ -53,19 +54,20 @@ object FitnessProbe {
    */
   def as2dMatrix(): Array[Array[Double]] = {
     val distances = DataHolder.getCurrent.expectedDistances
-    if (distances.distances.getDimension != 2) {
-      throw new IllegalArgumentException("Operacja zaimplementowana tylko dla 2 punktów nieciągłości!")
+    if (distances.distances.getDimension < 2) {
+      throw new IllegalArgumentException("Operacja zaimplementowana dla co najmniej 2 punktów nieciągłości!")
     }
     val dist1 = distances.distances.getEntry(0)
     val dist2 = distances.distances.getEntry(1)
+    // Jeśli odległości jest > 2 - pozostałe stałe
+    val otherDists = MatrixOps.asIterable(distances.distances).slice(2, distances.distances.getDimension).toArray
     val realResp = DataHolder.getCurrent.canalResponse
-    val params = DataHolder.getCurrent.measurementParams.getMicrostripParams
     val range1 = dist1 - MARGIN to dist1 + MARGIN by STEP
     val range2 = dist2 - MARGIN to dist2 + MARGIN by STEP
     val data = range1.map(varDist1 => {
       Array(varDist1) ++ range2.map(varDist2 => {
-        val dists = Array(varDist1, varDist2)
-        val model = new FixedWidthLineModel(new Distances(new ArrayRealVector(dists)), params)
+        val dists = Array(varDist1, varDist2) ++ otherDists
+        val model = MicrostripLineModelFactory.newModel(new Distances(new ArrayRealVector(dists)))
         FitnessFunction(model, realResp, 0)
       })
     })
@@ -100,7 +102,7 @@ object FitnessProbe {
    */
   private def getXRange(dist1: Double, dist2: Double): NumericRange[Double] = {
     val (min, max) = if (dist1 < dist2) (dist1, dist2) else (dist2, dist1)
-    min - MARGIN to max + MARGIN by STEP
+    0.0.min(min - MARGIN) to max + MARGIN by STEP
   }
 
 }

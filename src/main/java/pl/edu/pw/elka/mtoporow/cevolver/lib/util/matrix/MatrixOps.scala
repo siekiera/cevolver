@@ -1,7 +1,5 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix
 
-import java.util.Random
-
 import org.apache.commons.math3.analysis.UnivariateFunction
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear._
@@ -48,17 +46,6 @@ object MatrixOps {
   def reduceComplexVector(vector: FieldVector[Complex], function: (Complex, Complex) => Double): Double = {
     // TODO to nie wygląda ładnie
     asIterable(vector).reduce((a, b) => new Complex(function.apply(a, b))).getReal
-  }
-
-  /**
-   * Tworzy losowy wektor liczb rzeczywistych
-   *
-   * @param random
-   * @param length
-   * @return
-   */
-  def randomRealVector(random: Random, length: Int) = {
-    MatrixUtils.createRealVector((1 to length).map(x => random.nextDouble()).toArray)
   }
 
   def zeroComplexArray(length: Int) = (0 until length).map(i => Complex.ZERO).toArray

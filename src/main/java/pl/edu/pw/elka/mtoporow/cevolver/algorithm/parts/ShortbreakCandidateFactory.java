@@ -1,12 +1,11 @@
 package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts;
 
 import org.apache.commons.math3.linear.RealVector;
-import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.ShortbreakLineModel;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps;
 
 import java.util.Random;
 
@@ -16,7 +15,7 @@ import java.util.Random;
  *
  * @author Michał Toporowski
  */
-public class ShortbreakCandidateFactory extends AbstractCandidateFactory<AbstractCanalModel> {
+public class ShortbreakCandidateFactory extends BaseCandidateFactory {
     private final MeasurementParams measurementParams = DataHolder.getCurrent().measurementParams();
     private final int breakCount;
 
@@ -27,9 +26,19 @@ public class ShortbreakCandidateFactory extends AbstractCandidateFactory<Abstrac
 
     @Override
     public AbstractCanalModel generateRandomCandidate(Random rng) {
-        RealVector lengths = MatrixOps.randomRealVector(rng, breakCount);
-        RealVector widths = MatrixOps.randomRealVector(rng, breakCount);
         // TODO:: przeskalować to
+        RealVector lengths = JavaVectorOps.randomRealVector(rng, breakCount, 0, 1);
+        /*
+        Założenie: szerokości miejsc nieciągłości są mniejsze od szerokości właściwego przewodu
+        losujemy z przedziału [0, w)
+         */
+        RealVector widths = JavaVectorOps.randomRealVector(rng, breakCount, 0, measurementParams.getMicrostripParams().w());
         return new ShortbreakLineModel(lengths, widths, measurementParams.getMicrostripParams());
+    }
+
+    @Override
+    public int traitCount() {
+        // N długości + N szerokości
+        return breakCount * 2;
     }
 }

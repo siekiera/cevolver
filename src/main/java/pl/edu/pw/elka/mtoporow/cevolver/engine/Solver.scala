@@ -66,10 +66,11 @@ class Solver {
     result.populationSize = parameters.populationSize
     result.eliteCount = parameters.eliteCount
     // TODO:: rozważyć wykorzystanie tu klasy MicrostripLineModelFactory
-    result.cf = DataHolder.getCurrent.measurementParams.getModelType match {
+    val cf = DataHolder.getCurrent.measurementParams.getModelType match {
       case ModelType.LONGBREAK => new FixedWidthCandidateFactory(parameters.breakCount)
       case ModelType.SHORTBREAK => new ShortbreakCandidateFactory(parameters.breakCount)
     }
+    result.cf = cf
     val operators = new util.ArrayList[EvolutionaryAlgorithm.EO]()
     for (opType <- parameters.operators) {
       val probability = readProbability(opType)
@@ -81,7 +82,7 @@ class Solver {
           opType.paramValueCasted(RegisteredParams.STANDARD_DEVIATION))
         case EOType.AVERAGE_VALUE_CROSSOVER => new AverageValueCrossover(probability)
         case EOType.PARAMETER_AVG_VAL_CROSSOVER => new ParameterAverageValueCrossover(probability)
-        case EOType.SELF_ADAPTATING_MUTATION => new SelfAdaptatingMutation(parameters.breakCount, probability)
+        case EOType.SELF_ADAPTATING_MUTATION => new SelfAdaptatingMutation(cf.traitCount(), probability)
       }
       operators.add(operator)
     }
