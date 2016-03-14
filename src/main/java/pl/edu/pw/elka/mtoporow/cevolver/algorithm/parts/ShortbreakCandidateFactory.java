@@ -26,8 +26,9 @@ public class ShortbreakCandidateFactory extends BaseCandidateFactory {
 
     @Override
     public AbstractCanalModel generateRandomCandidate(Random rng) {
-        // TODO:: przeskalować to
-        RealVector lengths = JavaVectorOps.randomRealVector(rng, breakCount, 0, 1);
+        // Losujemy odległości z [0, totalLength]
+        // TODO:: może powinniśmy to jakoś uzmiennić? Jako parametr algorytmu?
+        RealVector lengths = JavaVectorOps.randomRealVector(rng, breakCount, 0, measurementParams.getTotalLength());
         /*
         Założenie: szerokości miejsc nieciągłości są mniejsze od szerokości właściwego przewodu
         losujemy z przedziału [0, w)

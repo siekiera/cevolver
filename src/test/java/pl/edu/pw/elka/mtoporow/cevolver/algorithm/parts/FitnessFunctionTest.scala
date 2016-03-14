@@ -3,7 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts
 import org.scalatest.FunSuite
 import pl.edu.pw.elka.mtoporow.cevolver.TestDataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.FixedWidthLineModel
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripLineModelFactory, ShortbreakLineModel, FixedWidthLineModel}
 
 /**
  * Test funkcji oceny jakości
@@ -20,6 +20,13 @@ class FitnessFunctionTest extends FunSuite {
   test("Test funkcji celu - dla dobrych wyników ma być 0") {
     val c = new FixedWidthLineModel(TestDataHolder.dists, DataHolder.getCurrent.measurementParams.getMicrostripParams)
     val fitness = FitnessFunction.apply(c, TestDataHolder.externallyCalculatedResponse, 0)
+    assert(fitness == 0.0)
+  }
+
+  test("Test funkcji celu - dla dobrych wyników ma być 0 - sh") {
+    DataHolder.load("s12")
+    val c = MicrostripLineModelFactory.newModel(DataHolder.getCurrent.expectedDistances)
+    val fitness = FitnessFunction.apply(c, DataHolder.getCurrent.canalResponse, 0)
     assert(fitness == 0.0)
   }
 }
