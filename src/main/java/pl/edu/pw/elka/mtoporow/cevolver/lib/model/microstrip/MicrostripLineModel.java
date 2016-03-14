@@ -6,6 +6,7 @@ import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalResponse;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix;
 
 /**
  * Model linii mikropaskowej
@@ -31,6 +32,20 @@ public abstract class MicrostripLineModel extends AbstractCanalModel {
         }
 
         return new CanalResponse(new ArrayFieldVector<>(respValues));
+    }
+
+    /**
+     * Oblicza macierz T mikropaska o zadanych parametrach
+     *
+     * @param w    szerokość
+     * @param l    długość
+     * @param z01  impedancja na wejściu
+     * @param freq częstotliwość
+     * @return macierz T
+     */
+    protected TMatrix calcTMatrix(final double w, final double l, final Complex z01, final double freq) {
+        Microstrip microstrip = new Microstrip(w, pars.t(), l, pars.h(), pars.epsr());
+        return microstrip.getTMatrix(z01, freq);
     }
 
     /**

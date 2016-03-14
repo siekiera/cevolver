@@ -7,5 +7,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  * @author Michał Toporowski
  */
 public enum CFType implements AlgorithmPartType {
-    DEFAULT
+    FIXED_WIDTH,
+    VARIABLE_WIDTH
 }

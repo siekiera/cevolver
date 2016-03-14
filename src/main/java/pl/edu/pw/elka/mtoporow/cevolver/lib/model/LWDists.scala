@@ -26,6 +26,13 @@ class LWDists private(distances: RealVector, val breakCount: Int) extends Distan
   def wEntry(i: Int) = distances.getEntry(i + breakCount)
 
   /**
+   * Zwraca wektor długości
+   *
+   * @return wektor
+   */
+  def lengths = distances.getSubVector(0, breakCount)
+
+  /**
    * Konstruktor
    *
    * @param lengths wektor długości
@@ -33,12 +40,32 @@ class LWDists private(distances: RealVector, val breakCount: Int) extends Distan
    * @return
    */
   def this(lengths: RealVector, widths: RealVector) = this(lengths.append(widths), lengths.getDimension)
+}
 
+object LWDists {
   /**
-   * Konstruktor pomocniczy - do tworzenia obiektu na podstawie istniejącego pełnego wektora
+   * Tworzy obiekt na potrzeby modelu shortbreak na podstawie istniejącego pełnego wektora
    *
    * @param distances wektor zawierający najpierw długości, a potem szerokości
    * @return
    */
-  protected def this(distances: RealVector) = this(distances, distances.getDimension / 2)
+  def shortbreak(distances: Distances): LWDists = {
+    distances match {
+      case dists: LWDists => dists
+      case _ => new LWDists(distances.distances, distances.size / 2)
+    }
+  }
+
+  /**
+   * Tworzy obiekt na potrzeby modelu longbreak na podstawie istniejącego pełnego wektora
+   *
+   * @param distances wektor zawierający najpierw długości, a potem szerokości
+   * @return
+   */
+  def longbreak(distances: Distances): LWDists = {
+    distances match {
+      case dists: LWDists => dists
+      case _ => new LWDists(distances.distances, (1 + distances.size) / 2)
+    }
+  }
 }

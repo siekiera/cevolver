@@ -49,14 +49,9 @@ public class ShortbreakLineModel extends MicrostripLineModel {
         return tMatrix.getS11();
     }
 
-    private TMatrix calcTMatrix(final double w, final double l, final Complex z01, final double freq) {
-        Microstrip microstrip = new Microstrip(w, pars.t(), l, pars.h(), pars.epsr());
-        return microstrip.getTMatrix(z01, freq);
-    }
-
     @Override
     public RealVector lengths() {
-        return dists.distances().getSubVector(0, dists.breakCount());
+        return dists.lengths();
     }
 
     @Override
@@ -66,6 +61,6 @@ public class ShortbreakLineModel extends MicrostripLineModel {
 
     @Override
     public AbstractCanalModel createNew(Distances distances) {
-        return new ShortbreakLineModel(new LWDists(distances.distances()), pars);
+        return new ShortbreakLineModel(LWDists.shortbreak(distances), pars);
     }
 }

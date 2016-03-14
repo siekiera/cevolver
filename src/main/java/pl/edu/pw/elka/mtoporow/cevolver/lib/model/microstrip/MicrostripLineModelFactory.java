@@ -24,7 +24,7 @@ public class MicrostripLineModelFactory {
         final MicrostripParams params = mp.getMicrostripParams();
         switch (mp.getModelType()) {
             case SHORTBREAK:
-                return new ShortbreakLineModel(new LWDists(distances.distances()), params);
+                return new ShortbreakLineModel(LWDists.shortbreak(distances), params);
             case LONGBREAK:
                 return new FixedWidthLineModel(distances, params);
             default:

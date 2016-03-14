@@ -66,9 +66,10 @@ class Solver {
     result.populationSize = parameters.populationSize
     result.eliteCount = parameters.eliteCount
     // TODO:: rozważyć wykorzystanie tu klasy MicrostripLineModelFactory
-    val cf = DataHolder.getCurrent.measurementParams.getModelType match {
-      case ModelType.LONGBREAK => new FixedWidthCandidateFactory(parameters.breakCount)
-      case ModelType.SHORTBREAK => new ShortbreakCandidateFactory(parameters.breakCount)
+    val cf = (DataHolder.getCurrent.measurementParams.getModelType, parameters.candidateFactory.partType) match {
+      case (ModelType.LONGBREAK, CFType.FIXED_WIDTH) => new FixedWidthCandidateFactory(parameters.breakCount)
+      case (ModelType.LONGBREAK, CFType.VARIABLE_WIDTH) => new LongbreakCandidateFactory(parameters.breakCount)
+      case (ModelType.SHORTBREAK, _) => new ShortbreakCandidateFactory(parameters.breakCount)
     }
     result.cf = cf
     val operators = new util.ArrayList[EvolutionaryAlgorithm.EO]()

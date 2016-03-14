@@ -24,4 +24,11 @@ class Distances(val distances: RealVector) {
    * @return String
    */
   def toStringMM = "odległości [mm]: (" + MatrixOps.asIterable(distances).map(Units.MILLI.fromSI(_).toString).mkString(", ") + ")"
+
+  /**
+   * Rozmiar wektora
+   *
+   * @return rozmiar wektora
+   */
+  def size = distances.getDimension
 }
