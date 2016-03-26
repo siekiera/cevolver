@@ -1,6 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli;
 
 import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.MeasurementParams;
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.ModelType;
@@ -59,7 +60,9 @@ public class EnvPropertiesReader extends PropertiesReader {
             expectedWidths.mapMultiplyToSelf(UNIT.valueInSI());
             this.expectedDistances = new LWDists(expectedDistances, expectedWidths);
         } else {
-            this.expectedDistances = new Distances(expectedDistances);
+            // Longbreak - dodajemy biggerW jako odległości
+            RealVector expectedWidths = new ArrayRealVector(expectedDistances.getDimension() - 1, measurementParams.getMicrostripParams().biggerW());
+            this.expectedDistances = new LWDists(expectedDistances, expectedWidths);
         }
 
     }

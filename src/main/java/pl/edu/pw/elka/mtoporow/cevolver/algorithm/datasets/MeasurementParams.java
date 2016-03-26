@@ -50,7 +50,7 @@ public class MeasurementParams {
     }
 
     public MicrostripParams getMicrostripParams() {
-        Objects.requireNonNull(frequencies, "Microstrip params not set");
+        Objects.requireNonNull(microstripParams, "Microstrip params not set");
         return microstripParams;
     }
 

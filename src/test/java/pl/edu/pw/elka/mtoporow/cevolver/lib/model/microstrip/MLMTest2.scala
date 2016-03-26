@@ -2,7 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip
 
 import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear.ArrayRealVector
-import org.scalatest.FunSuite
+import org.scalatest.{OneInstancePerTest, FunSuite}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{CanalUtils, LWDists}
@@ -13,7 +13,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps
  * Data utworzenia: 22.03.16, 20:05
  * @author Michał Toporowski
  */
-class MLMTest2 extends FunSuite {
+class MLMTest2 extends FunSuite with OneInstancePerTest {
 
   test("Test s11 for even") {
     println("2 miejsca nieciągłości")
@@ -70,8 +70,9 @@ class MLMTest2 extends FunSuite {
   }
 
   def distsForNormal() = {
-    new LWDists(DataHolder.getCurrent.expectedDistances.distances,
-      JavaVectorOps.createVector(DataHolder.getCurrent.measurementParams.getMicrostripParams.biggerW))
+//    new LWDists(DataHolder.getCurrent.expectedDistances.distances,
+//      JavaVectorOps.createVector(DataHolder.getCurrent.measurementParams.getMicrostripParams.biggerW))
+    LWDists.longbreak(DataHolder.getCurrent.expectedDistances)
   }
 
   def distsFor1() = {
