@@ -3,6 +3,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.RealVector;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.CanalUtils;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.LWDists;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.matrix.TMatrix;
@@ -36,12 +37,19 @@ public class LongbreakLineModel extends MicrostripLineModel {
             TMatrix elementMat = calcTMatrix(dists.wEntry(i - 1), dists.lEntry(i), z01, freq);
             tMatrix = tMatrix.multiply(elementMat);
         }
-        // Ostatni element - zakładamy taki sam, jak pierwszy
-        // jeśli impedancja dopasowana (z0 ~ z01), dł. nie wpływa na wynik
-        TMatrix lastMat = calcTMatrix(pars.w(), dists.lEntry(0), z01, freq);
-        tMatrix = tMatrix.multiply(lastMat);
-        // FIXME:: jeśli breakCount jest nieparzyste - należy dodać jeszcze impedancję na koncu
-        return tMatrix.getS11();
+        if ((dists.breakCount() & 1) == 0) {
+            // Parzysta liczba przerwań
+            // Ostatni element - zakładamy taki sam, jak pierwszy
+            // jeśli impedancja dopasowana (z0 ~ z01), dł. nie wpływa na wynik
+            TMatrix lastMat = calcTMatrix(pars.w(), dists.lEntry(0), z01, freq);
+            tMatrix = tMatrix.multiply(lastMat);
+            return tMatrix.getS11();
+        } else {
+            // Nieparzysta liczba przerwań - należy dodać impedancję na końcu
+            // TODO:: jaka powinna być wartość tej impedancji???
+            final Complex impS11 = CanalUtils.s11ForImpedance(null, z01);
+            return tMatrix.getS11WithCascadeS11(impS11);
+        }
     }
 
     @Override

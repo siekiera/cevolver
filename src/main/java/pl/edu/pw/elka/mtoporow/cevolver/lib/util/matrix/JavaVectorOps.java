@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -103,5 +104,15 @@ public final class JavaVectorOps {
      */
     public static RealVector randomRealVector(final Random rng, final int length, final double min, final double bound) {
         return MatrixUtils.createRealVector(rng.doubles(length, min, bound).toArray());
+    }
+
+    /**
+     * Tworzy wektor na podstawie wartości
+     *
+     * @param values liczby rzeczywiste
+     * @return RealVector
+     */
+    public static RealVector createVector(double... values) {
+        return new ArrayRealVector(values);
     }
 }

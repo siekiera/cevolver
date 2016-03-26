@@ -13,6 +13,7 @@ import java.nio.file.*;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -84,6 +85,18 @@ public final class DataHolder {
             }
         } catch (IOException e) {
             throw new DataLoadingException(e);
+        }
+    }
+
+    /**
+     * Ładuje zestaw danych, o ile nie jest już załadowany
+     * @see DataHolder#load(java.lang.String)
+     *
+     * @param dataSetId identyfikator (nazwa pliku bez rozszerzenia)
+     */
+    public static void lazyLoad(final String dataSetId) {
+        if (!Objects.equals(dataSetId, getCurrentId())) {
+            load(dataSetId);
         }
     }
 

@@ -25,10 +25,24 @@ public class TMatrix {
      * Mnoży tę macierz przez inną
      *
      * @param other inna macierz T
-     * @return macierz wynikowa
+     * @return macierz wynikowa tj. macierz reprezentująca połączenie kaskadowe czwórników
      */
     public TMatrix multiply(TMatrix other) {
         return new TMatrix(this.matrix.multiply(other.matrix));
+    }
+
+    /**
+     * Zwraca element S11 macierzy reprezentującej połączenie kaskadowe tej macierzy i macierzy reprezentowanej
+     * jedynie przez element s11'
+     *
+     * @param s11 s11'
+     * @return element s11 wynikowej macierzy
+     */
+    public Complex getS11WithCascadeS11(final Complex s11) {
+        // TODO:: czy to dobrze?
+        // s11m = (t11 * s11' + t12) / (t21 + s11' + t22)
+        return matrix.getEntry(0, 0).multiply(s11).add(matrix.getEntry(0, 1))
+                .divide(matrix.getEntry(1, 0).multiply(s11).add(matrix.getEntry(1, 1)));
     }
 
     /**
