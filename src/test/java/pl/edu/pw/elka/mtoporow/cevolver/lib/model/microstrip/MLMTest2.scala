@@ -26,11 +26,18 @@ class MLMTest2 extends FunSuite with OneInstancePerTest {
 
   test("Test s11 for 1") {
     println("1 miejsce nieciągłości")
-    run1("20", 50.0)
-    run1("20", 40.0)
-    run1("20", 30.0)
-    run1("20", 1.4)
-    run1("20", 5.0)
+    run1("20", 50.0, 0.2)
+    run1("20", 50.0, 0.5)
+    run1("20", 50.0, 1.4)
+    run1("20", 40.0, 0.2)
+    run1("20", 40.0, 0.5)
+    run1("20", 30.0, 0.2)
+    run1("20", 30.0, 0.5)
+    run1("20", 1.4, 0.2)
+    run1("20", 1.4, 0.5)
+    run1("20", 1.4, 1.4)
+    run1("20", 5.0, 0.2)
+    run1("20", 5.0, 0.5)
   }
 
   private def runNormal(ds: String, last: Double): Unit = {
@@ -38,13 +45,13 @@ class MLMTest2 extends FunSuite with OneInstancePerTest {
     println(s"Zestaw $ds, ostatni: $last, s11 = $res")
   }
 
-  private def run1(ds: String, impedance: Double): Unit = {
-    val res = run(ds, impedance, distsFor1)
-    println(s"Zestaw $ds, impedancja na końcu: $impedance, s11 = $res")
+  private def run1(ds: String, impedance: Double, last: Double): Unit = {
+    val res = run(ds, last, distsFor1Alt, impedance)
+    println(s"Zestaw $ds, ostatni: $last, impedancja na końcu: $impedance, s11 = $res")
   }
 
 
-  private def run(ds: String, last: Double, distsSupplier: () => LWDists): Complex = {
+  private def run(ds: String, last: Double, distsSupplier: () => LWDists, imp: Double = 0.0): Complex = {
     DataHolder.lazyLoad(ds)
     val pars = DataHolder.getCurrent.measurementParams.getMicrostripParams
     val dists = distsSupplier()
@@ -59,12 +66,17 @@ class MLMTest2 extends FunSuite with OneInstancePerTest {
     }
     if ((dists.breakCount & 1) == 0) {
       // Parzysta
+      // Ostatni taki sam, jak pierwszy
       val lastMat: TMatrix = model.calcTMatrix(pars.w, last, z01, freq)
       tMatrix = tMatrix.multiply(lastMat)
       tMatrix.getS11
     } else {
       // Nieparzysta
-      val impS11: Complex = CanalUtils.s11ForImpedance(Complex.valueOf(last), z01)
+      // Ostatni pasek o innej szerokości
+      val lastMat = model.calcTMatrix(dists.wEntry(dists.breakCount - 1), last, z01, freq)
+      tMatrix = tMatrix.multiply(lastMat)
+      // Dodatkowa impedancja wyrównująca
+      val impS11: Complex = CanalUtils.s11ForImpedance(Complex.valueOf(imp), z01)
       tMatrix.getS11WithCascadeS11(impS11)
     }
   }
@@ -76,7 +88,17 @@ class MLMTest2 extends FunSuite with OneInstancePerTest {
   }
 
   def distsFor1() = {
+    // FIXME:: to jest dobrze?
     new LWDists(DataHolder.getCurrent.expectedDistances.distances.getSubVector(0, 1), new ArrayRealVector())
   }
 
+  def distsFor1Alt() = {
+    def distsFor2 = DataHolder.getCurrent.expectedDistances.distances
+    new LWDists(distsFor2.getSubVector(0, 1), distsFor2.getSubVector(2, 1))
+  }
+
+//  def distsFor3() = {
+//    val lengths = new ArrayRealVector()
+//    new LWDists()
+//  }
 }

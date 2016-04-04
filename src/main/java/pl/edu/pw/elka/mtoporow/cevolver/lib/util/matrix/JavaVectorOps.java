@@ -4,11 +4,14 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.uncommons.watchmaker.framework.EvaluatedCandidate;
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -104,6 +107,13 @@ public final class JavaVectorOps {
      */
     public static RealVector randomRealVector(final Random rng, final int length, final double min, final double bound) {
         return MatrixUtils.createRealVector(rng.doubles(length, min, bound).toArray());
+    }
+
+    /*
+    FIXME wywalić to stąd
+     */
+    public static List<AbstractCanalModel> getCandidates(final List<EvaluatedCandidate<AbstractCanalModel>> evaluated) {
+        return evaluated.stream().map(EvaluatedCandidate::getCandidate).collect(Collectors.toList());
     }
 
     /**

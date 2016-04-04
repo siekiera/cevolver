@@ -50,6 +50,7 @@ object LWDists {
    * @return
    */
   def shortbreak(distances: Distances): LWDists = {
+    // N przerw => N długości + N szerokości
     distances match {
       case dists: LWDists => dists
       case _ => new LWDists(distances.distances, distances.size / 2)
@@ -63,6 +64,7 @@ object LWDists {
    * @return
    */
   def longbreak(distances: Distances): LWDists = {
+    // N przerw => N długości + N-1 szerokości
     distances match {
       case dists: LWDists => dists
       case _ => new LWDists(distances.distances, (1 + distances.size) / 2)

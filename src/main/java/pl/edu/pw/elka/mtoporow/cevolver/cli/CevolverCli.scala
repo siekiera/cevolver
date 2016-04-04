@@ -26,6 +26,7 @@ object CevolverCli {
 
   private val properties = new Properties()
   private var lastResult: EvolutionResult = null
+  private var lastSolver: Solver = null
 
   def main(args: Array[String]) {
     loadDefaultProperties()
@@ -54,6 +55,7 @@ object CevolverCli {
           case Array("fpcsv") => fitnessProbeCsv()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
+          case Array("continue") => continue()
           case Array("multi", n@_) => runMultipleTimes(getInt(n), VerboseLevel.allOff())
           case Array("multi", n@_, verbose@_) => runMultipleTimes(getInt(n), VerboseLevel(verbose))
           case _ => println("Nieznane polecenie!")
@@ -73,6 +75,7 @@ object CevolverCli {
     try {
       println("Ładowanie... " + datasetId)
       DataHolder.load(datasetId)
+      lastSolver = null
       printf("Załadowano zbiór danych: %s\n", datasetId)
     } catch {
       case e: Exception => println("Nie można załadować zbioru danych: " + e.getMessage)
@@ -93,7 +96,8 @@ object CevolverCli {
       val expectedDists = DataHolder.getCurrent.expectedDistances
       printMeasurementParams()
       println("Rozpoczynam obliczenia...")
-      val result = new Solver().solveWithAllResults(algParameters, verboseLevel)
+      lastSolver = new Solver()
+      val result = lastSolver.solveWithAllResults(algParameters, verboseLevel)
       printf("Zakończono obliczenia po %s pokoleniach, czas obliczeń: %s\n", result.generationCount, result.durationSec)
       println("Oczekiwany wynik: " + expectedDists.toStringMM)
       println("Najlepszy wynik z populacji: ")
@@ -102,6 +106,24 @@ object CevolverCli {
     } catch {
       case e: Exception => println("Błąd podczas uruchamiania algorytmu: " + e.getMessage)
     }
+  }
+
+  /**
+   * Kontynuuje obliczenia w ostatnio zakończonym miejscu
+   */
+  private def continue(): Unit = {
+    if (lastSolver == null) {
+      println("Nie ma rozpoczętej ewolucji do kontynuowania. Użyj komendy run")
+      return
+    }
+    val expectedDists = DataHolder.getCurrent.expectedDistances
+    println("Kontynuuję obliczenia...")
+    val result = lastSolver.continue()
+    printf("Zakończono obliczenia po %s pokoleniach, czas obliczeń: %s\n", result.generationCount, result.durationSec)
+    println("Oczekiwany wynik: " + expectedDists.toStringMM)
+    println("Najlepszy wynik z populacji: ")
+    CevolverApp.printAllResults(result.population, 1)
+    lastResult = result
   }
 
   /**

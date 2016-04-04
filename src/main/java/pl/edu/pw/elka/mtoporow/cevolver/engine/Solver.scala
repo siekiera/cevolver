@@ -1,6 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.engine
 
 import java.util
+import java.util.concurrent.{Callable, Executors}
 
 import org.uncommons.maths.random.Probability
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
@@ -17,6 +18,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
  * @author Michał Toporowski
  */
 class Solver {
+  private var algorithm: EvolutionaryAlgorithm = null
 
   /**
    * Rozwiązuje problem
@@ -34,26 +36,32 @@ class Solver {
    * Rozwiązuje problem
    *
    * @param parameters parametry
-   * @return wynik (lista osobników posortowana od najlepszego)
-   */
-  def solveWithAllResults(parameters: AlgorithmParameters) = {
-    val internalParameters = convertParams(parameters)
-    val algorithm = new EvolutionaryAlgorithm(internalParameters, VerboseLevel.allOn())
-    algorithm.solveWithAllResults()
-  }
-
-  /**
-   * Rozwiązuje problem
-   *
-   * @param parameters parametry
    * @param verboseLevel poziom logowania
    * @return wynik (lista osobników posortowana od najlepszego)
    */
-  def solveWithAllResults(parameters: AlgorithmParameters, verboseLevel: VerboseLevel) = {
+  def solveWithAllResults(parameters: AlgorithmParameters, verboseLevel: VerboseLevel = VerboseLevel.allOn()) = {
     val internalParameters = convertParams(parameters)
-    val algorithm = new EvolutionaryAlgorithm(internalParameters, verboseLevel)
+    algorithm = new EvolutionaryAlgorithm(internalParameters, verboseLevel)
     algorithm.solveWithAllResults()
   }
+
+  def solveAsync(parameters: AlgorithmParameters, verboseLevel: VerboseLevel = VerboseLevel.allOn()) = {
+    val executor = Executors.newSingleThreadExecutor()
+    val internalParameters = convertParams(parameters)
+    algorithm = new EvolutionaryAlgorithm(internalParameters, verboseLevel)
+    val command = new Callable[EvolutionResult] {
+      override def call(): EvolutionResult = algorithm.solveWithAllResults()
+    }
+    val future = executor.submit(command)
+    future.get()
+  }
+
+  /**
+   * Kontynuuje obliczenia w ostatnio zakończonym miejscu
+   * @return
+   */
+  def continue(): EvolutionResult = algorithm.continue()
+
 
   /**
    * Konwertuje parametry zewnętrzne (deklaratywne) na wewnętrzne (programowe)
