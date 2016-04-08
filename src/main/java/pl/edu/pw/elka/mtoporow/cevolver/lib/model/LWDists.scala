@@ -30,7 +30,7 @@ class LWDists private(distances: RealVector, val breakCount: Int) extends Distan
    *
    * @return wektor
    */
-  def lengths = distances.getSubVector(0, breakCount)
+  override def lengths = distances.getSubVector(0, breakCount)
 
   /**
    * Konstruktor

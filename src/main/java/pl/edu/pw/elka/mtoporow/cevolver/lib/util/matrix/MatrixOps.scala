@@ -5,6 +5,8 @@ import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear._
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.MiscMathOps
 
+import scala.collection.TraversableLike
+
 /**
  * Zawiera operacje na macierzach i wektorach
  * Data utworzenia: 21.06.15, 10:09
@@ -196,6 +198,8 @@ object MatrixOps {
   def avg(vals: Array[Double]) = vals.sum / vals.length
 
   def avg(vals: TraversableOnce[Double]) = vals.sum / vals.size
+
+  def sliceAvg(vals: Iterable[Double], limit: Int) = avg(vals.slice(0, limit))
 
   /**
    * Liczy minimum tablicy

@@ -31,4 +31,11 @@ class Distances(val distances: RealVector) {
    * @return rozmiar wektora
    */
   def size = distances.getDimension
+
+  /**
+   * Długości - domyślnie cały wektor
+   *
+   * @return
+   */
+  def lengths: RealVector = distances
 }

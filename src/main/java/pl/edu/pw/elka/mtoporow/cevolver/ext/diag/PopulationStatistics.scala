@@ -1,13 +1,15 @@
 package pl.edu.pw.elka.mtoporow.cevolver.ext.diag
 
 import org.uncommons.watchmaker.framework.EvaluatedCandidate
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{EvolutionResult, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Cell
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
 /**
- * Klasa X
+ * Statystyki populacji wynikowej
  * Data utworzenia: 04.04.16, 12:10
  * @author Michał Toporowski
  */
@@ -20,16 +22,26 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
   val avgFitness = MatrixOps.avg(fitnesses)
   @Cell("best 10% candidates' fitness")
   val best10Fitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 10))
+  @Cell("best 25% candidates' fitness")
+  val best25Fitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 4))
+  @Cell("average vector square distance from expected")
+  val avgLengthsDiff = MatrixOps.avg(rowStatistics.map(_.lengthsDiff))
+  @Cell("best 10% average vector square distance from expected")
+  val best10LengthsDiff = MatrixOps.sliceAvg(rowStatistics.map(_.lengthsDiff), rowStatistics.size / 10)
+  @Cell("best 25% average vector square distance from expected")
+  val best25LengthsDiff = MatrixOps.sliceAvg(rowStatistics.map(_.lengthsDiff), rowStatistics.size / 4)
 
+  def calcRowStatistics(candidate: EVC): RowStatistics = new RowStatistics(candidate, DataHolder.getCurrent.expectedDistances)
 
-  def calcRowStatistics(candidate: EVC): RowStatistics = new RowStatistics(candidate)
-
-  class RowStatistics(candidate: EVC) {
+  class RowStatistics(candidate: EVC, expDists: Distances) {
     @Cell("distances")
-    def distances = candidate.getCandidate.distances.distances
+    val distances = candidate.getCandidate.distances.distances
     @Cell("fitness")
-    def fitness = candidate.getFitness
-
+    val fitness = candidate.getFitness
+    @Cell("vector square distance from expected lengths")
+    val lengthsDiff = candidate.getCandidate.lengths.getDistance(expDists.lengths)
+    @Cell("vector L1 distance from expected lengths")
+    val lengthsL1Diff = candidate.getCandidate.lengths.getL1Distance(expDists.lengths)
   }
 
 }

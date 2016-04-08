@@ -1,49 +1,65 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli.export
 
-import java.io.{IOException, Writer}
-import java.lang.reflect.Field
+import java.io.IOException
+import java.lang.reflect.{AnnotatedElement, Field}
 
-import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.PopulationStatistics
+import scala.collection.immutable.ListMap
 
 /**
- * Klasa X
+ * Tablica pól przeznaczonych do wyeksportowania
  * Data utworzenia: 04.04.16, 15:14
  *
  * @author Michał Toporowski
  */
 class CellArray(cls: Class[_]) {
-  //  private final val fields: Map[String, Field] = new LinkedHashMap[String, Field]
-  //  private final val methods: Map[String, Method] = new LinkedHashMap[String, Method]
+  private val methods = annotationsMap(cls.getDeclaredMethods)
+  private val fields = annotationsMap(cls.getDeclaredFields)
 
-  private val methods = cls.getDeclaredMethods.filter(_.isAnnotationPresent(classOf[Cell])).map(m => (m.getAnnotation(classOf[Cell]).value(), m)).toMap
-  private val fields = cls.getDeclaredFields.filter(_.isAnnotationPresent(classOf[Cell])).map(f => (f.getAnnotation(classOf[Cell]).value(), f)).toMap
+  private def annotationsMap[T <: AnnotatedElement](els: Array[T]) = ListMap(els.filter(_.isAnnotationPresent(classOf[Cell])).map(m => (m.getAnnotation(classOf[Cell]).value(), m)): _*)
 
   def names = fields.keySet ++ methods.keySet
-
-
 }
 
 object CellArray {
+  /**
+   * Eksportuje pola oznaczone adnotacją @Cell z obiektu cellObject do Writera
+   *
+   * @param cellObjects obiekt
+   * @param writer klasa zapisująca
+   * @throws java.io.IOException io
+   */
   @throws(classOf[IOException])
-  def writeValues(cellObjects: Iterable[AnyRef], writer: Writer) = {
+  def writeValues(cellObjects: Iterable[AnyRef], writer: RowWriter) = {
     var ca: CellArray = null
     for (cellObject <- cellObjects) {
       if (ca == null) {
         ca = new CellArray(cellObject.getClass)
-        writer.append(ca.names.mkString(";")).append("\n")
+        writer.yieldRow(ca.names)
       }
       val fieldVals = ca.fields.values.map(f => fieldValue(f, cellObject))
       val methodVals = ca.methods.values.map(m => m.invoke(cellObject))
-      writer.append((fieldVals ++ methodVals).mkString(";")).append("\n")
+      writer.yieldRow(fieldVals ++ methodVals)
     }
-    writer.flush()
-    writer.close()
   }
 
-  def writeValue(cellObject: AnyRef, writer: Writer): Unit = {
+  /**
+   * Eksportuje pola oznaczone adnotacją @Cell z obiektu cellObject do Writera
+   *
+   * @param cellObject obiekt
+   * @param writer klasa zapisująca
+   * @throws java.io.IOException io
+   */
+  def writeValue(cellObject: AnyRef, writer: RowWriter): Unit = {
     writeValues(Iterable(cellObject), writer)
   }
 
+  /**
+   * Pobiera wartość pola przy pomocy refleksji
+   *
+   * @param field pole
+   * @param obj obiekt
+   * @return wartość
+   */
   private def fieldValue(field: Field, obj: AnyRef): AnyRef = {
     var result: AnyRef = null
     if (!field.isAccessible) {

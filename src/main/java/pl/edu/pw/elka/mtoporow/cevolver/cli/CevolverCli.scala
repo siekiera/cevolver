@@ -7,7 +7,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{Conversions, PropertiesUtil, TimeUtil}
-import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{CellArray, Exporter}
+import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{ConsoleRowWriter, CellArray, Exporter}
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
 import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.{PopulationStatistics, FitnessProbe}
@@ -275,10 +275,10 @@ object CevolverCli {
 
   private def popStats(): Unit = {
     val stats = new PopulationStatistics(lastResult)
-    val writer = new OutputStreamWriter(System.out)
+    val writer = new ConsoleRowWriter
+    CellArray.writeValues(stats.rowStatistics, writer)
     CellArray.writeValue(stats, writer)
-//    CellArray.writeValues(stats.rowStatistics, writer)
-
+    writer.finish()
   }
 
   /**
