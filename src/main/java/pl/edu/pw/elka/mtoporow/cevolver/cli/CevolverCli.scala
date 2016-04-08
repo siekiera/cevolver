@@ -1,16 +1,16 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
-import java.io.{OutputStreamWriter, File}
+import java.io.File
 import java.util.Properties
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{Conversions, PropertiesUtil, TimeUtil}
-import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{ConsoleRowWriter, CellArray, Exporter}
+import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{CellArray, ConsoleRowWriter, Exporter, FileRowWriter}
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
-import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.{PopulationStatistics, FitnessProbe}
+import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.{FitnessProbe, PopulationStatistics}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps
 import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
@@ -139,6 +139,9 @@ object CevolverCli {
     val avgFitnessVals = new Array[Double](n)
     val bestAvgFitnessVals = new Array[Double](n)
     val bestPercentage = 10.0
+    // Zapisujemy wynik tu
+    val timePart = TimeUtil.nowAsNoSepString()
+    val dir = GeneralConstants.subdir(timePart)
     for (i <- 0 until n) {
       // Uruchamiamy
       run(verboseLevel)
@@ -149,10 +152,14 @@ object CevolverCli {
       avgFitnessVals(i) = population.map(_.getFitness).sum / population.size
       val bestCount = (bestPercentage * population.size / 100.0).toInt
       bestAvgFitnessVals(i) = population.slice(0, bestCount).map(_.getFitness).sum / bestCount
+
+      // Statystyki populacji
+      val writer = new FileRowWriter(new File(dir, s"stats_$i"))
+      val stats = new PopulationStatistics(lastResult)
+      CellArray.writeValues(stats.rowStatistics, writer)
+      CellArray.writeValue(stats, writer)
+      writer.finish()
     }
-    // Zapisujemy wynik
-    val timePart = TimeUtil.nowAsNoSepString()
-    val dir = GeneralConstants.subdir(timePart)
     // Ślad funkcji celu
     Exporter.serialize(new File(dir, "funkcja_celu.csv"), results)
     // Ślad funkcji celu jako chartData
