@@ -1,10 +1,10 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli.export;
 
-import com.sun.deploy.util.StringUtils;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Klasa eksportująca kolekcje do plików
@@ -40,7 +40,7 @@ public class Exporter implements Closeable {
     }
 
     public Exporter append(Collection<?> c) throws IOException {
-        appendLine(StringUtils.join(c, SEPARATOR));
+        appendLine(c.stream().map(Object::toString).collect(Collectors.joining(SEPARATOR)));
         return this;
     }
 

@@ -20,6 +20,15 @@ object MiscMathOps {
   def relativeError(x: Double, p: Double) = math.abs(x / p - 1)
 
   /**
+   * Zwraca błąd względny w procentach
+   *
+   * @param x wartość zmierzona
+   * @param p wartość dokładna
+   * @return błąd względny
+   */
+  def relativeErrorPercentage(x: Double, p: Double) = 100 * math.abs(x / p - 1)
+
+  /**
    * Zwraca błąd względny liczony na modułach liczb zespolonych
    *
    * @param x wartość zmierzona

@@ -190,6 +190,17 @@ object MatrixOps {
   def absoluteErrorPhase(measured: ComplexVector, precise: ComplexVector) = compare(measured, precise, MiscMathOps.absoluteErrorPhase)
 
   /**
+   * Liczy błąd względny w procentach na wektorach liczb rzeczywistych
+   *
+   * @param measured
+   * @param precise
+   * @return
+   */
+  def relativeErrorPercentage(measured: RealVector, precise: RealVector) = {
+    (asIterable(measured), asIterable(precise)).zipped.map(MiscMathOps.relativeErrorPercentage).toArray
+  }
+
+  /**
    * Liczy wartość średnią tablicy liczb rzeczywistych
    *
    * @param vals tablica

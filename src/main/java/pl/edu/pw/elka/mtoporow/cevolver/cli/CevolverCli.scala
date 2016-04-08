@@ -5,7 +5,7 @@ import java.util.Properties
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
+import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{Conversions, PropertiesUtil, TimeUtil}
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{CellArray, ConsoleRowWriter, Exporter, FileRowWriter}
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
@@ -56,6 +56,7 @@ object CevolverCli {
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
           case Array("stats") => popStats()
+          case Array("algoopts") => algoOpts()
           case Array("continue") => continue()
           case Array("multi", n@_) => runMultipleTimes(getInt(n), VerboseLevel.allOff())
           case Array("multi", n@_, verbose@_) => runMultipleTimes(getInt(n), VerboseLevel(verbose))
@@ -280,6 +281,9 @@ object CevolverCli {
     SerializationUtil.serialize(file, chartData)
   }
 
+  /**
+   * Wypisuje statystyki dla ostatniej populacji
+   */
   private def popStats(): Unit = {
     val stats = new PopulationStatistics(lastResult)
     val writer = new ConsoleRowWriter
@@ -287,6 +291,18 @@ object CevolverCli {
     CellArray.writeValue(stats, writer)
     writer.finish()
   }
+
+  /**
+   * Wypisuje dostępne parametry algorytmu
+   */
+  private def algoOpts(): Unit = {
+    println("CF: " + CFType.values().mkString(", "))
+    println("EO: " + EOType.values().mkString(", "))
+    println("SS: " + SSType.values().mkString(", "))
+    println("FE: " + FEType.values().mkString(", "))
+    println("TC: " + TCType.values().mkString(", "))
+   }
+
 
   /**
    * Sonduje wartość f. celu i zapisuje do pliku
