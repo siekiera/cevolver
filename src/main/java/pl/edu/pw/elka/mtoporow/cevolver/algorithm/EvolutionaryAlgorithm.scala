@@ -105,7 +105,7 @@ class EvolutionaryAlgorithm(private val parameters: InternalAlgorithmParams, pri
     engine.addEvolutionObserver(new EvolutionObserver[C] {
       override def populationUpdate(data: PopulationData[_ <: C]): Unit = {
         progressWriteExecutor.execute(() => {
-          if (verboseLevel.generationCount) println("Pokolenie nr " + lastGenerations + data.getGenerationNumber)
+          if (verboseLevel.generationCount) println("Pokolenie nr " + (lastGenerations + data.getGenerationNumber))
           if (verboseLevel.distances) println("Najlepszy wynik: " + data.getBestCandidate.distances.toStringMM)
           if (verboseLevel.response) println("Najlepszy wynik (odpowiedź): " + data.getBestCandidate.lastResponse())
           if (verboseLevel.fitness) println("F. celu: " + data.getBestCandidateFitness)

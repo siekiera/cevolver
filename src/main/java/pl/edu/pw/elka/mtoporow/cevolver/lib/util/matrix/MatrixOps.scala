@@ -195,6 +195,8 @@ object MatrixOps {
    */
   def avg(vals: Array[Double]) = vals.sum / vals.length
 
+  def avg(vals: TraversableOnce[Double]) = vals.sum / vals.size
+
   /**
    * Liczy minimum tablicy
    *
@@ -219,6 +221,8 @@ object MatrixOps {
    * @return String
    */
   def mkString(vals: Array[Double], sep: String) = vals.mkString(sep)
+
+  def mkString(vals: Array[Any]): String = vals.mkString(";")
 
   /**
    * Konwertuje wektor liczb zespolonych do Stringa

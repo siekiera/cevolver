@@ -1,16 +1,16 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli
 
-import java.io.File
+import java.io.{OutputStreamWriter, File}
 import java.util.Properties
 
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.EvolutionResult
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param.VerboseLevel
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.{Conversions, PropertiesUtil, TimeUtil}
-import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Exporter
+import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{CellArray, Exporter}
 import pl.edu.pw.elka.mtoporow.cevolver.engine.Solver
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
-import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.FitnessProbe
+import pl.edu.pw.elka.mtoporow.cevolver.ext.diag.{PopulationStatistics, FitnessProbe}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.JavaVectorOps
 import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
@@ -55,6 +55,7 @@ object CevolverCli {
           case Array("fpcsv") => fitnessProbeCsv()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
+          case Array("stats") => popStats()
           case Array("continue") => continue()
           case Array("multi", n@_) => runMultipleTimes(getInt(n), VerboseLevel.allOff())
           case Array("multi", n@_, verbose@_) => runMultipleTimes(getInt(n), VerboseLevel(verbose))
@@ -270,6 +271,14 @@ object CevolverCli {
     val chartData = FitnessProbe.asChartData()
     val file = new File(GeneralConstants.OUTPUT_DIR, DataHolder.getCurrentId + "_probe.cht")
     SerializationUtil.serialize(file, chartData)
+  }
+
+  private def popStats(): Unit = {
+    val stats = new PopulationStatistics(lastResult)
+    val writer = new OutputStreamWriter(System.out)
+    CellArray.writeValue(stats, writer)
+//    CellArray.writeValues(stats.rowStatistics, writer)
+
   }
 
   /**

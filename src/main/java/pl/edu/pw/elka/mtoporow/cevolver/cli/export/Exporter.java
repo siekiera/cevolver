@@ -1,11 +1,9 @@
 package pl.edu.pw.elka.mtoporow.cevolver.cli.export;
 
+import com.sun.deploy.util.StringUtils;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 
 /**
@@ -15,10 +13,19 @@ import java.util.Collection;
  * @author Michał Toporowski
  */
 public class Exporter implements Closeable {
-    private final FileWriter writer;
+    private static final String SEPARATOR = ";";
+    private final Writer writer;
 
-    private Exporter(final File file) throws IOException {
-        this.writer = new FileWriter(file);
+    private Exporter(final Writer writer) {
+        this.writer = writer;
+    }
+
+    public static Exporter forFile(final File file) throws IOException {
+        return new Exporter(new FileWriter(file));
+    }
+
+    public static Exporter systemOut() {
+        return new Exporter(new OutputStreamWriter(System.out));
     }
 
     /**
@@ -27,8 +34,28 @@ public class Exporter implements Closeable {
      * @param line linię
      * @throws IOException
      */
-    private void appendLine(final String line) throws IOException {
+    private Exporter appendLine(final String line) throws IOException {
         writer.append(line).append("\n");
+        return this;
+    }
+
+    public Exporter append(Collection<?> c) throws IOException {
+        appendLine(StringUtils.join(c, SEPARATOR));
+        return this;
+    }
+
+    public Exporter appendMatrix(final double[][] matrix) throws IOException {
+        for (double[] row : matrix) {
+            appendLine(MatrixOps.mkString(row, SEPARATOR));
+        }
+        return this;
+    }
+
+    public Exporter appendMatrix(final Object[][] matrix) throws IOException {
+        for (Object[] row : matrix) {
+            appendLine(MatrixOps.mkString(row));
+        }
+        return this;
     }
 
     @Override
@@ -45,10 +72,8 @@ public class Exporter implements Closeable {
      * @throws IOException
      */
     public static void serialize(File file, Collection<?> c) throws IOException {
-        try (Exporter exporter = new Exporter(file)) {
-            for (Object obj : c) {
-                exporter.appendLine(obj.toString());
-            }
+        try (Exporter exporter = Exporter.forFile(file)) {
+            exporter.append(c);
         }
     }
 
@@ -60,10 +85,9 @@ public class Exporter implements Closeable {
      * @throws IOException
      */
     public static void serialize(File file, double[][] matrix) throws IOException {
-        try (Exporter exporter = new Exporter(file)) {
-            for (double[] row : matrix) {
-                exporter.appendLine(MatrixOps.mkString(row, ";"));
-            }
+        try (Exporter exporter = Exporter.forFile(file)) {
+            exporter.appendMatrix(matrix);
         }
     }
+
 }
