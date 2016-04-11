@@ -17,7 +17,7 @@ class CellArray(cls: Class[_]) {
 
   private def annotationsMap[T <: AnnotatedElement](els: Array[T]) = ListMap(els.filter(_.isAnnotationPresent(classOf[Cell])).map(m => (m.getAnnotation(classOf[Cell]).value(), m)): _*)
 
-  def names = fields.keySet ++ methods.keySet
+  private def names = fields.keySet ++ methods.keySet
 }
 
 object CellArray {
@@ -26,11 +26,13 @@ object CellArray {
    *
    * @param cellObjects obiekt
    * @param writer klasa zapisująca
+   * @param ca opcjonalny obiekt CA
    * @throws java.io.IOException io
+   * @return obiekt CellArray do reużycia
    */
   @throws(classOf[IOException])
-  def writeValues(cellObjects: Iterable[AnyRef], writer: RowWriter) = {
-    var ca: CellArray = null
+  def writeValues(cellObjects: Iterable[AnyRef], writer: RowWriter, cellArray: CellArray = null): CellArray = {
+    var ca: CellArray = cellArray
     for (cellObject <- cellObjects) {
       if (ca == null) {
         ca = new CellArray(cellObject.getClass)
@@ -40,6 +42,7 @@ object CellArray {
       val methodVals = ca.methods.values.map(m => m.invoke(cellObject))
       writer.yieldRow(fieldVals ++ methodVals)
     }
+    ca
   }
 
   /**
@@ -47,10 +50,12 @@ object CellArray {
    *
    * @param cellObject obiekt
    * @param writer klasa zapisująca
+   * @param ca opcjonalny obiekt CA
    * @throws java.io.IOException io
+   * @return obiekt CellArray do reużycia
    */
-  def writeValue(cellObject: AnyRef, writer: RowWriter): Unit = {
-    writeValues(Iterable(cellObject), writer)
+  def writeValue(cellObject: AnyRef, writer: RowWriter, ca: CellArray = null): CellArray = {
+    writeValues(Iterable(cellObject), writer, ca)
   }
 
   /**

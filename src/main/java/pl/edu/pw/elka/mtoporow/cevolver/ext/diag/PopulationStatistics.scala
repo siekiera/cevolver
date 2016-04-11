@@ -17,6 +17,7 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
   type EVC = EvaluatedCandidate[EvolutionaryAlgorithm.C]
   val population = Conversions.javaToScalaList(evolutionResult.population)
   val rowStatistics = population.map(calcRowStatistics)
+  
   val fitnesses = population.map(evc => evc.getFitness)
   @Cell("average fitness")
   val avgFitness = MatrixOps.avg(fitnesses)
@@ -24,20 +25,29 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
   val best10Fitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 10))
   @Cell("best 25% candidates' fitness")
   val best25Fitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 4))
+  
+  val lengthsDiffs = rowStatistics.map(_.lengthsDiff)
   @Cell("average vector square distance from expected")
-  val avgLengthsDiff = MatrixOps.avg(rowStatistics.map(_.lengthsDiff))
+  val avgLengthsDiff = MatrixOps.avg(lengthsDiffs)
   @Cell("best 10% average vector square distance from expected")
-  val best10PLengthsDiff = MatrixOps.sliceAvg(rowStatistics.map(_.lengthsDiff), rowStatistics.size / 10)
+  val best10PLengthsDiff = MatrixOps.sliceAvg(lengthsDiffs, rowStatistics.size / 10)
   @Cell("best 25% average vector square distance from expected")
-  val best25PLengthsDiff = MatrixOps.sliceAvg(rowStatistics.map(_.lengthsDiff), rowStatistics.size / 4)
+  val best25PLengthsDiff = MatrixOps.sliceAvg(lengthsDiffs, rowStatistics.size / 4)
+  @Cell("best 10 average vector square distance from expected")
+  val best10LengthsDiff = MatrixOps.sliceAvg(lengthsDiffs, 10)
+
+  val relativeErrors = rowStatistics.map(_.avgRelativeError)
   @Cell("average relative error on lengths")
-  val avgRelativeError = MatrixOps.avg(rowStatistics.map(_.avgRelativeError))
+  val avgRelativeError = MatrixOps.avg(relativeErrors)
   @Cell("best 10% average relative error on lengths")
-  val best10PRelativeError = MatrixOps.sliceAvg(rowStatistics.map(_.avgRelativeError), rowStatistics.size / 10)
+  val best10PRelativeError = MatrixOps.sliceAvg(relativeErrors, rowStatistics.size / 10)
   @Cell("best 25% relative error on lengths")
-  val best25PRelativeError = MatrixOps.sliceAvg(rowStatistics.map(_.avgRelativeError), rowStatistics.size / 4)
+  val best25PRelativeError = MatrixOps.sliceAvg(relativeErrors, rowStatistics.size / 4)
   @Cell("best 10 average relative error on lengths")
-  val best10RelativeError = MatrixOps.sliceAvg(rowStatistics.map(_.avgRelativeError), 10)
+  val best10RelativeError = MatrixOps.sliceAvg(relativeErrors, 10)
+
+  @Cell("execution time [s]")
+  val executionTime = evolutionResult.durationSec
 
   def calcRowStatistics(candidate: EVC): RowStatistics = new RowStatistics(candidate, DataHolder.getCurrent.expectedDistances)
 

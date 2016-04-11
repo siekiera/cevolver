@@ -16,6 +16,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
 
 import scala.io.Source
+import scalafx.scene.control.Cell
 
 /**
  * Interfejs wiersza polecenia dla aplikacji
@@ -141,8 +142,11 @@ object CevolverCli {
     val bestAvgFitnessVals = new Array[Double](n)
     val bestPercentage = 10.0
     // Zapisujemy wynik tu
-    val timePart = TimeUtil.nowAsNoSepString()
+    val timePart = TimeUtil.nowAsUlineString()
     val dir = GeneralConstants.subdir(timePart)
+    // Statystyki całościowe
+    val totalStatsWriter = new FileRowWriter(new File(dir, s"stats_total.csv"))
+    var totalStatsCellArray: CellArray = null
     for (i <- 0 until n) {
       // Uruchamiamy
       run(verboseLevel)
@@ -155,12 +159,14 @@ object CevolverCli {
       bestAvgFitnessVals(i) = population.slice(0, bestCount).map(_.getFitness).sum / bestCount
 
       // Statystyki populacji
-      val writer = new FileRowWriter(new File(dir, s"stats_$i"))
+      val w = new FileRowWriter(new File(dir, s"stats_$i.csv"))
       val stats = new PopulationStatistics(lastResult)
-      CellArray.writeValues(stats.rowStatistics, writer)
-      CellArray.writeValue(stats, writer)
-      writer.finish()
+      CellArray.writeValues(stats.rowStatistics, w)
+      totalStatsCellArray = CellArray.writeValue(stats, totalStatsWriter, totalStatsCellArray)
+      w.finish()
     }
+    totalStatsWriter.finish()
+
     // Ślad funkcji celu
     Exporter.serialize(new File(dir, "funkcja_celu.csv"), results)
     // Ślad funkcji celu jako chartData
@@ -178,9 +184,6 @@ object CevolverCli {
     SerializationUtil.serialize(new File(dir, "średnia.cht"), avgChartData)
     // Parametry algorytmu
     PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), "Zestaw danych: " + DataHolder.getCurrentId)
-    // Wynikowa populacja ostatniego
-    val population = Conversions.javaToScalaList(lastResult.population).map(c => c.getCandidate.distances.distances.toArray).toArray
-    Exporter.serialize(new File(dir, "populacja.csv"), population)
     // Czasy wykonania
     Exporter.serialize(new File(dir, "czasy.csv"), Array(times))
     // Uśredniona wartość FC wszystkich i bestPercentage% najlepszych
@@ -340,6 +343,7 @@ object CevolverCli {
     println("Polecenia: " +
       "\n\thelp\t\tten komunikat" +
       "\n\tabout\t\tinformacje o programie" +
+      "\n\talgoopts\twypisanie dostępnych opcji algorytmu" +
       "\n\tdatasets\twypisanie dostępnych zbiorów danych" +
       "\n\tload <id>\tzaładowanie zbioru danych" +
       "\n\tset <k> <v>\tustawienie wartości parametru algorytmu" +
@@ -352,6 +356,8 @@ object CevolverCli {
       "\n\t\td - odległości w najlepszym modelu" +
       "\n\t\tr - odpowiedź najlepszego modelu" +
       "\n\t\tf - wartość funkcji przystosowania najlepszego modelu" +
+      "\n\tmulti <n> [ndfr]\t uruchomienie algorytmu n razy + zapisanie śladu i statystyk do plików" +
+      "\n\tcontinue\turuchomienie algorytmu z ostatnio zakończonego miejsca" +
       "\n\tq\t\twyjście")
   }
 
