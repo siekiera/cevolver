@@ -1,5 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.ext.diag
 
+import java.util
+
 import org.uncommons.watchmaker.framework.EvaluatedCandidate
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
@@ -17,15 +19,17 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
   type EVC = EvaluatedCandidate[EvolutionaryAlgorithm.C]
   val population = Conversions.javaToScalaList(evolutionResult.population)
   val rowStatistics = population.map(calcRowStatistics)
-  
+
   val fitnesses = population.map(evc => evc.getFitness)
   @Cell("average fitness")
   val avgFitness = MatrixOps.avg(fitnesses)
   @Cell("best 10% candidates' fitness")
-  val best10Fitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 10))
+  val best10PFitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 10))
   @Cell("best 25% candidates' fitness")
-  val best25Fitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 4))
-  
+  val best25PFitness = MatrixOps.avg(fitnesses.slice(0, fitnesses.size / 4))
+  @Cell("best 10 candidates' fitness")
+  val best10Fitness = MatrixOps.avg(fitnesses.slice(0, 10))
+
   val lengthsDiffs = rowStatistics.map(_.lengthsDiff)
   @Cell("average vector square distance from expected")
   val avgLengthsDiff = MatrixOps.avg(lengthsDiffs)
@@ -60,8 +64,10 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
     val lengthsDiff = candidate.getCandidate.lengths.getDistance(expDists.lengths)
     @Cell("vector L1 distance from expected lengths")
     val lengthsL1Diff = candidate.getCandidate.lengths.getL1Distance(expDists.lengths)
-    @Cell("relative error %")
+
     val relativeError = MatrixOps.relativeErrorPercentage(candidate.getCandidate.lengths, expDists.lengths)
+    @Cell("relative error %")
+    val relativeErrorStr = util.Arrays.toString(relativeError)
     @Cell("average relative error %")
     val avgRelativeError = MatrixOps.avg(relativeError)
   }

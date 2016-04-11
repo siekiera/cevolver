@@ -28,6 +28,8 @@ abstract class RowWriter protected(protected val writer: Writer, separator: Stri
  * @param file plik
  */
 class FileRowWriter(file: File) extends RowWriter(new FileWriter(file), ";") {
+  override def yieldRow(row: TraversableOnce[Any]): Unit = super.yieldRow(row.map(x => "\"" + x + "\""))
+
   def finish() = writer.close()
 }
 
