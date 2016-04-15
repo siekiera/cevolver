@@ -61,6 +61,6 @@ public class ShortbreakLineModel extends MicrostripLineModel {
 
     @Override
     public AbstractCanalModel createNew(Distances distances) {
-        return new ShortbreakLineModel(LWDists.shortbreak(distances), pars);
+        return new ShortbreakLineModel(LWDists.shortbreak(distances), pars).withTempVector(algorithmTempVector());
     }
 }

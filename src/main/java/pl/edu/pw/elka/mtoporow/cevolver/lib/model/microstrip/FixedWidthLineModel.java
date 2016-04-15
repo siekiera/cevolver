@@ -59,6 +59,6 @@ public class FixedWidthLineModel extends MicrostripLineModel {
 
     @Override
     public AbstractCanalModel createNew(Distances distances) {
-        return new FixedWidthLineModel(distances, pars);
+        return new FixedWidthLineModel(distances, pars).withTempVector(algorithmTempVector());
     }
 }

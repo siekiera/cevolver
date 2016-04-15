@@ -64,6 +64,6 @@ public class LongbreakLineModel extends MicrostripLineModel {
 
     @Override
     public AbstractCanalModel createNew(Distances distances) {
-        return new LongbreakLineModel(LWDists.longbreak(distances), pars);
+        return new LongbreakLineModel(LWDists.longbreak(distances), pars).withTempVector(algorithmTempVector());
     }
 }

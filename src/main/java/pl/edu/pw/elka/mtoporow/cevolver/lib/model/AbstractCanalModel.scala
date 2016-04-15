@@ -64,6 +64,17 @@ abstract class AbstractCanalModel {
   def createNew(distances: RealVector): AbstractCanalModel = createNew(new Distances(distances))
 
   /**
+   * Ustawia wektor tymczasowy i zwraca obiekt modelu
+   *
+   * @param vector wektor
+   * @return
+   */
+  def withTempVector(vector: RealVector) = {
+    algorithmTempVector = vector
+    this
+  }
+
+  /**
    * Oblicza odpowiedź kanału
    *
    * @param measurementParams parametry pomiaru

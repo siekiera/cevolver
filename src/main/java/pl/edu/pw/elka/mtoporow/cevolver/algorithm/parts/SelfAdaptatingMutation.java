@@ -35,14 +35,13 @@ public class SelfAdaptatingMutation extends BaseMutation {
     protected AbstractCanalModel mutate(final AbstractCanalModel candidate, final Random rng) {
         RealVector deviations = candidate.algorithmTempVector();
         if (deviations == null) {
-            deviations = new ArrayRealVector(n, randomCoeffScalar);
+            deviations = new ArrayRealVector(n, randomCoeffScalar).map(x -> x * rng.nextGaussian());
         }
         // Mutacja odchyleń standardowych
         RealVector mutatedDeviations = deviations.map(s -> s * expNormal(tau0, rng) * expNormal(tau, rng));
-        candidate.algorithmTempVector_$eq(mutatedDeviations);
         // Właściwa mutacja osobnika
         RealVector newDists = candidate.distances().distances().add(mutatedDeviations);
-        return candidate.createNew(newDists);
+        return candidate.createNew(newDists).withTempVector(mutatedDeviations);
     }
 
     /**

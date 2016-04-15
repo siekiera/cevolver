@@ -12,6 +12,6 @@ import org.uncommons.watchmaker.framework.operators.DoubleArrayCrossover;
 public class DistArrayCrossover extends BaseCrossover {
 
     public DistArrayCrossover(Probability probability) {
-        super(new DoubleArrayCrossover(1, probability), true);
+        super(new DoubleArrayCrossover(1, probability), false);
     }
 }
