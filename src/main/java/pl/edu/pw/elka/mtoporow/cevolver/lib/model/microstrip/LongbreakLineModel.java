@@ -47,7 +47,10 @@ public class LongbreakLineModel extends MicrostripLineModel {
         } else {
             // Nieparzysta liczba przerwań - należy dodać impedancję na końcu
             // TODO:: jaka powinna być wartość tej impedancji???
-            final Complex impS11 = CanalUtils.s11ForImpedance(null, z01);
+            int beforeLast = dists.breakCount() - 1;
+            double lastImpedance = new Microstrip(dists.wEntry(beforeLast - 1), pars.t(), dists.lEntry(beforeLast), pars.h(), freq).getZ0();
+            Complex z = z01.subtract(lastImpedance);
+            final Complex impS11 = CanalUtils.s11ForImpedance(z, z01);
             return tMatrix.getS11WithCascadeS11(impS11);
         }
     }

@@ -4,13 +4,14 @@ import java.util
 import java.util.concurrent.{Callable, Executors}
 
 import org.uncommons.maths.random.Probability
-import org.uncommons.watchmaker.framework.operators.EvolutionPipeline
+import org.uncommons.watchmaker.framework.operators.{EvolutionPipeline, IdentityOperator}
 import org.uncommons.watchmaker.framework.selection.{RankSelection, RouletteWheelSelection, StochasticUniversalSampling, TournamentSelection}
 import org.uncommons.watchmaker.framework.termination.{GenerationCount, Stagnation, TargetFitness}
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.param._
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts._
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel
 
 /**
  * Silnik rozwiązujący problem
@@ -91,6 +92,7 @@ class Solver {
         case EOType.AVERAGE_VALUE_CROSSOVER => new AverageValueCrossover(probability)
         case EOType.PARAMETER_AVG_VAL_CROSSOVER => new ParameterAverageValueCrossover(probability)
         case EOType.SELF_ADAPTATING_MUTATION => new SelfAdaptatingMutation(cf.traitCount(), probability)
+        case EOType.IDENTITY => new IdentityOperator[AbstractCanalModel]
       }
       operators.add(operator)
     }

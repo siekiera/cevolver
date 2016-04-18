@@ -30,5 +30,9 @@ public enum EOType implements AlgorithmPartType {
     /**
      * Samo-adoptująca mutacja
      */
-    SELF_ADAPTATING_MUTATION
+    SELF_ADAPTATING_MUTATION,
+    /**
+     * Identyczność (nic nie robi)
+     */
+    IDENTITY
 }
