@@ -16,7 +16,6 @@ import pl.edu.pw.elka.mtoporow.cevolver.util.GeneralConstants
 import pl.edu.pw.elka.mtoporow.cevolver.util.export.SerializationUtil
 
 import scala.io.Source
-import scalafx.scene.control.Cell
 
 /**
  * Interfejs wiersza polecenia dla aplikacji
@@ -102,7 +101,7 @@ object CevolverCli {
       lastSolver = new Solver()
       val result = lastSolver.solveWithAllResults(algParameters, verboseLevel)
       printf("Zakończono obliczenia po %s pokoleniach, czas obliczeń: %s\n", result.generationCount, result.durationSec)
-      println("Oczekiwany wynik: " + expectedDists.toStringMM)
+      println("Oczekiwany wynik: " + expectedDists.toString)
       println("Najlepszy wynik z populacji: ")
       CevolverApp.printAllResults(result.population, 1)
       lastResult = result
@@ -123,7 +122,7 @@ object CevolverCli {
     println("Kontynuuję obliczenia...")
     val result = lastSolver.continue()
     printf("Zakończono obliczenia po %s pokoleniach, czas obliczeń: %s\n", result.generationCount, result.durationSec)
-    println("Oczekiwany wynik: " + expectedDists.toStringMM)
+    println("Oczekiwany wynik: " + expectedDists.toString)
     println("Najlepszy wynik z populacji: ")
     CevolverApp.printAllResults(result.population, 1)
     lastResult = result
@@ -304,7 +303,7 @@ object CevolverCli {
     println("SS: " + SSType.values().mkString(", "))
     println("FE: " + FEType.values().mkString(", "))
     println("TC: " + TCType.values().mkString(", "))
-   }
+  }
 
 
   /**

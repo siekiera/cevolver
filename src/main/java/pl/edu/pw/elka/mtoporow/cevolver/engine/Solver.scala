@@ -84,7 +84,6 @@ class Solver {
     for (opType <- parameters.operators) {
       val probability = readProbability(opType)
       val operator = opType.partType match {
-        case EOType.SIMPLE_MUTATION => new SimpleMutation(probability)
         case EOType.DIST_ARRAY_CROSSOVER => new DistArrayCrossover(probability)
         case EOType.INVERSION => new Inversion(probability)
         case EOType.STANDARD_GAUSSIAN_MUTATION => new StandardGaussianMutation(probability,

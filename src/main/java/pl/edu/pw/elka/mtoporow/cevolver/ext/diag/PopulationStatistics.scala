@@ -70,6 +70,8 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
     val relativeErrorStr = util.Arrays.toString(relativeError)
     @Cell("average relative error %")
     val avgRelativeError = MatrixOps.avg(relativeError)
+    @Cell("temp vector")
+    val tempVector = candidate.getCandidate.algorithmTempVector
   }
 
 }

@@ -5,8 +5,6 @@ import org.apache.commons.math3.complex.Complex
 import org.apache.commons.math3.linear._
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.maths.MiscMathOps
 
-import scala.collection.TraversableLike
-
 /**
  * Zawiera operacje na macierzach i wektorach
  * Data utworzenia: 21.06.15, 10:09
@@ -36,18 +34,6 @@ object MatrixOps {
    */
   def reduceComplexVector(vector: FieldVector[Complex], function: (Complex, Complex) => Complex): Complex = {
     asIterable(vector).reduce(function)
-  }
-
-  /**
-   * Redukuje wektor liczb zespolonych do liczby rzeczywistej
-   *
-   * @param vector
-   * @param function
-   * @return
-   */
-  def reduceComplexVector(vector: FieldVector[Complex], function: (Complex, Complex) => Double): Double = {
-    // TODO to nie wygląda ładnie
-    asIterable(vector).reduce((a, b) => new Complex(function.apply(a, b))).getReal
   }
 
   def zeroComplexArray(length: Int) = (0 until length).map(i => Complex.ZERO).toArray
@@ -139,6 +125,18 @@ object MatrixOps {
    */
   def invert(realVector: RealVector) = {
     new ArrayRealVector(realVector.toArray.reverse)
+  }
+
+  /**
+   * Produkuje wektor V = {v[1], ..., v[n]}, gdzie v[i] = function(v1[i], v2[i])
+   *
+   * @param v1 wektor 1
+   * @param v2 wektor 2
+   * @param function funkcja przekształcająca
+   * @return wektor wynikowy
+   */
+  def combine(v1: RealVector, v2: RealVector, function: (Double, Double) => Double): RealVector = {
+    MatrixUtils.createRealVector((asIterable(v1), asIterable(v2)).zipped.map(function).toArray)
   }
 
   /**

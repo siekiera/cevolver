@@ -8,10 +8,6 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.param;
  */
 public enum EOType implements AlgorithmPartType {
     /**
-     * Mutacja polegająca na dodawaniu wartości losowej o rozkładzie normalnym
-     */
-    SIMPLE_MUTATION,
-    /**
      * Krzyżowanie polegające na wymianie parametrów
      */
     DIST_ARRAY_CROSSOVER,

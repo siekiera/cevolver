@@ -42,7 +42,6 @@ trait PunishmentFunction {
  */
 object FitnessFunction {
   def apply(candidate: EvolutionaryAlgorithm.C, realResp: CanalResponse, punishmentRatio: Double): Double = {
-    // TODO:: w klasie RealVector jest funkcja na to (RealVector.getDistance)
     val candResponse = candidate.response(DataHolder.getCurrent.measurementParams)
     val diff = candResponse.value.subtract(realResp.value)
     val fitness = MatrixOps.asIterable(diff).map(sqrAbs).sum

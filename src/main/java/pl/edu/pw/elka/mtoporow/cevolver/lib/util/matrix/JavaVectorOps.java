@@ -1,6 +1,5 @@
 package pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -109,20 +108,13 @@ public final class JavaVectorOps {
         return MatrixUtils.createRealVector(rng.doubles(length, min, bound).toArray());
     }
 
-    /*
-    FIXME wywalić to stąd
+    /**
+     * Ekstrahuje osobniki z listy obiektów EvaluatedCandidate
+     *
+     * @param evaluated zewaluowane osobniki
+     * @return osobniki
      */
     public static List<AbstractCanalModel> getCandidates(final List<EvaluatedCandidate<AbstractCanalModel>> evaluated) {
         return evaluated.stream().map(EvaluatedCandidate::getCandidate).collect(Collectors.toList());
-    }
-
-    /**
-     * Tworzy wektor na podstawie wartości
-     *
-     * @param values liczby rzeczywiste
-     * @return RealVector
-     */
-    public static RealVector createVector(double... values) {
-        return new ArrayRealVector(values);
     }
 }

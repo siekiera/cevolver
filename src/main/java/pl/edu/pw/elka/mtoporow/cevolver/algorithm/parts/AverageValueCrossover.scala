@@ -2,6 +2,7 @@ package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts
 
 import java.util.Random
 
+import org.apache.commons.math3.linear.RealVector
 import org.uncommons.maths.random.Probability
 
 /**
@@ -9,15 +10,9 @@ import org.uncommons.maths.random.Probability
  * Data utworzenia: 09.01.16, 17:03
  * @author Michał Toporowski
  */
-class AverageValueCrossover(private val probability: Probability) extends BaseCrossover(new DoubleAverageCO(probability), false)
-
-private class DoubleAverageCO(private val probability: Probability) extends BaseDoubleCrossover(probability) {
-  override def mateOne(parent1: Array[Double], parent2: Array[Double], numberOfCrossoverPoints: Int, rng: Random): Array[Double] = {
-    val child1 = new Array[Double](parent1.length)
+class AverageValueCrossover(probability: Probability) extends SymmetricCrossover(probability) {
+  override protected def mateOne(parent1: RealVector, parent2: RealVector, numberOfCrossoverPoints: Int, rng: Random): RealVector = {
     val random = rng.nextDouble()
-    for (i <- 0 until parent1.length) {
-      child1(i) = random * parent1(i) + (1 - random) * parent2(i)
-    }
-    child1
+    parent1.combine(random, 1 - random, parent2)
   }
 }

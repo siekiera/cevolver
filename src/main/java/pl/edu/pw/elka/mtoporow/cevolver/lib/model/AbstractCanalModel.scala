@@ -81,6 +81,8 @@ abstract class AbstractCanalModel {
    * @return odpowiedź
    */
   protected def calculateResponse(measurementParams: MeasurementParams): CanalResponse
+
+  override def toString: String = s"Model: ${getClass.getSimpleName}; ${distances.toString}"
 }
 
 

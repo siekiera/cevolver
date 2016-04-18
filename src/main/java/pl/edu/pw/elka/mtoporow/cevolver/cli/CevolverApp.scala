@@ -41,7 +41,7 @@ object CevolverApp {
   def printAllResults(results: java.util.List[EvaluatedCandidate[EvolutionaryAlgorithm.C]], maxResults: Int): Unit = {
     for (i <- 0 until results.size().min(maxResults)) {
       val ec = results.get(i)
-      println(i.toString + ": Funkcja celu: " + ec.getFitness + "; c: " + ec.getCandidate.hashCode() + "; " + ec.getCandidate.distances.toStringMM)
+      println(i.toString + ": Funkcja celu: " + ec.getFitness + "; c: " + ec.getCandidate.hashCode() + "; " + ec.getCandidate.distances.toString)
     }
   }
 }

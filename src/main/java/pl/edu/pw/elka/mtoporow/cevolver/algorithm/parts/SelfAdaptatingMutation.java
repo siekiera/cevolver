@@ -1,9 +1,7 @@
 package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.uncommons.maths.random.Probability;
-import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
 
 import java.util.Random;
@@ -18,24 +16,22 @@ import java.util.Random;
  */
 public class SelfAdaptatingMutation extends BaseMutation {
     private static final double C = 1.0;
-    /* To jest inicjalizowane raz na uruchomienie algorytmu */
-    private final int n;
+    private static final double DEFAULT_INITIAL_DEVIATION = 0.1;
     private final double tau0;
     private final double tau;
-    private final double randomCoeffScalar = 0.01 * DataHolder.getCurrent().measurementParams().getTotalLength();
 
     public SelfAdaptatingMutation(final int breakCount, final Probability probability) {
         super(probability);
-        this.n = breakCount;
-        tau0 = C / Math.sqrt(2 * n);
-        tau = C / Math.sqrt(2 * Math.sqrt(n));
+        tau0 = C / Math.sqrt(2 * breakCount);
+        tau = C / Math.sqrt(2 * Math.sqrt(breakCount));
     }
 
     @Override
     protected AbstractCanalModel mutate(final AbstractCanalModel candidate, final Random rng) {
         RealVector deviations = candidate.algorithmTempVector();
         if (deviations == null) {
-            deviations = new ArrayRealVector(n, randomCoeffScalar).map(x -> x * rng.nextGaussian());
+            // Jeśli jeszcze nie ma odchyleń, bierzemy jakieś losowe proporcjonalne do odległości
+            deviations = candidate.distances().distances().map(d -> (d * DEFAULT_INITIAL_DEVIATION * rng.nextGaussian()));
         }
         // Mutacja odchyleń standardowych
         RealVector mutatedDeviations = deviations.map(s -> s * expNormal(tau0, rng) * expNormal(tau, rng));

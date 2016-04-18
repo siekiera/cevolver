@@ -1,16 +1,14 @@
 package pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.uncommons.watchmaker.framework.EvolutionaryOperator;
+import org.apache.commons.math3.util.Pair;
+import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.operators.AbstractCrossover;
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.AbstractCanalModel;
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Klasa bazowa dla operatora krzyżowania
@@ -18,34 +16,27 @@ import java.util.stream.Collectors;
  *
  * @author Michał Toporowski
  */
-class BaseCrossover implements EvolutionaryOperator<AbstractCanalModel> {
-    private final AbstractCrossover<double[]> doubleCrossover;
-    private final Function<RealVector, RealVector> asSums;
-    private final Function<RealVector, RealVector> fromSums;
+abstract class BaseCrossover extends AbstractCrossover<AbstractCanalModel> {
 
-    public BaseCrossover(AbstractCrossover<double[]> doubleCrossover, boolean useSums) {
-        this.doubleCrossover = doubleCrossover;
-        if (useSums) {
-            this.asSums = MatrixOps::asSums;
-            this.fromSums = MatrixOps::fromSums;
-        } else {
-            this.asSums = Function.identity();
-            this.fromSums = Function.identity();
-        }
+    public BaseCrossover(final Probability crossoverProbability) {
+        super(1, crossoverProbability);
     }
 
     @Override
-    public List<AbstractCanalModel> apply(List<AbstractCanalModel> selectedCandidates, Random rng) {
-        List<double[]> distValues = selectedCandidates.parallelStream()
-                .map(c -> c.distances().distances())
-                .map(asSums)
-                .map(RealVector::toArray)
-                .collect(Collectors.toList());
-        List<double[]> crossed = doubleCrossover.apply(distValues, rng);
-        return crossed.parallelStream()
-                .map(ArrayRealVector::new)
-                .map(fromSums)
-                .map(v -> selectedCandidates.get(0).createNew(v))
-                .collect(Collectors.toList());
+    protected List<AbstractCanalModel> mate(AbstractCanalModel parent1, AbstractCanalModel parent2, int numberOfCrossoverPoints, Random rng) {
+        final Pair<RealVector, RealVector> childVectors = mate(parent1.distances().distances(), parent2.distances().distances(), numberOfCrossoverPoints, rng);
+        return Arrays.asList(parent1.createNew(childVectors.getFirst()), parent2.createNew(childVectors.getSecond()));
     }
+
+    /**
+     * Krzyżuje wektory dwóch osobników
+     *
+     * @param parent1                 wektor osobnika 1
+     * @param parent2                 wektor osobnika 2
+     * @param numberOfCrossoverPoints liczba p. krzyżowania
+     * @param rng                     rng
+     * @return para wektoróœ dzieci
+     */
+    protected abstract Pair<RealVector, RealVector> mate(RealVector parent1, RealVector parent2, int numberOfCrossoverPoints, Random rng);
+
 }
