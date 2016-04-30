@@ -33,7 +33,8 @@ object CevolverCli {
     about()
     help()
     print(": ")
-    for (ln <- Source.stdin.getLines()) {
+    val source = if (args.isEmpty) Source.stdin else Source.fromFile(args(0))
+    for (ln <- source.getLines()) {
       try {
         val input = ln.trim.split(" ")
         input match {
@@ -332,7 +333,7 @@ object CevolverCli {
    */
   private def about(): Unit = {
     println("Cevolver - narzędzie do obliczania odległości w kanałach transmisyjnych za pomocą algorytmów ewolucyjnych" +
-      "\n Autor: Michał Toporowski")
+      "\n Autor: Michał Toporowski\n Uruchomienie bez parametrów - tryb interakywny\n Uruchomienie z nazwą pliku - tryb wsadowy")
   }
 
   /**
