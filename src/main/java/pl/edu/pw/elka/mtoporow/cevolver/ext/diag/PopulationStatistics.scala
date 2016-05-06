@@ -8,7 +8,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.algorithm.util.Conversions
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.{EvolutionResult, EvolutionaryAlgorithm}
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.Cell
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.Distances
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.{JavaVectorOps, MatrixOps}
 
 /**
  * Statystyki populacji wynikowej
@@ -56,16 +56,19 @@ class PopulationStatistics(evolutionResult: EvolutionResult) {
   def calcRowStatistics(candidate: EVC): RowStatistics = new RowStatistics(candidate, DataHolder.getCurrent.expectedDistances)
 
   class RowStatistics(candidate: EVC, expDists: Distances) {
+    /** Wektor długości z osobnika rozmiaru takiego, jak wektor oczekiwany */
+    private val candidateLengthsResized = JavaVectorOps.resize(candidate.getCandidate.lengths, expDists.lengths.getDimension)
+
     @Cell("distances")
     val distances = candidate.getCandidate.distances.distances
     @Cell("fitness")
     val fitness = candidate.getFitness
     @Cell("vector square distance from expected lengths")
-    val lengthsDiff = candidate.getCandidate.lengths.getDistance(expDists.lengths)
+    val lengthsDiff = candidateLengthsResized.getDistance(expDists.lengths)
     @Cell("vector L1 distance from expected lengths")
-    val lengthsL1Diff = candidate.getCandidate.lengths.getL1Distance(expDists.lengths)
+    val lengthsL1Diff = candidateLengthsResized.getL1Distance(expDists.lengths)
 
-    val relativeError = MatrixOps.relativeErrorPercentage(candidate.getCandidate.lengths, expDists.lengths)
+    val relativeError = MatrixOps.relativeErrorPercentage(candidateLengthsResized, expDists.lengths)
     @Cell("relative error %")
     val relativeErrorStr = util.Arrays.toString(relativeError)
     @Cell("average relative error %")
