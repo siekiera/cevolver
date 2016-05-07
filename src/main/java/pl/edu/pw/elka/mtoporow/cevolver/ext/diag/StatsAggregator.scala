@@ -4,14 +4,14 @@ import java.io.File
 
 import org.apache.commons.math3.linear.MatrixUtils
 import pl.edu.pw.elka.mtoporow.cevolver.cli.export.{Exporter, FileRowWriter, RowWriter}
-import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
+import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.{JavaVectorOps, MatrixOps}
 
 import scala.io.Source
 
 /**
  * Agregator plików ze statystykami
  *
- * Wywołanie: StatsAggregator &lt;katalog&gt; [plik1] [plik2]
+ * Wywołanie: StatsAggregator &lt;katalog&gt; &lt;plik1&gt; [n]
  *
  * Założenie: struktura jest następująca:
  * <ul><li> katalog <ul>
@@ -19,32 +19,36 @@ import scala.io.Source
  * <li> podkatalog 2 <ul><li> plik1 </li><li> plik2 </li></ul></li>
  * </ul></li></ul>
  *
+ * n - liczba linii do pominięcia z początku pliku (domyślnie 0)
+ *
  * Data utworzenia: 02.05.16, 12:08
  * @author Michał Toporowski
  */
 object StatsAggregator {
 
   def main(args: Array[String]) {
-    if (args.length < 2) throw new IllegalArgumentException("args.length < 2!")
-    processDir(new File(args(0)), args.drop(1))
+    args.length match {
+      case 2 => processDir(new File(args(0)), args(1))
+      case 3 => processDir(new File(args(0)), args(1), args(2).toInt)
+      case _ => throw new IllegalArgumentException("Nieprawidłowa liczba argumentów!")
+    }
   }
 
-  private def processDir(rootDir: File, fileNames: Array[String]): Unit = {
-    val totalAgrFile = new File(rootDir, "total_agr.csv")
+  private def processDir(rootDir: File, fileName: String, linesToDrop: Int = 0): Unit = {
+    println(s"Agregowanie danych z plików o nazwie $fileName z katalogu ${rootDir.getPath}; Liczba linii do pominięcia: $linesToDrop...")
+    val totalAgrFile = new File(rootDir, fileName + "_total_agr.csv")
     val totalWriter = new FileRowWriter(totalAgrFile)
-    rootDir.listFiles().filter(_.isDirectory).foreach(f =>
-      fileNames.foreach(n => processFile(f, n, totalWriter))
-    )
+    rootDir.listFiles().filter(_.isDirectory).foreach(f => processFile(f, fileName, totalWriter, linesToDrop))
     totalWriter.finish()
     println(s"Zapisano ${totalAgrFile.getPath}")
   }
 
-  private def processFile(dir: File, filename: String, totalWriter: RowWriter): Unit = {
+  private def processFile(dir: File, filename: String, totalWriter: RowWriter, linesToDrop: Int): Unit = {
     val file = new File(dir, filename)
     val src = Source.fromFile(file)
     // Odczytanie danych z CSV-ki do macierzy
-    val data = src.getLines().drop(1).map(s => s.split(";").map(_.replace("\"", "").toDouble)).toArray
-    val matrix = MatrixUtils.createRealMatrix(data)
+    val data = src.getLines().drop(linesToDrop).map(s => s.split(";").map(_.replace("\"", "").toDouble)).toArray
+    val matrix = JavaVectorOps.createMatrix(data)
 
     // Agregacja - do macierzy zawierającej średnią, max i min
     val aggregates = (0 until matrix.getColumnDimension).map(matrix.getColumn).map(c => Array(MatrixOps.avg(c), c.max, c.min)).toArray
