@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.mtoporow.cevolver.ext.diag
+package pl.edu.pw.elka.mtoporow.cevolver.ext.diag.aggregation
 
 import java.io.File
 
@@ -22,6 +22,11 @@ import scala.io.Source
  * n - liczba linii do pominięcia z początku pliku (domyślnie 0)
  * avgOnly - flaga określająca, czy wrzucać tylko średnią
  *
+ * Przykładowe wywołania:
+ * <ul>
+ * <li>"katalog1" stats_total.csv 1</li>
+ * <li>"katalog1" funkcja_celu.csv 0 t</li>
+ * </ul>
  * Data utworzenia: 02.05.16, 12:08
  * @author Michał Toporowski
  */

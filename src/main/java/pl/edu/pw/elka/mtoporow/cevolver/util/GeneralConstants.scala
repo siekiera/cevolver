@@ -9,6 +9,10 @@ import java.io.File
  */
 object GeneralConstants {
 
+  val FF_OUTPUT_FILENAME = "funkcja_celu.csv"
+  val STATS_TOTAL_FILENAME = "stats_total.csv"
+  val TIMES_FILENAME = "czasy.csv"
+
   /**
    * Domyślny katalog wyjściowy programu, czyli ${USER_HOME}/cevolver_out
    */

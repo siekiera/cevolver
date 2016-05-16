@@ -145,7 +145,7 @@ object CevolverCli {
     val timePart = TimeUtil.nowAsUlineString()
     val dir = GeneralConstants.subdir(timePart)
     // Statystyki całościowe
-    val totalStatsWriter = new FileRowWriter(new File(dir, s"stats_total.csv"))
+    val totalStatsWriter = new FileRowWriter(new File(dir, GeneralConstants.STATS_TOTAL_FILENAME))
     var totalStatsCellArray: CellArray = null
     for (i <- 0 until n) {
       // Uruchamiamy
@@ -168,7 +168,7 @@ object CevolverCli {
     totalStatsWriter.finish()
 
     // Ślad funkcji celu
-    Exporter.serialize(new File(dir, "funkcja_celu.csv"), results)
+    Exporter.serialize(new File(dir, GeneralConstants.FF_OUTPUT_FILENAME), results)
     // Ślad funkcji celu jako chartData
     val chartFile = new File(dir, "funkcja_celu.cht")
     val chartData: ChartData = new ChartData("Wykres wartości funkcji celu", "Nr pokolenia", null)
@@ -185,7 +185,7 @@ object CevolverCli {
     // Parametry algorytmu
     PropertiesUtil.storeToFile(properties, new File(dir, "algorithm.properties"), "Zestaw danych: " + DataHolder.getCurrentId)
     // Czasy wykonania
-    Exporter.serialize(new File(dir, "czasy.csv"), Array(times))
+    Exporter.serialize(new File(dir, GeneralConstants.TIMES_FILENAME), Array(times))
     // Uśredniona wartość FC wszystkich i bestPercentage% najlepszych
     Exporter.serialize(new File(dir, "fc.csv"), Array(avgFitnessVals, bestAvgFitnessVals))
   }
