@@ -20,8 +20,8 @@ object FourierSolver {
   def calculate() = {
     val vals = freqResp()
     val respImp = fft.transform(vals, TransformType.INVERSE)
-    val resAbs = respImp.map(c => new java.lang.Double(c.abs())).array
-    val cl = java.util.Arrays.asList[java.lang.Double](resAbs: _*)
+    val resAbs = respImp.map(c => c.abs()).array
+    val cl = Array(resAbs)
     Exporter.serialize(new File(GeneralConstants.OUTPUT_DIR, s"idft_${DataHolder.getCurrentId}.csv"), cl)
   }
 
