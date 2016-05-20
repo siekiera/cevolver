@@ -29,7 +29,7 @@ public class IDFT {
                 Complex multiplier = Complex.valueOf(Math.cos(arg)).add(Complex.I.multiply(Math.sin(arg)));
                 xn = xn.add(input.getEntry(k).multiply(multiplier));
             }
-            output.setEntry(n, xn);
+            output.setEntry(n, xn.divide(len));
         }
         return output;
     }
