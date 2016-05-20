@@ -14,7 +14,7 @@ import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
  * Data utworzenia: 15.02.16, 14:14
  * @author Michał Toporowski
  */
-object FourierSolver {
+object FastFourierSolver {
   private val fft = new FastFourierTransformer(DftNormalization.STANDARD)
 
   def calculate() = {
