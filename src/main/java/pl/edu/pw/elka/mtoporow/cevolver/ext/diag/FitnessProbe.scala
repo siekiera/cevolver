@@ -4,7 +4,7 @@ import org.apache.commons.math3.linear.ArrayRealVector
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.datasets.DataHolder
 import pl.edu.pw.elka.mtoporow.cevolver.algorithm.parts.FitnessFunction
 import pl.edu.pw.elka.mtoporow.cevolver.ext.chart.ChartData
-import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{MicrostripLineModelFactory, FixedWidthLineModel, MicrostripParams}
+import pl.edu.pw.elka.mtoporow.cevolver.lib.model.microstrip.{FixedWidthLineModel, MicrostripLineModelFactory, MicrostripParams}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.model.{CanalResponse, Distances}
 import pl.edu.pw.elka.mtoporow.cevolver.lib.util.matrix.MatrixOps
 
@@ -16,7 +16,7 @@ import scala.collection.immutable.NumericRange
  * @author Michał Toporowski
  */
 object FitnessProbe {
-  private val STEP = 0.005
+  private val STEP = 0.002
   private val MARGIN = 0.05
 
   /**
@@ -74,6 +74,40 @@ object FitnessProbe {
     val firstRow = Array(Array(0.0) ++ range2)
     firstRow ++ data
   }
+
+  /**
+   * Zwraca wartości funkcji celu w postaci macierzy 2d
+   * Format wierszy: [x = L1]; [y = L2]; [z = wartość f. celu]
+   *
+   * @return Wartości macierzy
+   */
+  def asXYZ(): Array[Array[Double]] = {
+    val distances = DataHolder.getCurrent.expectedDistances
+    if (distances.distances.getDimension < 2) {
+      throw new IllegalArgumentException("Operacja zaimplementowana dla co najmniej 2 punktów nieciągłości!")
+    }
+    val dist1 = distances.distances.getEntry(0)
+    val dist2 = distances.distances.getEntry(1)
+    // Jeśli odległości jest > 2 - pozostałe stałe
+    val otherDists = MatrixOps.asIterable(distances.distances).slice(2, distances.distances.getDimension).toArray
+    val realResp = DataHolder.getCurrent.canalResponse
+    val range1 = 0.0.max(dist1 - MARGIN) to dist1 + MARGIN by STEP
+    val range2 = 0.0.max(dist2 - MARGIN) to dist2 + MARGIN by STEP
+
+    var result: Array[Array[Double]] = Array(Array())
+
+    for (varDist1 <- range1) {
+      result = result ++ range2.map(varDist2 => {
+        val dists = Array(varDist1, varDist2) ++ otherDists
+        val model = MicrostripLineModelFactory.newModel(new Distances(new ArrayRealVector(dists)))
+        val value = FitnessFunction(model, realResp, 0)
+        Array(varDist1, varDist2, value)
+      })
+    }
+
+    result
+  }
+
 
   /**
    * Zwraca wartości funkcji celu dla kanału, w którym jedna odległość jest zafiksowana, a druga ruchoma

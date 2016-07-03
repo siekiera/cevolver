@@ -54,6 +54,7 @@ object CevolverCli {
           case Array("store") => store()
           case Array("fprobe") => fitnessProbe()
           case Array("fpcsv") => fitnessProbeCsv()
+          case Array("fpxyz") => fitnessProbeXYZ()
           case Array("run") => run(VerboseLevel.allOff())
           case Array("run", verbose@_) => run(VerboseLevel(verbose))
           case Array("stats") => popStats()
@@ -282,6 +283,19 @@ object CevolverCli {
     val chartData = FitnessProbe.asChartData()
     val file = new File(GeneralConstants.OUTPUT_DIR, DataHolder.getCurrentId + "_probe.cht")
     SerializationUtil.serialize(file, chartData)
+  }
+
+  /**
+   * Sonduje wartość f. celu i zapisuje do pliku
+   */
+  private def fitnessProbeXYZ(): Unit = {
+    if (!DataHolder.isLoaded) {
+      println("Nie załadowano danych!")
+      return
+    }
+    val matrix = FitnessProbe.asXYZ()
+    val file = new File(GeneralConstants.OUTPUT_DIR, DataHolder.getCurrentId + "_probe_xyz.csv")
+    Exporter.serialize(file, matrix)
   }
 
   /**
