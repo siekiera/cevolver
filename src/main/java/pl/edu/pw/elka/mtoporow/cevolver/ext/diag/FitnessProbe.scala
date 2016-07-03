@@ -16,7 +16,7 @@ import scala.collection.immutable.NumericRange
  * @author Michał Toporowski
  */
 object FitnessProbe {
-  private val STEP = 0.0005
+  private val STEP = 0.005
   private val MARGIN = 0.05
 
   /**
@@ -62,8 +62,8 @@ object FitnessProbe {
     // Jeśli odległości jest > 2 - pozostałe stałe
     val otherDists = MatrixOps.asIterable(distances.distances).slice(2, distances.distances.getDimension).toArray
     val realResp = DataHolder.getCurrent.canalResponse
-    val range1 = dist1 - MARGIN to dist1 + MARGIN by STEP
-    val range2 = dist2 - MARGIN to dist2 + MARGIN by STEP
+    val range1 = 0.0.max(dist1 - MARGIN) to dist1 + MARGIN by STEP
+    val range2 = 0.0.max(dist2 - MARGIN) to dist2 + MARGIN by STEP
     val data = range1.map(varDist1 => {
       Array(varDist1) ++ range2.map(varDist2 => {
         val dists = Array(varDist1, varDist2) ++ otherDists
