@@ -16,5 +16,6 @@ Programy:
 * ChartViewer (`chart.sh`) - aplikacja do wyświetlania wykresów w formacie `.cht` wyeksportowanych przez program;
 * StatsAggregator, FFAggregator - programy do agregacji statystyk wyprodukowanych podczas eksperymentów;
 
-Shortly in English:
+
+Shortly in English:\
 Supporting code for research for my master thesis "Applications of Evolutionary Methods for Distance Measurement in Transmission Channel"
